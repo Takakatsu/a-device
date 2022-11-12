@@ -49,6 +49,8 @@ void Main()
 				{
 				case NONE://エラー？
 					break;
+
+					//////タイトルバー系統//////
 				case TITLE_BAR://タイトルドラッグつまり移動
 				{
 					g_win_active->setPos(g_win_active->getPos() + drag);
@@ -60,6 +62,8 @@ void Main()
 					break;
 				case T_BAR_MIN://ボタンをドラッグしても…ねぇ？
 					break;
+
+					//////メイン処理//////
 				case CONTENTS://コンテンツドラッグ処理
 					break;
 

@@ -26,7 +26,16 @@ public:
 	}
 	virtual void draw()
 	{
-		getRectF().drawFrame(1, Color(0));
+		//メインコンテンツを描画する場合はgetContentsRectF()から左上座標を追加する。
+		{
+			//枠外描画を禁止
+			Graphics2D::SetScissorRect(getContentsRectF().asRect());
+			RasterizerState rs = RasterizerState::Default2D;
+			rs.scissorEnable = true;
+			const ScopedRenderStates2D rasterizer{ rs };
+			//以下で描画
+			Circle(Cursor::Pos(), 100).draw(Color(255, 255, 0));
+		}
 		drawFlame();
 	}
 	virtual void drawFlame()
@@ -44,6 +53,11 @@ public:
 			getTitleBar(i).draw(Color(0, 0, (i * 50 + 30)));
 		}
 	}
+	virtual void click(Vec2 pos)//呼び出すときは内部座標で処理する
+	{
+	}
+
+	//コンテンツやフレームの取得
 	CLICKED_TYPE getPosType(Vec2 p)
 	{
 		//非接触
@@ -80,7 +94,6 @@ public:
 
 		return CLICKED_TYPE::NONE;
 	}
-	//コンテンツやフレームの取得
 	RectF getFlameRectF(char type)//1から9までの数値が数字キーに対応
 	{
 		Vec2 v1 = Vec2(MARGIN_FLAME, -MARGIN_FLAME);
@@ -162,11 +175,6 @@ public:
 	Vec2 getSize()
 	{
 		return size;
-	}
-
-	RectF getRectF()
-	{
-		return RectF(pos, size);
 	}
 };
 
