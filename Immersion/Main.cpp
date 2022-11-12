@@ -7,8 +7,8 @@ void Main()
 	Scene::SetBackground(Color(255));
 
 	Array<MyWindow*> my_wins;
-	MyWindow win = MyWindow(Vec2(0, 0), Vec2(100, 100));
-	Calculator cal = Calculator(Vec2(150, 0), Vec2(100, 100));
+	MyWindow win = MyWindow(Vec2(0, 0), Vec2(200, 200));
+	Calculator cal = Calculator(Vec2(250, 0), Vec2(200, 200));
 	my_wins.push_back(&win);
 	my_wins.push_back(&cal);
 
