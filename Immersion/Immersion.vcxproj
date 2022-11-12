@@ -315,6 +315,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="def.h" />
+    <ClInclude Include="func.h" />
+    <ClInclude Include="MyIcon.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

@@ -2,9 +2,13 @@
 
 #include<Siv3D.hpp> // OpenSiv3D v0.6.5
 
-//定数
+//////定数//////
+
+//アイコン系
+#define MARGIN_ICON 50//アイコンの間隔
+#define ICON_SIZE 40//アイコンのサイズ
+//ウィンドウ系
 #define MARGIN_FLAME 4//フレームの幅
-//#define MARGIN_FLAME_TOUCH 10//フレームの接触範囲
 #define MARGIN_TITLEBAR 30//タイトルバーの太さ
 #define MARGIN_TITLEBAR_BUTTON 50//タイトルバーのボタンの太さ
 
@@ -26,4 +30,22 @@ enum CLICKED_TYPE
 	FLAME_DOWN_LEFT,
 };
 
+typedef struct MailData
+{
+	String from;
+	String title;
+	String text;
+};
+
+extern Array<MailData> MailLib;
+
 #include "MyWindow.h"
+
+extern Array<MyWindow*> my_wins;
+extern MyWindow* win_active;
+
+#include "MyIcon.h"
+
+extern Array<MyIcon*> my_icons;
+
+#include "func.h"

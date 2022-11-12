@@ -1,22 +1,35 @@
 ﻿#pragma once
 #include "def.h"
 
-//ウィンドウの当たり判定は、枠と上フレームと画面内が存在
-
 class MyWindow
 {
 private:
 protected:
+	bool is_min;//最小化か否か
+	bool is_max;//最大化か否か
 	Vec2 pos;//座標
+	Vec2 pos_tmp;//最大化されていない座標
 	Vec2 size;//ウィンドウサイズ
+	Vec2 size_tmp;//最大化されていないサイズ
+	Vec2 size_min;//サイズ最小値
 public:
 	MyWindow()
 	{
+		is_max = false;
+		is_min = false;
+		pos_tmp = Vec2();
+		size_tmp = Vec2();
+		size_min = Vec2(MARGIN_FLAME * 2 + MARGIN_TITLEBAR_BUTTON * 3, MARGIN_FLAME * 2 + MARGIN_TITLEBAR);
 		pos = Vec2(0, 0);
 		size = Vec2(0, 0);
 	}
 	MyWindow(Vec2 p, Vec2 s)
 	{
+		is_max = false;
+		is_min = false;
+		pos_tmp = Vec2();
+		size_tmp = Vec2();
+		size_min = Vec2(MARGIN_FLAME * 2 + MARGIN_TITLEBAR_BUTTON * 3, MARGIN_FLAME * 2 + MARGIN_TITLEBAR);
 		pos = p;
 		size = s;
 	}
@@ -26,13 +39,11 @@ public:
 	}
 	virtual void draw()
 	{
-		//メインコンテンツを描画する場合はgetContentsRectF()から左上座標を追加する。
 		{
-			//枠外描画を禁止
-			Graphics2D::SetScissorRect(getContentsRectF().asRect());
-			RasterizerState rs = RasterizerState::Default2D;
-			rs.scissorEnable = true;
-			const ScopedRenderStates2D rasterizer{ rs };
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(rect);
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
 			Circle(Cursor::Pos(), 100).draw(Color(255, 255, 0));
 		}
@@ -55,6 +66,7 @@ public:
 	}
 	virtual void click(Vec2 pos)//呼び出すときは内部座標で処理する
 	{
+		Print(pos);
 	}
 
 	//コンテンツやフレームの取得
@@ -171,10 +183,33 @@ public:
 	void setSize(Vec2 s)
 	{
 		size = s;
+		if (size.x < size_min.x)size.x = size_min.x;
+		if (size.y < size_min.y)size.y = size_min.y;
 	}
 	Vec2 getSize()
 	{
 		return size;
+	}
+	//タイトルバーのボタン処理
+	void dealSizeMax()
+	{
+		if (is_max)//最大化されている場合
+		{
+			pos = pos_tmp;
+			size = size_tmp;
+		}
+		else//最大化する場合
+		{
+			pos_tmp = pos;
+			size_tmp = size;
+			pos = Vec2(0, 0);
+			size = Scene::Size();
+		}
+		is_max = !is_max;
+	}
+	void dealSizeMin()
+	{
+		is_min = true;
 	}
 };
 
@@ -190,6 +225,49 @@ public:
 	}
 	void draw()
 	{
-		RectF(pos, size).draw(Color(127));
+		{
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(rect);
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
+			//以下で描画
+			RectF(Vec2(0, 0), size).draw(Color(0));
+			Circle(Cursor::Pos(), 100).draw(Color(255, 255, 255));
+		}
+		drawFlame();
+	}
+};
+
+class MailSoft : public MyWindow
+{
+private:
+	Font font01;
+	bool is_reading;//メールを読んでるか否か
+	int mail_num;//選択中のメールの番号
+public:
+	MailSoft() : MyWindow()
+	{
+		font01 = Font(30);
+		is_reading = false;
+		mail_num = 0;
+	};
+	MailSoft(Vec2 p,Vec2 s) : MyWindow(p,s)
+	{
+		font01 = Font(30);
+		is_reading = false;
+		mail_num = 0;
+	};
+	void draw()
+	{
+		{
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(rect);
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
+			//以下で描画
+			RectF(Vec2(0, 0), size).draw(Color(0));//背景
+
+		}
+		drawFlame();
 	}
 };
