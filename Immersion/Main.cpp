@@ -24,7 +24,7 @@ void Main()
 			for (int i = 0; i < my_wins.size(); i++)
 			{
 				//ウィンドウをクリックしてた時
-				if (my_wins[i]->getRectF().contains(pos))
+				if (my_wins[i]->getPosType(pos)!= CLICKED_TYPE::NONE)
 				{
 					win_active = my_wins[i];
 					my_wins.remove_at(i);

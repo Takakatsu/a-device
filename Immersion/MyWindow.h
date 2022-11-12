@@ -31,67 +31,54 @@ public:
 	}
 	virtual void drawFlame()
 	{
+		//枠
 		for (int i = 1; i < 10; i++)
 		{
 			if (i == 5)continue;
 			Color c = (i % 2 == 0) ? Color(255, 0, 0) : Color(0, 255, 0);
 			getFlameRectF(i).draw(c);
 		}
-		Vec2 v2 = Vec2(MARGIN_FLAME, MARGIN_FLAME);
 		//タイトルバー
+		for (int i = 0; i < 4; i++)
 		{
-			RectF rf = RectF(pos + v2, Vec2(size.x - MARGIN_FLAME * 2 - MARGIN_TITLEBAR_BUTTON * 3, MARGIN_TITLEBAR));
-			rf.draw(Color(0, 255, 0));
-			//各ボタン
-			rf = RectF(Vec2(rf.rightX(), rf.pos.y), Vec2(MARGIN_TITLEBAR_BUTTON, MARGIN_TITLEBAR));
-			rf.draw(Color(0, 0, 255));
-			rf.moveBy(Vec2(MARGIN_TITLEBAR_BUTTON, 0));
-			rf.draw(Color(0, 0, 200));
-			rf.moveBy(Vec2(MARGIN_TITLEBAR_BUTTON, 0));
-			rf.draw(Color(0, 0, 145));
+			getTitleBar(i).draw(Color(0, 0, (i * 50 + 30)));
 		}
 	}
 	CLICKED_TYPE getPosType(Vec2 p)
 	{
-		//接触判定
-		Vec2 v1 = Vec2(MARGIN_FLAME, -MARGIN_FLAME);
-		Vec2 v2 = Vec2(MARGIN_FLAME, MARGIN_FLAME);
-
 		//非接触
-		if (!RectF(pos - v2, size + 2 * v2).contains(p))return CLICKED_TYPE::NONE;
+		if (!getAllRectF().contains(p))return CLICKED_TYPE::NONE;
 
 		//メイン
 		if (getContentsRectF().contains(p))
 		{
 			return CLICKED_TYPE::CONTENTS;
 		}
-
+		//枠
+		{
+			Array<CLICKED_TYPE> cts ={
+				CLICKED_TYPE::FLAME_DOWN_LEFT,CLICKED_TYPE::FLAME_DOWN,CLICKED_TYPE::FLAME_DOWN_RIGHT,
+				CLICKED_TYPE::FLAME_LEFT,CLICKED_TYPE::NONE,CLICKED_TYPE::FLAME_RIGHT,
+				CLICKED_TYPE::FLAME_UP_LEFT,CLICKED_TYPE::FLAME_UP,CLICKED_TYPE::FLAME_UP_RIGHT
+			};
+			for (int i = 1; i < cts.size(); i++)
+			{
+				if (i == 5)continue;
+				if (getFlameRectF(i).contains(p))return cts[i];
+			}
+		}
 		//タイトルバー
 		{
-			RectF rf = RectF(pos + v2, Vec2(size.x - MARGIN_FLAME * 2 - MARGIN_TITLEBAR_BUTTON * 3, MARGIN_TITLEBAR));
-			if (rf.contains(p))return CLICKED_TYPE::TITLE_BAR;
-			//各ボタン
-			rf = RectF(Vec2(rf.rightX(), rf.pos.y), Vec2(MARGIN_TITLEBAR_BUTTON, MARGIN_TITLEBAR));
-			if (rf.contains(p))return CLICKED_TYPE::T_BAR_MIN;
-			rf.moveBy(Vec2(MARGIN_TITLEBAR_BUTTON, 0));
-			if (rf.contains(p))return CLICKED_TYPE::T_BAR_MAX;
-			rf.moveBy(Vec2(MARGIN_TITLEBAR_BUTTON, 0));
-			if (rf.contains(p))return CLICKED_TYPE::T_BAR_CLOSE;
+			Array<CLICKED_TYPE> cts = {
+				CLICKED_TYPE::TITLE_BAR,CLICKED_TYPE::T_BAR_MIN,CLICKED_TYPE::T_BAR_MAX,CLICKED_TYPE::T_BAR_CLOSE
+			};
+			for (int i = 1; i < cts.size(); i++)
+			{
+				if (getTitleBar(i).contains(p))return cts[i];
+			}
 		}
 
-		//枠
-		RectF(pos + v1, Vec2(size.x, 0) - 2 * v1).draw(Color(255, 0, 0));
-		RectF(pos + Vec2(0, size.y) + v1, Vec2(size.x, 0) - 2 * v1).draw(Color(255, 0, 0));
-		RectF(pos - v1, Vec2(0, size.y) + 2 * v1).draw(Color(255, 0, 0));
-		RectF(pos + Vec2(size.x, 0) - v1, Vec2(0, size.y) + 2 * v1).draw(Color(255, 0, 0));
-
-		//角
-		RectF(pos - v2, v2 * 2).draw(Color(0, 255, 0));
-		RectF(pos + Vec2(0, size.y) - v2, v2 * 2).draw(Color(0, 255, 0));
-		RectF(pos + Vec2(size.x, 0) - v2, v2 * 2).draw(Color(0, 255, 0));
-		RectF(pos + size - v2, v2 * 2).draw(Color(0, 255, 0));
-
-		return CLICKED_TYPE::CONTENTS;
+		return CLICKED_TYPE::NONE;
 	}
 	//コンテンツやフレームの取得
 	RectF getFlameRectF(char type)//1から9までの数値が数字キーに対応
@@ -154,6 +141,10 @@ public:
 			pos + Vec2(MARGIN_FLAME, MARGIN_FLAME + MARGIN_TITLEBAR),
 			size + Vec2(-MARGIN_FLAME * 2, -MARGIN_TITLEBAR - MARGIN_FLAME * 2));
 		return rf;
+	}
+	RectF getAllRectF()
+	{
+		return RectF(pos - Vec2(MARGIN_FLAME, MARGIN_FLAME), size + 2 * Vec2(MARGIN_FLAME, MARGIN_FLAME));
 	}
 
 	void setPos(Vec2 p)
