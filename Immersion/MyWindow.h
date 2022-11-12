@@ -56,15 +56,15 @@ public:
 		}
 		//枠
 		{
-			Array<CLICKED_TYPE> cts ={
+			Array<CLICKED_TYPE> cts = {
 				CLICKED_TYPE::FLAME_DOWN_LEFT,CLICKED_TYPE::FLAME_DOWN,CLICKED_TYPE::FLAME_DOWN_RIGHT,
 				CLICKED_TYPE::FLAME_LEFT,CLICKED_TYPE::NONE,CLICKED_TYPE::FLAME_RIGHT,
 				CLICKED_TYPE::FLAME_UP_LEFT,CLICKED_TYPE::FLAME_UP,CLICKED_TYPE::FLAME_UP_RIGHT
 			};
-			for (int i = 1; i < cts.size(); i++)
+			for (int i = 0; i < 9; i++)
 			{
-				if (i == 5)continue;
-				if (getFlameRectF(i).contains(p))return cts[i];
+				if (i == 4)continue;
+				if (getFlameRectF(i + 1).contains(p))return cts[i];
 			}
 		}
 		//タイトルバー
@@ -72,7 +72,7 @@ public:
 			Array<CLICKED_TYPE> cts = {
 				CLICKED_TYPE::TITLE_BAR,CLICKED_TYPE::T_BAR_MIN,CLICKED_TYPE::T_BAR_MAX,CLICKED_TYPE::T_BAR_CLOSE
 			};
-			for (int i = 1; i < cts.size(); i++)
+			for (int i = 0; i < cts.size(); i++)
 			{
 				if (getTitleBar(i).contains(p))return cts[i];
 			}
@@ -92,13 +92,13 @@ public:
 			switch (type)
 			{
 			case 8:
-				return RectF(pos + v1, Vec2(size.x, 0) - 2 * v1).draw(Color(255, 0, 0));
+				return RectF(pos + v1, Vec2(size.x, 0) - 2 * v1);
 			case 2:
 				return RectF(pos + Vec2(0, size.y) + v1, Vec2(size.x, 0) - 2 * v1);
 			case 4:
-				RectF(pos - v1, Vec2(0, size.y) + 2 * v1).draw(Color(255, 0, 0));
+				return RectF(pos - v1, Vec2(0, size.y) + 2 * v1);
 			case 6:
-				RectF(pos + Vec2(size.x, 0) - v1, Vec2(0, size.y) + 2 * v1).draw(Color(255, 0, 0));
+				return RectF(pos + Vec2(size.x, 0) - v1, Vec2(0, size.y) + 2 * v1);
 			default:
 				break;
 			}
@@ -109,13 +109,13 @@ public:
 			switch (type)
 			{
 			case 7:
-				RectF(pos - v2, v2 * 2).draw(Color(0, 255, 0));
+				return RectF(pos - v2, v2 * 2);
 			case 9:
-				RectF(pos + Vec2(size.x, 0) - v2, v2 * 2).draw(Color(0, 255, 0));
+				return RectF(pos + Vec2(size.x, 0) - v2, v2 * 2);
 			case 1:
-				RectF(pos + Vec2(0, size.y) - v2, v2 * 2).draw(Color(0, 255, 0));
+				return RectF(pos + Vec2(0, size.y) - v2, v2 * 2);
 			case 3:
-				RectF(pos + size - v2, v2 * 2).draw(Color(0, 255, 0));
+				return RectF(pos + size - v2, v2 * 2);
 			default:
 				break;
 			}

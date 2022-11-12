@@ -7,28 +7,33 @@ void Main()
 	Scene::SetBackground(Color(255));
 
 	Array<MyWindow*> my_wins;
-	MyWindow win = MyWindow(Vec2(0, 0), Vec2(200, 200));
+	MyWindow win = MyWindow(Vec2(300, 300), Vec2(200, 200));
 	Calculator cal = Calculator(Vec2(250, 0), Vec2(200, 200));
 	my_wins.push_back(&win);
 	my_wins.push_back(&cal);
 
-	MyWindow* win_active = nullptr;
+	//ウィンドウ処理用
+	MyWindow* g_win_active = nullptr;
+	CLICKED_TYPE g_clicktype = CLICKED_TYPE::NONE;
 
 	while (System::Update())
 	{
+		ClearPrint();
 		//クリック時
 		if (MouseL.down())
 		{
 			Vec2 pos = Cursor::PosF();
-			win_active = nullptr;
+			g_win_active = nullptr;
 			for (int i = 0; i < my_wins.size(); i++)
 			{
 				//ウィンドウをクリックしてた時
-				if (my_wins[i]->getPosType(pos)!= CLICKED_TYPE::NONE)
+				CLICKED_TYPE ct = my_wins[i]->getPosType(pos);
+				if (ct != CLICKED_TYPE::NONE)
 				{
-					win_active = my_wins[i];
+					g_win_active = my_wins[i];
+					g_clicktype = ct;
 					my_wins.remove_at(i);
-					my_wins.push_front(win_active);
+					my_wins.push_front(g_win_active);
 					break;
 				}
 			}
@@ -36,10 +41,81 @@ void Main()
 		//ドラッグ時
 		else if (MouseL.pressed())
 		{
+			Vec2 drag = Cursor::DeltaF();
 			//ウィンドウをドラッグしているとき
-			if (win_active != nullptr)
+			if (g_win_active != nullptr)
 			{
-				win_active->setPos(win_active->getPos() + Cursor::DeltaF());
+				switch (g_clicktype)
+				{
+				case NONE://エラー？
+					break;
+				case TITLE_BAR://タイトルドラッグつまり移動
+				{
+					g_win_active->setPos(g_win_active->getPos() + drag);
+				}
+				break;
+				case T_BAR_CLOSE://ボタンをドラッグしても…ねぇ？
+					break;
+				case T_BAR_MAX://ボタンをドラッグしても…ねぇ？
+					break;
+				case T_BAR_MIN://ボタンをドラッグしても…ねぇ？
+					break;
+				case CONTENTS://コンテンツドラッグ処理
+					break;
+
+					//////以下は変形系統//////
+				case FLAME_UP://上方向に変形
+				{
+					Vec2 v = Vec2(0, drag.y);
+					g_win_active->setPos(g_win_active->getPos() + v);
+					g_win_active->setSize(g_win_active->getSize() - v);
+				}
+				break;
+				case FLAME_DOWN://下方向に変形
+				{
+					Vec2 v = Vec2(0, drag.y);
+					g_win_active->setSize(g_win_active->getSize() + v);
+				}
+				break;
+				case FLAME_RIGHT://右方向に変形
+				{
+					Vec2 v = Vec2(drag.x, 0);
+					g_win_active->setSize(g_win_active->getSize() + v);
+				}
+				break;
+				case FLAME_LEFT://左方向に変形
+				{
+					Vec2 v = Vec2(drag.x, 0);
+					g_win_active->setPos(g_win_active->getPos() + v);
+					g_win_active->setSize(g_win_active->getSize() - v);
+				}
+				break;
+				case FLAME_UP_RIGHT://右上方向に変形
+				{
+					g_win_active->setPos(g_win_active->getPos() + Vec2(0, drag.y));
+					g_win_active->setSize(g_win_active->getSize() + Vec2(drag.x, -drag.y));
+				}
+				break;
+				case FLAME_UP_LEFT://左上方向に変形
+				{
+					g_win_active->setPos(g_win_active->getPos() + drag);
+					g_win_active->setSize(g_win_active->getSize() - drag);
+				}
+				break;
+				case FLAME_DOWN_RIGHT://右下方向に変形
+				{
+					g_win_active->setSize(g_win_active->getSize() + drag);
+				}
+				break;
+				case FLAME_DOWN_LEFT://左下方向に変形
+				{
+					g_win_active->setPos(g_win_active->getPos() + Vec2(drag.x, 0));
+					g_win_active->setSize(g_win_active->getSize() + Vec2(-drag.x, drag.y));
+				}
+				break;
+				default:
+					break;
+				}
 			}
 		}
 
