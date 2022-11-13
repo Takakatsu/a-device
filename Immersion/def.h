@@ -5,8 +5,8 @@
 //////定数//////
 
 //アイコン系
-#define MARGIN_ICON 50//アイコンの間隔
-#define ICON_SIZE 40//アイコンのサイズ
+#define MARGIN_ICON 80//アイコンの間隔
+#define ICON_SIZE 64//アイコンのサイズ
 //ウィンドウ系
 #define MARGIN_FLAME 4//フレームの幅
 #define MARGIN_TITLEBAR 30//タイトルバーの太さ

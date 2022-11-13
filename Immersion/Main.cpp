@@ -3,8 +3,11 @@
 void Main()
 {
 	//ウィンドウサイズ等の初期設定
-	Window::Resize(1280, 720);
+	Window::Resize(1920, 1080);
+	Scene::SetResizeMode(ResizeMode::Keep);
+	Scene::Resize(960, 540);
 	Scene::SetBackground(Color(255));
+	Window::SetFullscreen(true);
 
 	//データの初期化
 	initialize_lib();
@@ -177,6 +180,8 @@ void Main()
 		}
 
 		//////描画//////
+		TextureFilter::Nearest();
+
 		for (int i = 0; i < my_icons.size(); i++)
 		{
 			my_icons[i]->draw();

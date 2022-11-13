@@ -38,6 +38,6 @@ public:
 	}
 	RectF getRect()
 	{
-		return RectF(pos * MARGIN_ICON, Vec2(ICON_SIZE, ICON_SIZE));
+		return RectF(pos * MARGIN_ICON + Vec2(16, 16), Vec2(ICON_SIZE, ICON_SIZE));
 	}
 };
