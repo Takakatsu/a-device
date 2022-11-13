@@ -265,8 +265,20 @@ public:
 			const ScopedViewport2D viewport(rect);
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
-			RectF(Vec2(0, 0), size).draw(Color(0));//背景
+			RectF(Vec2(0, 0), size).draw(Color(127));//背景
+			if (is_reading)
+			{
 
+			}
+			else
+			{
+				RectF mailline = RectF(Vec2(0, 0), Vec2(180, 50));
+				for (int i = 0; i < MailLib.size(); i++)
+				{
+					font01(MailLib[i].from).draw(mailline, Color(0));
+					mailline.moveBy(Vec2(0, 50));
+				}
+			}
 		}
 		drawFlame();
 	}
