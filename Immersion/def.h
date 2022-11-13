@@ -4,6 +4,10 @@
 
 //////定数//////
 
+//マップ系
+#define MAP_CENTER_X 14
+#define MAP_CENTER_Y 14
+
 //アイコン系
 #define MARGIN_ICON 80//アイコンの間隔
 #define ICON_SIZE 64//アイコンのサイズ
@@ -36,6 +40,29 @@ typedef struct MailData
 	String title;
 	String text;
 };
+
+enum MAPTILE
+{
+	SHIP,//宇宙船
+	GRASS,//草原
+	ROCK,//岩
+	SAND,//砂場
+};
+
+typedef struct TileData
+{
+	Color c;
+};
+
+extern HashTable<MAPTILE, TileData> TileLib;
+
+typedef struct MapTip
+{
+	MAPTILE tile;
+	bool is_found;
+};
+
+extern Array<Array<MapTip>> MAINMAP;
 
 extern Array<MailData> MailLib;
 

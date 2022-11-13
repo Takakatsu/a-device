@@ -1,5 +1,7 @@
 ﻿#include "def.h"
 
+HashTable<MAPTILE, TileData> TileLib;
+Array<Array<MapTip>> MAINMAP;
 Array<MailData> MailLib;
 
 Array<MyWindow*> my_wins;
@@ -8,6 +10,32 @@ MyWindow* win_active;
 
 void initialize_lib()
 {
+	{
+		TileData td;
+		td.c = Color(255, 0, 0);
+		TileLib.emplace(MAPTILE::SHIP, td);
+		td.c = Color(0, 255, 0);
+		TileLib.emplace(MAPTILE::GRASS, td);
+	}
+	{
+		for (int i = 0; i < 30; i++)
+		{
+			Array<MapTip> tmptile;
+			for (int j = 0; j < 30; j++)
+			{
+				MapTip t;
+				t.is_found = false;
+				t.tile = MAPTILE::GRASS;
+				if (i == MAP_CENTER_X && j == MAP_CENTER_Y)
+				{
+					t.is_found = true;
+					t.tile = MAPTILE::SHIP;
+				}
+				tmptile.push_back(t);
+			}
+			MAINMAP.push_back(tmptile);
+		}
+	}
 	{
 		MailData md;
 		md.from = U"不明";

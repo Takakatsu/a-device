@@ -251,7 +251,7 @@ public:
 		is_reading = false;
 		mail_num = 0;
 	};
-	MailSoft(Vec2 p,Vec2 s) : MyWindow(p,s)
+	MailSoft(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
 		font01 = Font(30);
 		is_reading = false;
@@ -277,6 +277,73 @@ public:
 				{
 					font01(MailLib[i].from).draw(mailline, Color(0));
 					mailline.moveBy(Vec2(0, 50));
+				}
+			}
+		}
+		drawFlame();
+	}
+};
+
+class MAPViewer : public MyWindow
+{
+private:
+	Font font01;
+	Vec2 pos_camera;
+public:
+	MAPViewer() : MyWindow()
+	{
+		font01 = Font(30);
+		pos_camera = Vec2(0, 0);
+	};
+	MAPViewer(Vec2 p, Vec2 s) : MyWindow(p, s)
+	{
+		font01 = Font(30);
+		pos_camera = Vec2(0, 0);
+	};
+	void draw()
+	{
+		{
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(rect);
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
+			//以下で描画
+			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(Color(0));//背景
+
+			const double r = 10;//図形の半径
+			const double m_r = 12;//マージンの半径
+			for (int i = 0; i < MAINMAP.size(); i++)
+			{
+				for (int j = 0; j < MAINMAP[i].size(); j++)
+				{
+					if (MAINMAP[i][j].is_found)
+					{
+						Vec2 dis = Vec2(
+							(i - MAP_CENTER_X) * m_r * 1.5,
+							(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
+						Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
+					}
+					//周囲の描画
+					Array<Point> ps;
+					if (i % 2 == 0)ps = { Point(0, 1), Point(0, -1), Point(-1, -1), Point(-1, 0), Point(1, -1), Point(1, 0) };
+					else ps = { Point(0, 1), Point(0, -1), Point(-1, 1), Point(-1, 0), Point(1, 1), Point(1, 0) };
+					for (int k = 0; k < ps.size(); k++)
+					{
+						Point p = Point(i, j) + ps[k];
+						if (0 <= p.x && p.x < MAINMAP.size())
+						{
+							if (0 <= p.y && p.y < MAINMAP[p.x].size())
+							{
+								if (MAINMAP[p.x][p.y].is_found)
+								{
+									Vec2 dis = Vec2(
+										(i - MAP_CENTER_X) * m_r * 1.5,
+										(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
+									Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
+								}
+							}
+						}
+					}
 				}
 			}
 		}

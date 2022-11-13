@@ -19,6 +19,8 @@ void Main()
 	my_wins.push_back(&s_cal);
 	MailSoft s_mail = MailSoft(Vec2(250, 200), Vec2(200, 200));
 	my_wins.push_back(&s_mail);
+	MAPViewer s_map = MAPViewer(Vec2(250, 200), Vec2(200, 200));
+	my_wins.push_back(&s_map);
 
 	//アイコン系
 	MyIcon ic_tmp = MyIcon(Point(0, 0), &s_tmp);
