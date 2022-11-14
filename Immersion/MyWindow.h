@@ -64,9 +64,13 @@ public:
 			getTitleBar(i).draw(Color(0, 0, (i * 50 + 30)));
 		}
 	}
-	virtual void click(Vec2 pos)//呼び出すときは内部座標で処理する
+	virtual void click(Vec2 pos, bool is_left)//呼び出すときは内部座標で処理する
 	{
 		Print(pos);
+	}
+	virtual void drag(Vec2 delta, bool is_left)
+	{
+
 	}
 
 	//コンテンツやフレームの取得
@@ -300,6 +304,13 @@ public:
 		font01 = Font(30);
 		pos_camera = Vec2(0, 0);
 	};
+	void drag(Vec2 delta, bool is_left)
+	{
+		if (!is_left)
+		{
+			pos_camera += delta;
+		}
+	}
 	void draw()
 	{
 		{
@@ -310,36 +321,41 @@ public:
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(Color(0));//背景
 
-			const double r = 10;//図形の半径
-			const double m_r = 12;//マージンの半径
-			for (int i = 0; i < MAINMAP.size(); i++)
 			{
-				for (int j = 0; j < MAINMAP[i].size(); j++)
+				const Transformer2D t_cam{ Mat3x2::Translate(pos_camera) };
+				const double r = 10;//図形の半径
+				const double m_r = 12;//マージンの半径
+				for (int i = 0; i < MAINMAP.size(); i++)
 				{
-					if (MAINMAP[i][j].is_found)
+					for (int j = 0; j < MAINMAP[i].size(); j++)
 					{
-						Vec2 dis = Vec2(
-							(i - MAP_CENTER_X) * m_r * 1.5,
-							(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-						Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
-					}
-					//周囲の描画
-					Array<Point> ps;
-					if (i % 2 == 0)ps = { Point(0, 1), Point(0, -1), Point(-1, -1), Point(-1, 0), Point(1, -1), Point(1, 0) };
-					else ps = { Point(0, 1), Point(0, -1), Point(-1, 1), Point(-1, 0), Point(1, 1), Point(1, 0) };
-					for (int k = 0; k < ps.size(); k++)
-					{
-						Point p = Point(i, j) + ps[k];
-						if (0 <= p.x && p.x < MAINMAP.size())
+						//発見済みの座標
+						if (MAINMAP[i][j].is_found)
 						{
-							if (0 <= p.y && p.y < MAINMAP[p.x].size())
+							Vec2 dis = Vec2(
+								(i - MAP_CENTER_X) * m_r * 1.5,
+								(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
+							Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
+						}
+						//周囲の描画(発見済みの座標との隣接)
+						Array<Point> ps;
+						if (i % 2 == 0)ps = { Point(0, 1), Point(0, -1), Point(-1, -1), Point(-1, 0), Point(1, -1), Point(1, 0) };
+						else ps = { Point(0, 1), Point(0, -1), Point(-1, 1), Point(-1, 0), Point(1, 1), Point(1, 0) };
+						for (int k = 0; k < ps.size(); k++)
+						{
+							Point p = Point(i, j) + ps[k];
+							if (0 <= p.x && p.x < MAINMAP.size())
 							{
-								if (MAINMAP[p.x][p.y].is_found)
+								if (0 <= p.y && p.y < MAINMAP[p.x].size())
 								{
-									Vec2 dis = Vec2(
-										(i - MAP_CENTER_X) * m_r * 1.5,
-										(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-									Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
+									if (MAINMAP[p.x][p.y].is_found)
+									{
+										Vec2 dis = Vec2(
+											(i - MAP_CENTER_X) * m_r * 1.5,
+											(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
+										Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(Color(127));
+										break;
+									}
 								}
 							}
 						}
