@@ -293,6 +293,8 @@ class MAPViewer : public MyWindow
 private:
 	Font font01;
 	Vec2 pos_camera;
+	const double r = 10;//図形の半径
+	const double m_r = 12;//マージンの半径
 public:
 	MAPViewer() : MyWindow()
 	{
@@ -304,6 +306,69 @@ public:
 		font01 = Font(30);
 		pos_camera = Vec2(0, 0);
 	};
+	void click(Vec2 pos, bool is_left)
+	{
+		{
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(rect);
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
+
+			//メインの地図
+			{
+				const Transformer2D t_cam{ Mat3x2::Translate(pos_camera) };
+				for (int i = 0; i < MAINMAP.size(); i++)
+				{
+					for (int j = 0; j < MAINMAP[i].size(); j++)
+					{
+						//各種タイル
+						Vec2 dis = Vec2(
+							(i - MAP_CENTER_X) * m_r * 1.5,
+							(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
+						Polygon poly = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c).asPolygon();
+						if (poly.contains(pos))
+						{
+							//発見済みの座標の処理
+							if (MAINMAP[i][j].is_found)
+							{
+							}
+							//未発見の座標の処理
+							else
+							{
+								//発見済みの座標との隣接判定
+								bool is_touch = false;
+								{
+									Array<Point> ps;
+									if (i % 2 == 0)ps = { Point(0, 1), Point(0, -1), Point(-1, -1), Point(-1, 0), Point(1, -1), Point(1, 0) };
+									else ps = { Point(0, 1), Point(0, -1), Point(-1, 1), Point(-1, 0), Point(1, 1), Point(1, 0) };
+									for (int k = 0; k < ps.size(); k++)
+									{
+										Point p = Point(i, j) + ps[k];
+										if (0 <= p.x && p.x < MAINMAP.size())
+										{
+											if (0 <= p.y && p.y < MAINMAP[p.x].size())
+											{
+												if (MAINMAP[p.x][p.y].is_found)
+												{
+													is_touch = true;
+													break;
+												}
+											}
+										}
+									}
+								}
+								if (is_touch)
+								{
+									//仮で強制発見処理
+									MAINMAP[i][j].is_found = true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	void drag(Vec2 delta, bool is_left)
 	{
 		if (!is_left)
@@ -324,8 +389,6 @@ public:
 			//メインの地図
 			{
 				const Transformer2D t_cam{ Mat3x2::Translate(pos_camera) };
-				const double r = 10;//図形の半径
-				const double m_r = 12;//マージンの半径
 				for (int i = 0; i < MAINMAP.size(); i++)
 				{
 					for (int j = 0; j < MAINMAP[i].size(); j++)
@@ -338,26 +401,30 @@ public:
 								(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
 							Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
 						}
-						//周囲の描画(発見済みの座標との隣接)
-						Array<Point> ps;
-						if (i % 2 == 0)ps = { Point(0, 1), Point(0, -1), Point(-1, -1), Point(-1, 0), Point(1, -1), Point(1, 0) };
-						else ps = { Point(0, 1), Point(0, -1), Point(-1, 1), Point(-1, 0), Point(1, 1), Point(1, 0) };
-						for (int k = 0; k < ps.size(); k++)
+						//未発見の座標
+						else
 						{
-							Point p = Point(i, j) + ps[k];
-							if (0 <= p.x && p.x < MAINMAP.size())
+							//周囲の描画(発見済みの座標との隣接)
+							Array<Point> ps;
+							if (i % 2 == 0)ps = { Point(0, 1), Point(0, -1), Point(-1, -1), Point(-1, 0), Point(1, -1), Point(1, 0) };
+							else ps = { Point(0, 1), Point(0, -1), Point(-1, 1), Point(-1, 0), Point(1, 1), Point(1, 0) };
+							for (int k = 0; k < ps.size(); k++)
 							{
-								if (0 <= p.y && p.y < MAINMAP[p.x].size())
+								Point p = Point(i, j) + ps[k];
+								if (0 <= p.x && p.x < MAINMAP.size())
 								{
-									if (MAINMAP[p.x][p.y].is_found)
+									if (0 <= p.y && p.y < MAINMAP[p.x].size())
 									{
-										Vec2 dis = Vec2(
-											(i - MAP_CENTER_X) * m_r * 1.5,
-											(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-										//マウスオーバー判定等
-										Shape2D shape = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg);
-										shape.draw(shape.asPolygon().mouseOver()?Color(255):Color(127));
-										break;
+										if (MAINMAP[p.x][p.y].is_found)
+										{
+											Vec2 dis = Vec2(
+												(i - MAP_CENTER_X) * m_r * 1.5,
+												(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
+											//マウスオーバー判定等
+											Shape2D shape = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg);
+											shape.draw(shape.asPolygon().mouseOver() ? Color(255) : Color(127));
+											break;
+										}
 									}
 								}
 							}
