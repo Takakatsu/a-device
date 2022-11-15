@@ -321,6 +321,7 @@ public:
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(Color(0));//背景
 
+			//メインの地図
 			{
 				const Transformer2D t_cam{ Mat3x2::Translate(pos_camera) };
 				const double r = 10;//図形の半径
@@ -353,7 +354,9 @@ public:
 										Vec2 dis = Vec2(
 											(i - MAP_CENTER_X) * m_r * 1.5,
 											(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-										Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(Color(127));
+										//マウスオーバー判定等
+										Shape2D shape = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg);
+										shape.draw(shape.asPolygon().mouseOver()?Color(255):Color(127));
 										break;
 									}
 								}
