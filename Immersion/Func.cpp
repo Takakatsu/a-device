@@ -1,8 +1,10 @@
 ﻿#include "def.h"
 
+Array<MailData> MailLib;
 HashTable<MAPTILE, TileData> TileLib;
 Array<Array<MapTip>> MAINMAP;
-Array<MailData> MailLib;
+HashTable<ROBOTTYPE, RobotData> RobotLib;
+Array<Robot> robots;
 
 Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;

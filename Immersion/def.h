@@ -34,13 +34,16 @@ enum CLICKED_TYPE
 	FLAME_DOWN_LEFT,
 };
 
+//メール系
 typedef struct MailData
 {
 	String from;
 	String title;
 	String text;
 };
+extern Array<MailData> MailLib;
 
+//マップ系
 enum MAPTILE
 {
 	SHIP,//宇宙船
@@ -48,23 +51,40 @@ enum MAPTILE
 	ROCK,//岩
 	SAND,//砂場
 };
-
 typedef struct TileData
 {
 	Color c;
 };
-
 extern HashTable<MAPTILE, TileData> TileLib;
-
 typedef struct MapTip
 {
 	MAPTILE tile;
 	bool is_found;
 };
-
 extern Array<Array<MapTip>> MAINMAP;
 
-extern Array<MailData> MailLib;
+//ロボット系
+enum ROBOTTYPE
+{
+	SEARCH,
+	FIGHT1,
+	FIGHT2,
+	COLLECT1,
+	COLLECT2,
+};
+typedef struct Robot
+{
+	ROBOTTYPE rt;
+	int count_go;//使用回数
+	int endurance;//耐久値的な。使うたびに蓄積して一定以上で破壊
+	double remain_time;//探索に行っている場合の残り時間
+};
+typedef struct RobotData
+{
+	int max_endurance;
+};
+extern HashTable<ROBOTTYPE, RobotData> RobotLib;
+extern Array<Robot> robots;
 
 #include "MyWindow.h"
 
