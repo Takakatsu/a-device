@@ -295,6 +295,7 @@ private:
 	Vec2 pos_camera;
 	const double r = 10;//図形の半径
 	const double m_r = 12;//マージンの半径
+	Robot* selected_robo = nullptr;//選択されている機械
 public:
 	MAPViewer() : MyWindow()
 	{
@@ -315,7 +316,25 @@ public:
 			const ScopedViewport2D viewport(rect);
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 
+			//UI
+			{
+				double t = size.x / 4;
+				RectF robo_rect = RectF(Vec2(getContentsRectF().size.x * 7 / 8, -((int)robots_stay.size() - 1) * 0.5 * t + getContentsRectF().size.y / 2), Vec2(t, t));
+				for (int i = 0; i < robots_stay.size(); i++)
+				{
+					RectF rf = robo_rect.movedBy(-robo_rect.size / 2).scaled(0.9);
+					if (rf.contains(pos))
+					{
+						selected_robo = &(robots_stay[i]);
+						return;
+					}
+					robo_rect.moveBy(Vec2(0, t));
+				}
+			}
+
 			//メインの地図
+			//選択している機械があった場合、それを利用し探索
+			if (selected_robo != nullptr)
 			{
 				const Transformer2D t_cam{ Mat3x2::Translate(pos_camera) };
 				for (int i = 0; i < MAINMAP.size(); i++)
@@ -332,6 +351,19 @@ public:
 							//発見済みの座標の処理
 							if (MAINMAP[i][j].is_found)
 							{
+								//active側への追加、stay側からの消去
+								for (auto it = robots_stay.begin(); it != robots_stay.end();)
+								{
+									if ((&(*it)) == selected_robo)
+									{
+										robots_active.push_back(*selected_robo);
+										it = robots_stay.erase(it);
+										selected_robo = nullptr;
+										break;
+									}
+									++it;
+								}
+								selected_robo = nullptr;//エラー対策
 							}
 							//未発見の座標の処理
 							else
@@ -362,6 +394,20 @@ public:
 								{
 									//仮で強制発見処理
 									MAINMAP[i][j].is_found = true;
+
+									//active側への追加、stay側からの消去
+									for (auto it = robots_stay.begin(); it != robots_stay.end();)
+									{
+										if ((&(*it)) == selected_robo)
+										{
+											robots_active.push_back(*selected_robo);
+											it = robots_stay.erase(it);
+											selected_robo = nullptr;
+											break;
+										}
+										++it;
+									}
+									selected_robo = nullptr;//エラー対策
 								}
 							}
 						}
@@ -387,19 +433,10 @@ public:
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(Color(0));//背景
 
-			//ロボットUIの描画
-			{
-				for (int i = 0; i < robots_stay.size(); i++)
-				{
-					rect.w / 4;
-					RectF(Vec2(rect.w * 3 / 4, -10), size + Vec2(10, 20)).draw(Color(255));//背景
-				}
-			}
-
+			Vec2 c_pos = cursor_pos - getContentsRectF().pos;//カーソル座標の取得
 			//メインの地図
 			{
 				const Transformer2D t_cam{ Mat3x2::Translate(pos_camera) };
-				const Transformer2D t_cam2{ Mat3x2::Identity(), Mat3x2::Translate(-2 * pos_camera) };
 				for (int i = 0; i < MAINMAP.size(); i++)
 				{
 					for (int j = 0; j < MAINMAP[i].size(); j++)
@@ -419,7 +456,6 @@ public:
 							Array<Point> ps;
 							if (i % 2 == 0)ps = { Point(0, 1), Point(0, -1), Point(-1, -1), Point(-1, 0), Point(1, -1), Point(1, 0) };
 							else ps = { Point(0, 1), Point(0, -1), Point(-1, 1), Point(-1, 0), Point(1, 1), Point(1, 0) };
-							Vec2 c_pos = cursor_pos - getContentsRectF().pos;//カーソル座標の取得
 							for (int k = 0; k < ps.size(); k++)
 							{
 								Point p = Point(i, j) + ps[k];
@@ -442,6 +478,19 @@ public:
 							}
 						}
 					}
+				}
+			}
+
+			//ロボットUIの描画
+			{
+				RectF(Vec2(getContentsRectF().size.x * 3 / 4, -10), getContentsRectF().size + Vec2(10, 20)).draw(ColorF(1.0, 1.0, 1.0, 0.5));//背景
+				double t = size.x / 4;
+				RectF robo_rect = RectF(Vec2(getContentsRectF().size.x * 7 / 8, -((int)robots_stay.size() - 1) * 0.5 * t + getContentsRectF().size.y / 2), Vec2(t, t));
+				for (int i = 0; i < robots_stay.size(); i++)
+				{
+					RectF rf = robo_rect.movedBy(-robo_rect.size / 2).scaled(0.9);
+					rf.draw((selected_robo == &robots_stay[i]) ? Color(0, 0, 255) : (rf.contains(c_pos)) ? Color(0, 255, 0) : Color(255, 0, 0));
+					robo_rect.moveBy(Vec2(0, t));
 				}
 			}
 		}

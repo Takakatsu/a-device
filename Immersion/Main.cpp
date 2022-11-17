@@ -12,6 +12,11 @@ void Initialize()
 	//ウィンドウ処理用
 	g_clicktype = CLICKED_TYPE::NONE;
 
+	Robot rob;
+	robots_stay.push_back(rob);
+	robots_stay.push_back(rob);
+	robots_stay.push_back(rob);
+
 	//データベースの初期化
 	initialize_lib();
 }
@@ -206,7 +211,7 @@ void Main()
 
 	while (System::Update())
 	{
-		ClearPrint();
+		//ClearPrint();
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
 
