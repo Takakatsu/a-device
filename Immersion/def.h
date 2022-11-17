@@ -16,6 +16,11 @@
 #define MARGIN_TITLEBAR 30//タイトルバーの太さ
 #define MARGIN_TITLEBAR_BUTTON 50//タイトルバーのボタンの太さ
 
+//デルタ秒
+extern double delta;
+//マウス座標
+extern Vec2 cursor_pos;
+
 enum CLICKED_TYPE
 {
 	NONE,
@@ -33,6 +38,7 @@ enum CLICKED_TYPE
 	FLAME_DOWN_RIGHT,
 	FLAME_DOWN_LEFT,
 };
+extern CLICKED_TYPE g_clicktype;
 
 //メール系
 typedef struct MailData
@@ -84,7 +90,8 @@ typedef struct RobotData
 	int max_endurance;
 };
 extern HashTable<ROBOTTYPE, RobotData> RobotLib;
-extern Array<Robot> robots;
+extern Array<Robot> robots_stay;
+extern Array<Robot> robots_active;
 
 #include "MyWindow.h"
 

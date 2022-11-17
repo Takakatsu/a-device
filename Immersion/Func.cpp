@@ -1,10 +1,14 @@
 ﻿#include "def.h"
 
+double delta;
+Vec2 cursor_pos;
+CLICKED_TYPE g_clicktype;
 Array<MailData> MailLib;
 HashTable<MAPTILE, TileData> TileLib;
 Array<Array<MapTip>> MAINMAP;
 HashTable<ROBOTTYPE, RobotData> RobotLib;
-Array<Robot> robots;
+Array<Robot> robots_stay;
+Array<Robot> robots_active;
 
 Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;

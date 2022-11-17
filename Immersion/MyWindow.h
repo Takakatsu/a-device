@@ -308,6 +308,7 @@ public:
 	};
 	void click(Vec2 pos, bool is_left)
 	{
+		if (is_left)
 		{
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
@@ -325,8 +326,8 @@ public:
 						Vec2 dis = Vec2(
 							(i - MAP_CENTER_X) * m_r * 1.5,
 							(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-						Polygon poly = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c).asPolygon();
-						if (poly.contains(pos))
+						Polygon poly = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg)/*.draw(TileLib[MAINMAP[i][j].tile].c)*/.asPolygon();
+						if (poly.contains(pos - pos_camera))
 						{
 							//発見済みの座標の処理
 							if (MAINMAP[i][j].is_found)
@@ -386,9 +387,19 @@ public:
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(Color(0));//背景
 
+			//ロボットUIの描画
+			{
+				for (int i = 0; i < robots_stay.size(); i++)
+				{
+					rect.w / 4;
+					RectF(Vec2(rect.w * 3 / 4, -10), size + Vec2(10, 20)).draw(Color(255));//背景
+				}
+			}
+
 			//メインの地図
 			{
 				const Transformer2D t_cam{ Mat3x2::Translate(pos_camera) };
+				const Transformer2D t_cam2{ Mat3x2::Identity(), Mat3x2::Translate(-2 * pos_camera) };
 				for (int i = 0; i < MAINMAP.size(); i++)
 				{
 					for (int j = 0; j < MAINMAP[i].size(); j++)
@@ -408,6 +419,7 @@ public:
 							Array<Point> ps;
 							if (i % 2 == 0)ps = { Point(0, 1), Point(0, -1), Point(-1, -1), Point(-1, 0), Point(1, -1), Point(1, 0) };
 							else ps = { Point(0, 1), Point(0, -1), Point(-1, 1), Point(-1, 0), Point(1, 1), Point(1, 0) };
+							Vec2 c_pos = cursor_pos - getContentsRectF().pos;//カーソル座標の取得
 							for (int k = 0; k < ps.size(); k++)
 							{
 								Point p = Point(i, j) + ps[k];
@@ -422,7 +434,7 @@ public:
 												(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
 											//マウスオーバー判定等
 											Shape2D shape = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg);
-											shape.draw(shape.asPolygon().mouseOver() ? Color(255) : Color(127));
+											shape.draw(shape.asPolygon().contains(c_pos - pos_camera) ? Color(255) : Color(127));
 											break;
 										}
 									}
