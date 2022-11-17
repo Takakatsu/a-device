@@ -54,3 +54,40 @@ void initialize_lib()
 		/*MailLib.push_back(md);*/
 	}
 }
+
+bool search_map(Point pos, Robot* robo)
+{
+	//active側への追加、stay側からの消去
+	for (auto it = robots_stay.begin(); it != robots_stay.end();)
+	{
+		if ((&(*it)) == robo)
+		{
+			//ここで機械へのダメージ処理などを実行
+			robo->count_go++;
+			robo->endurance += Random(1, 200);
+			double distance = Math::Sqrt(Math::Pow(pos.x - MAP_CENTER_X, 2) + Math::Pow(pos.y - MAP_CENTER_Y, 2));
+			robo->remain_time = Random(10.0, 30.0) + Random(distance) / 2;
+			switch (robo->rt)//任意の機械での処理**must**
+			{
+			case ROBOTTYPE::SEARCH:
+				break;
+			case ROBOTTYPE::COLLECT1:
+				break;
+			case ROBOTTYPE::COLLECT2:
+				break;
+			case ROBOTTYPE::FIGHT1:
+				break;
+			case ROBOTTYPE::FIGHT2:
+				break;
+			default:
+				break;
+			}
+			MAINMAP[pos.x][pos.y].is_found = true;
+			robots_active.push_back(*robo);
+			it = robots_stay.erase(it);
+			return true;
+		}
+		++it;
+	}
+	return false;
+}

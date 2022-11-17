@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "def.h"
+#include "func.h"
 
 class MyWindow
 {
@@ -351,19 +352,9 @@ public:
 							//発見済みの座標の処理
 							if (MAINMAP[i][j].is_found)
 							{
-								//active側への追加、stay側からの消去
-								for (auto it = robots_stay.begin(); it != robots_stay.end();)
-								{
-									if ((&(*it)) == selected_robo)
-									{
-										robots_active.push_back(*selected_robo);
-										it = robots_stay.erase(it);
-										selected_robo = nullptr;
-										break;
-									}
-									++it;
-								}
+								search_map(Point(i, j), selected_robo);
 								selected_robo = nullptr;//エラー対策
+								return;
 							}
 							//未発見の座標の処理
 							else
@@ -392,22 +383,9 @@ public:
 								}
 								if (is_touch)
 								{
-									//仮で強制発見処理
-									MAINMAP[i][j].is_found = true;
-
-									//active側への追加、stay側からの消去
-									for (auto it = robots_stay.begin(); it != robots_stay.end();)
-									{
-										if ((&(*it)) == selected_robo)
-										{
-											robots_active.push_back(*selected_robo);
-											it = robots_stay.erase(it);
-											selected_robo = nullptr;
-											break;
-										}
-										++it;
-									}
+									search_map(Point(i, j), selected_robo);
 									selected_robo = nullptr;//エラー対策
+									return;
 								}
 							}
 						}
