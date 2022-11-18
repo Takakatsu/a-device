@@ -62,10 +62,17 @@ typedef struct TileData
 	Color c;
 };
 extern HashTable<MAPTILE, TileData> TileLib;
+enum ENEMYTYPE
+{
+	NONE,
+	TYPE1,
+	TYPE2,
+};
 typedef struct MapTip
 {
 	MAPTILE tile;
-	bool is_found;
+	bool is_found;//発見済みか否か
+	ENEMYTYPE et;//敵状態
 };
 extern Array<Array<MapTip>> MAINMAP;
 

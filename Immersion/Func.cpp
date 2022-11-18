@@ -67,17 +67,65 @@ bool search_map(Point pos, Robot* robo)
 			robo->endurance += Random(1, 200);
 			double distance = Math::Sqrt(Math::Pow(pos.x - MAP_CENTER_X, 2) + Math::Pow(pos.y - MAP_CENTER_Y, 2));
 			robo->remain_time = Random(10.0, 30.0) + Random(distance) / 2;
-			switch (robo->rt)//任意の機械での処理**must**
+
+			switch (MAINMAP[pos.x][pos.y].et)
 			{
-			case ROBOTTYPE::SEARCH:
+			case ENEMYTYPE::TYPE1:
+			{
+				switch (robo->rt)//任意の機械での処理**must**
+				{
+				case ROBOTTYPE::SEARCH:
+					break;
+				case ROBOTTYPE::COLLECT1:
+					break;
+				case ROBOTTYPE::COLLECT2:
+					break;
+				case ROBOTTYPE::FIGHT1:
+					break;
+				case ROBOTTYPE::FIGHT2:
+					break;
+				default:
+					break;
+				}
+			}
 				break;
-			case ROBOTTYPE::COLLECT1:
+			case ENEMYTYPE::TYPE2:
+			{
+				switch (robo->rt)//任意の機械での処理**must**
+				{
+				case ROBOTTYPE::SEARCH:
+					break;
+				case ROBOTTYPE::COLLECT1:
+					break;
+				case ROBOTTYPE::COLLECT2:
+					break;
+				case ROBOTTYPE::FIGHT1:
+					break;
+				case ROBOTTYPE::FIGHT2:
+					break;
+				default:
+					break;
+				}
+			}
 				break;
-			case ROBOTTYPE::COLLECT2:
-				break;
-			case ROBOTTYPE::FIGHT1:
-				break;
-			case ROBOTTYPE::FIGHT2:
+			case ENEMYTYPE::NONE:
+			{
+				switch (robo->rt)//任意の機械での処理**must**
+				{
+				case ROBOTTYPE::SEARCH:
+					break;
+				case ROBOTTYPE::COLLECT1:
+					break;
+				case ROBOTTYPE::COLLECT2:
+					break;
+				case ROBOTTYPE::FIGHT1:
+					break;
+				case ROBOTTYPE::FIGHT2:
+					break;
+				default:
+					break;
+				}
+			}
 				break;
 			default:
 				break;
