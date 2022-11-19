@@ -8,7 +8,7 @@ HashTable<MAPTILE, TileData> TileLib;
 Array<Array<MapTip>> MAINMAP;
 HashTable<ROBOTTYPE, RobotData> RobotLib;
 Array<Robot> robots_stay;
-Array<Robot> robots_active;
+Array<Robot_Activated> robots_active;
 
 Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
@@ -38,11 +38,13 @@ void initialize_lib()
 			{
 				MapTip t;
 				t.is_found = false;
+				//マップタイルの指定
 				double d = pn.noise2D(i / 10.0, j / 10.0);
 				if (d < -0.3)t.tile = MAPTILE::WATER;
 				else if (d < -0.1)t.tile = MAPTILE::SAND;
 				else if (d < 0.2)t.tile = MAPTILE::GRASS;
 				else t.tile = MAPTILE::ROCK;
+				//敵の指定
 				t.et = ENEMYTYPE::ETNONE;
 				t.e_life = 0;
 				if (i == MAP_CENTER_X && j == MAP_CENTER_Y)
@@ -81,8 +83,13 @@ bool search_map(Point pos, Robot* robo)
 			double distance = Math::Sqrt(Math::Pow(pos.x - MAP_CENTER_X, 2) + Math::Pow(pos.y - MAP_CENTER_Y, 2));
 			robo->remain_time = Random(10.0, 30.0) + Random(distance) / 2;
 
+			Reward rw;
+			rw.pos = pos;
+			rw.found = false;
+
 			bool is_break = false;
 			//敵によって処理が変化
+			//敵の処理に関しては報酬に含まない(即時処理)
 			switch (MAINMAP[pos.x][pos.y].et)
 			{
 			case ENEMYTYPE::TYPE1:
@@ -143,7 +150,8 @@ bool search_map(Point pos, Robot* robo)
 				{
 				case ROBOTTYPE::SEARCH:
 				{
-					MAINMAP[pos.x][pos.y].is_found = true;
+					//MAINMAP[pos.x][pos.y].is_found = true;
+					rw.found = true;
 				}
 				break;
 				case ROBOTTYPE::COLLECT1://アイテム収集系**must**
@@ -173,7 +181,14 @@ bool search_map(Point pos, Robot* robo)
 			default:
 				break;
 			}
-			if (!is_break)robots_active.push_back(*robo);
+			if (!is_break)
+			{
+				Robot_Activated ra;
+				ra.rb = *robo;
+				ra.rw = rw;
+				robots_active.push_back(ra);
+				//robots_active.push_back(*robo);
+			}
 			it = robots_stay.erase(it);
 			return true;
 		}

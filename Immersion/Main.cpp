@@ -174,16 +174,22 @@ void Update_Robot()
 {
 	for (auto it = robots_active.begin(); it != robots_active.end();)
 	{
-		if (it->remain_time > delta)
+		if (it->rb.remain_time > delta)
 		{
 			//活動中なら活動
-			it->remain_time -= delta;
+			it->rb.remain_time -= delta;
 			++it;
 		}
 		else
 		{
 			//終了時に処理
-			robots_stay.push_back(*it);
+			if (it->rw.found)
+			{
+				MAINMAP[it->rw.pos.x][it->rw.pos.y].is_found = true;
+			}
+
+			//所持しているロボットに追加
+			robots_stay.push_back((*it).rb);
 			it = robots_active.erase(it);
 		}
 	}

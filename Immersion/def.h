@@ -101,7 +101,20 @@ typedef struct RobotData
 };
 extern HashTable<ROBOTTYPE, RobotData> RobotLib;
 extern Array<Robot> robots_stay;
-extern Array<Robot> robots_active;
+//報酬(探索報酬は戻ってきたときに与えられる)
+typedef struct Reward
+{
+	Point pos;//座標
+	bool found;//地形発見
+	//アイテム
+};
+//探索中のロボット
+typedef struct Robot_Activated
+{
+	Robot rb;
+	Reward rw;
+};
+extern Array<Robot_Activated> robots_active;
 
 #include "MyWindow.h"
 
