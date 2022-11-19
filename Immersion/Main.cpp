@@ -13,6 +13,10 @@ void Initialize()
 	g_clicktype = CLICKED_TYPE::NONE;
 
 	Robot rob;
+	rob.count_go = 0;
+	rob.endurance = 0;
+	rob.remain_time = 0;
+	rob.rt = ROBOTTYPE::SEARCH;
 	robots_stay.push_back(rob);
 	robots_stay.push_back(rob);
 	robots_stay.push_back(rob);
@@ -223,6 +227,7 @@ void Main()
 		{
 			my_wins[i]->update();
 		}
+		Update_Robot();
 
 		//////描画//////
 		TextureFilter::Nearest();

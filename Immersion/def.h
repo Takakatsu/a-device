@@ -5,8 +5,8 @@
 //////定数//////
 
 //マップ系
-#define MAP_CENTER_X 14
-#define MAP_CENTER_Y 14
+#define MAP_CENTER_X 32
+#define MAP_CENTER_Y 32
 
 //アイコン系
 #define MARGIN_ICON 80//アイコンの間隔
@@ -56,6 +56,7 @@ enum MAPTILE
 	GRASS,//草原
 	ROCK,//岩
 	SAND,//砂場
+	WATER,//水場
 };
 typedef struct TileData
 {
@@ -64,15 +65,17 @@ typedef struct TileData
 extern HashTable<MAPTILE, TileData> TileLib;
 enum ENEMYTYPE
 {
-	NONE,
+	ETNONE,
 	TYPE1,
 	TYPE2,
+	WALL,//絶対破壊
 };
 typedef struct MapTip
 {
 	MAPTILE tile;
 	bool is_found;//発見済みか否か
 	ENEMYTYPE et;//敵状態
+	int e_life;//敵体力
 };
 extern Array<Array<MapTip>> MAINMAP;
 

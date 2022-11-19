@@ -22,16 +22,29 @@ void initialize_lib()
 		TileLib.emplace(MAPTILE::SHIP, td);
 		td.c = Color(0, 255, 0);
 		TileLib.emplace(MAPTILE::GRASS, td);
+		td.c = Color(116, 80, 48);
+		TileLib.emplace(MAPTILE::ROCK, td);
+		td.c = Color(237, 180, 130);
+		TileLib.emplace(MAPTILE::SAND, td);
+		td.c = Color(0, 0, 180);
+		TileLib.emplace(MAPTILE::WATER, td);
 	}
 	{
-		for (int i = 0; i < 30; i++)
+		PerlinNoise pn;
+		for (int i = 0; i < MAP_CENTER_X * 2 + 1; i++)
 		{
 			Array<MapTip> tmptile;
-			for (int j = 0; j < 30; j++)
+			for (int j = 0; j < MAP_CENTER_Y * 2 + 1; j++)
 			{
 				MapTip t;
 				t.is_found = false;
-				t.tile = MAPTILE::GRASS;
+				double d = pn.noise2D(i / 10.0, j / 10.0);
+				if (d < -0.3)t.tile = MAPTILE::WATER;
+				else if (d < -0.1)t.tile = MAPTILE::SAND;
+				else if (d < 0.2)t.tile = MAPTILE::GRASS;
+				else t.tile = MAPTILE::ROCK;
+				t.et = ENEMYTYPE::ETNONE;
+				t.e_life = 0;
 				if (i == MAP_CENTER_X && j == MAP_CENTER_Y)
 				{
 					t.is_found = true;
@@ -68,56 +81,81 @@ bool search_map(Point pos, Robot* robo)
 			double distance = Math::Sqrt(Math::Pow(pos.x - MAP_CENTER_X, 2) + Math::Pow(pos.y - MAP_CENTER_Y, 2));
 			robo->remain_time = Random(10.0, 30.0) + Random(distance) / 2;
 
+			bool is_break = false;
+			//敵によって処理が変化
 			switch (MAINMAP[pos.x][pos.y].et)
 			{
 			case ENEMYTYPE::TYPE1:
 			{
-				switch (robo->rt)//任意の機械での処理**must**
+				switch (robo->rt)
 				{
 				case ROBOTTYPE::SEARCH:
+					is_break = true;
 					break;
 				case ROBOTTYPE::COLLECT1:
+					is_break = true;
 					break;
 				case ROBOTTYPE::COLLECT2:
+					is_break = true;
 					break;
 				case ROBOTTYPE::FIGHT1:
+					MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ETNONE;
 					break;
 				case ROBOTTYPE::FIGHT2:
+					MAINMAP[pos.x][pos.y].e_life -= Random(2, 4);
+					if (MAINMAP[pos.x][pos.y].e_life <= 0)MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ETNONE;
+					is_break = true;
 					break;
 				default:
 					break;
 				}
 			}
-				break;
+			break;
 			case ENEMYTYPE::TYPE2:
 			{
-				switch (robo->rt)//任意の機械での処理**must**
+				switch (robo->rt)
 				{
 				case ROBOTTYPE::SEARCH:
+					is_break = true;
 					break;
 				case ROBOTTYPE::COLLECT1:
+					is_break = true;
 					break;
 				case ROBOTTYPE::COLLECT2:
+					is_break = true;
 					break;
 				case ROBOTTYPE::FIGHT1:
+					MAINMAP[pos.x][pos.y].e_life -= Random(1, 5);
+					if (MAINMAP[pos.x][pos.y].e_life <= 0)MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ETNONE;
+					is_break = true;
 					break;
 				case ROBOTTYPE::FIGHT2:
+					MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ETNONE;
 					break;
 				default:
 					break;
 				}
 			}
-				break;
-			case ENEMYTYPE::NONE:
+			break;
+			case ENEMYTYPE::ETNONE:
 			{
-				switch (robo->rt)//任意の機械での処理**must**
+				switch (robo->rt)
 				{
 				case ROBOTTYPE::SEARCH:
-					break;
-				case ROBOTTYPE::COLLECT1:
-					break;
-				case ROBOTTYPE::COLLECT2:
-					break;
+				{
+					MAINMAP[pos.x][pos.y].is_found = true;
+				}
+				break;
+				case ROBOTTYPE::COLLECT1://アイテム収集系**must**
+				{
+
+				}
+				break;
+				case ROBOTTYPE::COLLECT2://アイテム収集系**must**
+				{
+
+				}
+				break;
 				case ROBOTTYPE::FIGHT1:
 					break;
 				case ROBOTTYPE::FIGHT2:
@@ -126,12 +164,16 @@ bool search_map(Point pos, Robot* robo)
 					break;
 				}
 			}
-				break;
+			break;
+			case ENEMYTYPE::WALL:
+			{
+				is_break = true;
+			}
+			break;
 			default:
 				break;
 			}
-			MAINMAP[pos.x][pos.y].is_found = true;
-			robots_active.push_back(*robo);
+			if (!is_break)robots_active.push_back(*robo);
 			it = robots_stay.erase(it);
 			return true;
 		}
