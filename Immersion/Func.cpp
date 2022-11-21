@@ -150,7 +150,6 @@ bool search_map(Point pos, Robot* robo)
 				{
 				case ROBOTTYPE::SEARCH:
 				{
-					//MAINMAP[pos.x][pos.y].is_found = true;
 					rw.found = true;
 				}
 				break;
@@ -187,7 +186,6 @@ bool search_map(Point pos, Robot* robo)
 				ra.rb = *robo;
 				ra.rw = rw;
 				robots_active.push_back(ra);
-				//robots_active.push_back(*robo);
 			}
 			it = robots_stay.erase(it);
 			return true;

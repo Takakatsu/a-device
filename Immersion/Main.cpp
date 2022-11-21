@@ -182,7 +182,7 @@ void Update_Robot()
 		}
 		else
 		{
-			//終了時に処理
+			//終了時に処理される報酬
 			if (it->rw.found)
 			{
 				MAINMAP[it->rw.pos.x][it->rw.pos.y].is_found = true;
