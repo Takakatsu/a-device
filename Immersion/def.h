@@ -93,6 +93,7 @@ typedef struct Robot
 	ROBOTTYPE rt;
 	int count_go;//使用回数
 	int endurance;//耐久値的な。使うたびに蓄積して一定以上で破壊
+	String name;//ロボットの名前
 	double remain_time;//探索に行っている場合の残り時間
 };
 typedef struct RobotData
@@ -115,6 +116,17 @@ typedef struct Robot_Activated
 	Reward rw;
 };
 extern Array<Robot_Activated> robots_active;
+
+//ゲームのログ
+typedef struct GameLog
+{
+	double remain_time;//表示されるまでの時間
+	DateTime time;//表示された時間？
+	String text;//本体
+};
+
+extern Array<GameLog> logs;//表示されうるログ
+extern Array<GameLog> logs_will;//未だ表示されないログ
 
 #include "MyWindow.h"
 

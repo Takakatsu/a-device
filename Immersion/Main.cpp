@@ -16,9 +16,14 @@ void Initialize()
 	rob.count_go = 0;
 	rob.endurance = 0;
 	rob.remain_time = 0;
+	rob.name = U"トレース";
 	rob.rt = ROBOTTYPE::SEARCH;
 	robots_stay.push_back(rob);
+	rob.name = U"ドゥオ";
 	robots_stay.push_back(rob);
+	rob.name = U"ウーヌス";
+	robots_stay.push_back(rob);
+	rob.name = U"ニーヒル";
 	robots_stay.push_back(rob);
 
 	//データベースの初期化
@@ -188,6 +193,10 @@ void Update_Robot()
 				MAINMAP[it->rw.pos.x][it->rw.pos.y].is_found = true;
 			}
 
+			//ログ出力
+			GameLog lg;
+			lg.text = U"";
+
 			//所持しているロボットに追加
 			robots_stay.push_back((*it).rb);
 			it = robots_active.erase(it);
@@ -221,7 +230,7 @@ void Main()
 
 	while (System::Update())
 	{
-		//ClearPrint();
+		ClearPrint();
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
 
@@ -247,6 +256,11 @@ void Main()
 		for (int i = my_wins.size() - 1; i >= 0; i--)
 		{
 			my_wins[i]->draw();
+		}
+
+		for (int i = 0; i < logs.size(); i++)
+		{
+			Print(logs[i].text);
 		}
 	}
 }

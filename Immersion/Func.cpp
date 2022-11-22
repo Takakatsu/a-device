@@ -2,7 +2,9 @@
 
 double delta;
 Vec2 cursor_pos;
+
 CLICKED_TYPE g_clicktype;
+
 Array<MailData> MailLib;
 HashTable<MAPTILE, TileData> TileLib;
 Array<Array<MapTip>> MAINMAP;
@@ -10,6 +12,7 @@ HashTable<ROBOTTYPE, RobotData> RobotLib;
 Array<Robot> robots_stay;
 Array<Robot_Activated> robots_active;
 
+Array<GameLog> logs;
 Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
 MyWindow* win_active;
@@ -81,13 +84,20 @@ bool search_map(Point pos, Robot* robo)
 			robo->count_go++;
 			robo->endurance += Random(1, 200);
 			double distance = Math::Sqrt(Math::Pow(pos.x - MAP_CENTER_X, 2) + Math::Pow(pos.y - MAP_CENTER_Y, 2));
-			robo->remain_time = Random(10.0, 30.0) + Random(distance) / 2;
+			const double b_rnd_min = 10.0;
+			const double b_rnd_max = 30.0;
+			robo->remain_time = Random(b_rnd_min, b_rnd_max) + Random(distance) / 2;
 
 			Reward rw;
 			rw.pos = pos;
 			rw.found = false;
 
 			bool is_break = false;
+			//耐久値が一定以上で破壊される
+			if (robo->endurance >= 1000)
+			{
+				is_break = true;
+			}
 			//敵によって処理が変化
 			//敵の処理に関しては報酬に含まない(即時処理)
 			switch (MAINMAP[pos.x][pos.y].et)
@@ -180,6 +190,31 @@ bool search_map(Point pos, Robot* robo)
 			default:
 				break;
 			}
+			//破壊された機械が確率で復活
+			bool is_revive = false;
+			if (is_break)
+			{
+				if (RandomBool(0.1))
+				{
+					is_revive = true;
+					is_break = false;
+					//復活時は適当な時間を加算される
+					robo->remain_time += b_rnd_max + distance;
+				}
+			}
+			//ログの送信
+			GameLog lg;
+			lg.text = robo->name + U"は探索に向かいました";
+			logs.push_back(lg);
+			//死亡可能性ログの出力
+			if (is_break)
+			{
+				GameLog lg;
+				lg.text = robo->name + U"は予定された時間までに帰還しませんでした";
+				logs_will.push_back(lg);
+			}
+
+			//報酬の登録
 			if (!is_break)
 			{
 				Robot_Activated ra;
