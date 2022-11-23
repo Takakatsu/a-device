@@ -319,6 +319,7 @@
     <ClInclude Include="MyIcon.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SubWindows.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App\example\obj\blacksmith.obj">

@@ -133,6 +133,8 @@ extern Array<GameLog> logs_will;//未だ表示されないログ
 extern Array<MyWindow*> my_wins;
 extern MyWindow* win_active;
 
+#include "SubWindows.h"
+
 #include "MyIcon.h"
 
 extern Array<MyIcon*> my_icons;

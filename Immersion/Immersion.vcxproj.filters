@@ -791,5 +791,8 @@
     <ClInclude Include="MyIcon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SubWindows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
