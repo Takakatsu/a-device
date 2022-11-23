@@ -13,6 +13,7 @@ Array<Robot> robots_stay;
 Array<Robot_Activated> robots_active;
 
 Array<GameLog> logs;
+Array<GameLog> logs_will;
 Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
 MyWindow* win_active;
@@ -94,7 +95,7 @@ bool search_map(Point pos, Robot* robo)
 
 			bool is_break = false;
 			//耐久値が一定以上で破壊される
-			if (robo->endurance >= 1000)
+			if (robo->endurance >= 100)
 			{
 				is_break = true;
 			}
@@ -190,6 +191,18 @@ bool search_map(Point pos, Robot* robo)
 			default:
 				break;
 			}
+			//ログの送信
+			GameLog lg;
+			lg.text = robo->name + U"は探索に向かいました";
+			logs.push_back(lg);
+			//死亡可能性ログの出力
+			if (is_break)
+			{
+				GameLog lg;
+				lg.text = robo->name + U"は予定された時間までに帰還しませんでした";
+				lg.remain_time = b_rnd_max + distance;
+				logs_will.push_back(lg);
+			}
 			//破壊された機械が確率で復活
 			bool is_revive = false;
 			if (is_break)
@@ -202,18 +215,6 @@ bool search_map(Point pos, Robot* robo)
 					robo->remain_time += b_rnd_max + distance;
 				}
 			}
-			//ログの送信
-			GameLog lg;
-			lg.text = robo->name + U"は探索に向かいました";
-			logs.push_back(lg);
-			//死亡可能性ログの出力
-			if (is_break)
-			{
-				GameLog lg;
-				lg.text = robo->name + U"は予定された時間までに帰還しませんでした";
-				logs_will.push_back(lg);
-			}
-
 			//報酬の登録
 			if (!is_break)
 			{

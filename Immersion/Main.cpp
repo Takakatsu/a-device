@@ -175,6 +175,24 @@ void Mouse_Operation()
 	}
 }
 
+void Update_Log()
+{
+	for (auto it = logs_will.begin(); it != logs_will.end();)
+	{
+		if (it->remain_time > delta)
+		{
+			//活動中なら活動
+			it->remain_time -= delta;
+			++it;
+		}
+		else
+		{
+			logs.push_back(*it);
+			it = logs_will.erase(it);
+		}
+	}
+}
+
 void Update_Robot()
 {
 	for (auto it = robots_active.begin(); it != robots_active.end();)
@@ -195,7 +213,8 @@ void Update_Robot()
 
 			//ログ出力
 			GameLog lg;
-			lg.text = U"";
+			lg.text = it->rb.name + U"は帰還しました";
+			logs.push_back(lg);
 
 			//所持しているロボットに追加
 			robots_stay.push_back((*it).rb);
@@ -243,6 +262,7 @@ void Main()
 			my_wins[i]->update();
 		}
 		Update_Robot();
+		Update_Log();
 
 		//////描画//////
 		TextureFilter::Nearest();
