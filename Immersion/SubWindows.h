@@ -266,23 +266,17 @@ private:
 	TextEditState txtstt;
 	Font font01;
 	Array<String> clogs;
+	Color col_bg = Color(0), col_txt = Color(0, 255, 0);
+	String dir = U"s: > ";
 protected:
 public:
 	CommandPrompt() : MyWindow()
 	{
 		font01 = Font(20);
-		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
 	};
 	CommandPrompt(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
 		font01 = Font(20);
-		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
-		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
-		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
-		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
-		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
-		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
-		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
 	};
 	void update()
 	{
@@ -290,6 +284,11 @@ public:
 		if (win_active == this)
 		{
 			txtstt.active = true;
+		}
+		if (txtstt.enterKey)
+		{
+			clogs.push_front(dir + txtstt.text);
+			txtstt.clear();
 		}
 	}
 	void draw()
@@ -300,13 +299,14 @@ public:
 			const ScopedViewport2D viewport(rect);
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
-			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(Color(0));//背景
+			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(col_bg);//背景
 
 			Vec2 basePos = Vec2();
 			Vec2 penPos = Vec2(basePos);
 			//入力中の奴
 			{
-				for (const auto& glyph : font01.getGlyphs(txtstt.text))
+				int i = -(int)dir.size();
+				for (const auto& glyph : font01.getGlyphs(dir + txtstt.text))
 				{
 					// 改行文字なら
 					if (glyph.codePoint == U'\n')
@@ -321,8 +321,13 @@ public:
 						penPos.x = basePos.x;
 						penPos.y += font01.height();
 					}
-					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0, 255, 0));
+					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), col_txt);
 					penPos.x += glyph.xAdvance;
+					if (i == txtstt.cursorPos - 1)
+					{
+						RectF(penPos, Vec2(10, font01.height())).draw(col_txt);
+					}
+					i++;
 				}
 				penPos.x = basePos.x;
 				penPos.y += font01.height();
@@ -346,7 +351,7 @@ public:
 						penPos.x = basePos.x;
 						penPos.y += font01.height();
 					}
-					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0, 255, 0));
+					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), col_txt);
 					penPos.x += glyph.xAdvance;
 				}
 				penPos.x = basePos.x;
