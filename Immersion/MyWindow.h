@@ -475,3 +475,69 @@ public:
 		drawFlame();
 	}
 };
+
+class CommandPrompt : public MyWindow
+{
+private:
+	Font font01;
+	Array<String> clogs;
+protected:
+public:
+	CommandPrompt() : MyWindow()
+	{
+		font01 = Font(20);
+		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
+	};
+	CommandPrompt(Vec2 p, Vec2 s) : MyWindow(p, s)
+	{
+		font01 = Font(20);
+		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
+		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
+		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
+		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
+		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
+		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
+		clogs.push_back(U"fajsojfioaenvonzojwlmjjojowjefadfhjajljsjdjfljsljdljfljaiojznflisojoneofzh");
+	};
+	void update()
+	{
+	}
+	void draw()
+	{
+		{
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(rect);
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
+			//以下で描画
+			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(Color(0));//背景
+
+			Vec2 basePos = Vec2();//rect.pos;
+			Vec2 penPos = Vec2(basePos);
+			for (int i = 0; i < clogs.size(); i++)
+			{
+				for (const auto& glyph : font01.getGlyphs(clogs[i]))
+				{
+					// 改行文字なら
+					if (glyph.codePoint == U'\n')
+					{
+						penPos.x = basePos.x;
+						penPos.y += font01.height();
+						continue;
+					}
+					//画面内に描画可能かの判定
+					if (penPos.x + glyph.xAdvance > rect.w)
+					{
+						penPos.x = basePos.x;
+						penPos.y += font01.height();
+					}
+					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0, 255, 0));
+					penPos.x += glyph.xAdvance;
+				}
+				penPos.x = basePos.x;
+				penPos.y += font01.height();
+			}
+		}
+		drawFlame();
+	}
+};

@@ -229,23 +229,28 @@ void Main()
 
 	//以下はグローバル変数として扱う物とその処理
 	//ウィンドウ系
-	MyWindow s_tmp = MyWindow(Vec2(300, 300), Vec2(200, 200));
+	/*MyWindow s_tmp = MyWindow(Vec2(300, 300), Vec2(200, 200));
 	my_wins.push_back(&s_tmp);
 	Calculator s_cal = Calculator(Vec2(250, 0), Vec2(200, 200));
 	my_wins.push_back(&s_cal);
 	MailSoft s_mail = MailSoft(Vec2(250, 200), Vec2(200, 200));
-	my_wins.push_back(&s_mail);
+	my_wins.push_back(&s_mail);*/
 	MAPViewer s_map = MAPViewer(Vec2(250, 200), Vec2(200, 200));
 	my_wins.push_back(&s_map);
+	CommandPrompt s_cmp = CommandPrompt(Vec2(300, 200), Vec2(200, 200));
+	my_wins.push_back(&s_cmp);
+
 	//アイコン系
-	MyIcon ic_tmp = MyIcon(Point(0, 0), &s_tmp);
+	/*MyIcon ic_tmp = MyIcon(Point(0, 0), &s_tmp);
 	my_icons.push_back(&ic_tmp);
 	MyIcon ic_cal = MyIcon(Point(0, 1), &s_cal);
 	my_icons.push_back(&ic_cal);
 	MyIcon ic_mail = MyIcon(Point(0, 2), &s_mail);
-	my_icons.push_back(&ic_mail);
+	my_icons.push_back(&ic_mail);*/
 	MyIcon ic_map = MyIcon(Point(0, 3), &s_map);
 	my_icons.push_back(&ic_map);
+	MyIcon ic_cmp = MyIcon(Point(0, 2), &s_cmp);
+	my_icons.push_back(&ic_cmp);
 
 	while (System::Update())
 	{

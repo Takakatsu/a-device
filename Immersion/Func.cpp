@@ -192,9 +192,11 @@ bool search_map(Point pos, Robot* robo)
 				break;
 			}
 			//ログの送信
-			GameLog lg;
-			lg.text = robo->name + U"は探索に向かいました";
-			logs.push_back(lg);
+			{
+				GameLog lg;
+				lg.text = robo->name + U"は探索に向かいました";
+				logs.push_back(lg);
+			}
 			//死亡可能性ログの出力
 			if (is_break)
 			{
