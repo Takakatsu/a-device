@@ -288,6 +288,31 @@ public:
 		if (txtstt.enterKey)
 		{
 			clogs.push_front(dir + txtstt.text);
+
+			bool is_cmd = false;
+			//ここでコマンドの処理をしなければならない
+			Array<String> strs = txtstt.text.split(' ');
+			if (strs.size() > 0)
+			{
+				if (strs[0] == U"help")
+				{
+					is_cmd = true;
+					clogs.push_front(U"log");
+				}
+				if (strs[0] == U"log")
+				{
+					is_cmd = true;
+					for (int i = 0; i < logs.size(); i++)
+					{
+						clogs.push_front(U"  "+logs[i].text);
+					}
+				}
+			}
+			if (!is_cmd)
+			{
+				clogs.push_front(U"undefined command");
+			}
+
 			txtstt.clear();
 		}
 	}

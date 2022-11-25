@@ -23,15 +23,15 @@ void initialize_lib()
 	{
 		TileData td;
 		td.c = Color(255, 0, 0);
-		TileLib.emplace(MAPTILE::SHIP, td);
+		TileLib.emplace(MAPTILE::MT_SHIP, td);
 		td.c = Color(0, 255, 0);
-		TileLib.emplace(MAPTILE::GRASS, td);
+		TileLib.emplace(MAPTILE::MT_GRASS, td);
 		td.c = Color(116, 80, 48);
-		TileLib.emplace(MAPTILE::ROCK, td);
+		TileLib.emplace(MAPTILE::MT_ROCK, td);
 		td.c = Color(237, 180, 130);
-		TileLib.emplace(MAPTILE::SAND, td);
+		TileLib.emplace(MAPTILE::MT_SAND, td);
 		td.c = Color(0, 0, 180);
-		TileLib.emplace(MAPTILE::WATER, td);
+		TileLib.emplace(MAPTILE::MT_WATER, td);
 	}
 	{
 		PerlinNoise pn;
@@ -44,17 +44,17 @@ void initialize_lib()
 				t.is_found = false;
 				//マップタイルの指定
 				double d = pn.noise2D(i / 10.0, j / 10.0);
-				if (d < -0.3)t.tile = MAPTILE::WATER;
-				else if (d < -0.1)t.tile = MAPTILE::SAND;
-				else if (d < 0.2)t.tile = MAPTILE::GRASS;
-				else t.tile = MAPTILE::ROCK;
+				if (d < -0.3)t.tile = MAPTILE::MT_WATER;
+				else if (d < -0.1)t.tile = MAPTILE::MT_SAND;
+				else if (d < 0.2)t.tile = MAPTILE::MT_GRASS;
+				else t.tile = MAPTILE::MT_ROCK;
 				//敵の指定
-				t.et = ENEMYTYPE::ETNONE;
+				t.et = ENEMYTYPE::ET_NONE;
 				t.e_life = 0;
 				if (i == MAP_CENTER_X && j == MAP_CENTER_Y)
 				{
 					t.is_found = true;
-					t.tile = MAPTILE::SHIP;
+					t.tile = MAPTILE::MT_SHIP;
 				}
 				tmptile.push_back(t);
 			}
@@ -103,25 +103,25 @@ bool search_map(Point pos, Robot* robo)
 			//敵の処理に関しては報酬に含まない(即時処理)
 			switch (MAINMAP[pos.x][pos.y].et)
 			{
-			case ENEMYTYPE::TYPE1:
+			case ENEMYTYPE::ET_TYPE1:
 			{
 				switch (robo->rt)
 				{
-				case ROBOTTYPE::SEARCH:
+				case ROBOTTYPE::RT_SEARCH:
 					is_break = true;
 					break;
-				case ROBOTTYPE::COLLECT1:
+				case ROBOTTYPE::RT_COLLECT1:
 					is_break = true;
 					break;
-				case ROBOTTYPE::COLLECT2:
+				case ROBOTTYPE::RT_COLLECT2:
 					is_break = true;
 					break;
-				case ROBOTTYPE::FIGHT1:
-					MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ETNONE;
+				case ROBOTTYPE::RT_FIGHT1:
+					MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ET_NONE;
 					break;
-				case ROBOTTYPE::FIGHT2:
+				case ROBOTTYPE::RT_FIGHT2:
 					MAINMAP[pos.x][pos.y].e_life -= Random(2, 4);
-					if (MAINMAP[pos.x][pos.y].e_life <= 0)MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ETNONE;
+					if (MAINMAP[pos.x][pos.y].e_life <= 0)MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ET_NONE;
 					is_break = true;
 					break;
 				default:
@@ -129,61 +129,61 @@ bool search_map(Point pos, Robot* robo)
 				}
 			}
 			break;
-			case ENEMYTYPE::TYPE2:
+			case ENEMYTYPE::ET_TYPE2:
 			{
 				switch (robo->rt)
 				{
-				case ROBOTTYPE::SEARCH:
+				case ROBOTTYPE::RT_SEARCH:
 					is_break = true;
 					break;
-				case ROBOTTYPE::COLLECT1:
+				case ROBOTTYPE::RT_COLLECT1:
 					is_break = true;
 					break;
-				case ROBOTTYPE::COLLECT2:
+				case ROBOTTYPE::RT_COLLECT2:
 					is_break = true;
 					break;
-				case ROBOTTYPE::FIGHT1:
+				case ROBOTTYPE::RT_FIGHT1:
 					MAINMAP[pos.x][pos.y].e_life -= Random(1, 5);
-					if (MAINMAP[pos.x][pos.y].e_life <= 0)MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ETNONE;
+					if (MAINMAP[pos.x][pos.y].e_life <= 0)MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ET_NONE;
 					is_break = true;
 					break;
-				case ROBOTTYPE::FIGHT2:
-					MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ETNONE;
+				case ROBOTTYPE::RT_FIGHT2:
+					MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ET_NONE;
 					break;
 				default:
 					break;
 				}
 			}
 			break;
-			case ENEMYTYPE::ETNONE:
+			case ENEMYTYPE::ET_NONE:
 			{
 				switch (robo->rt)
 				{
-				case ROBOTTYPE::SEARCH:
+				case ROBOTTYPE::RT_SEARCH:
 				{
 					rw.found = true;
 				}
 				break;
-				case ROBOTTYPE::COLLECT1://アイテム収集系**must**
+				case ROBOTTYPE::RT_COLLECT1://アイテム収集系**must**
 				{
 
 				}
 				break;
-				case ROBOTTYPE::COLLECT2://アイテム収集系**must**
+				case ROBOTTYPE::RT_COLLECT2://アイテム収集系**must**
 				{
 
 				}
 				break;
-				case ROBOTTYPE::FIGHT1:
+				case ROBOTTYPE::RT_FIGHT1:
 					break;
-				case ROBOTTYPE::FIGHT2:
+				case ROBOTTYPE::RT_FIGHT2:
 					break;
 				default:
 					break;
 				}
 			}
 			break;
-			case ENEMYTYPE::WALL:
+			case ENEMYTYPE::ET_WALL:
 			{
 				is_break = true;
 			}

@@ -49,14 +49,20 @@ typedef struct MailData
 };
 extern Array<MailData> MailLib;
 
+//アイテム系
+enum ITEMTYPE
+{
+
+};
+
 //マップ系
 enum MAPTILE
 {
-	SHIP,//宇宙船
-	GRASS,//草原
-	ROCK,//岩
-	SAND,//砂場
-	WATER,//水場
+	MT_SHIP,//宇宙船
+	MT_GRASS,//草原
+	MT_ROCK,//岩
+	MT_SAND,//砂場
+	MT_WATER,//水場
 };
 typedef struct TileData
 {
@@ -65,10 +71,10 @@ typedef struct TileData
 extern HashTable<MAPTILE, TileData> TileLib;
 enum ENEMYTYPE
 {
-	ETNONE,
-	TYPE1,
-	TYPE2,
-	WALL,//絶対破壊
+	ET_NONE,
+	ET_TYPE1,
+	ET_TYPE2,
+	ET_WALL,//絶対破壊
 };
 typedef struct MapTip
 {
@@ -82,11 +88,11 @@ extern Array<Array<MapTip>> MAINMAP;
 //ロボット系
 enum ROBOTTYPE
 {
-	SEARCH,
-	FIGHT1,
-	FIGHT2,
-	COLLECT1,
-	COLLECT2,
+	RT_SEARCH,
+	RT_FIGHT1,
+	RT_FIGHT2,
+	RT_COLLECT1,
+	RT_COLLECT2,
 };
 typedef struct Robot
 {

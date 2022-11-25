@@ -17,7 +17,7 @@ void Initialize()
 	rob.endurance = 0;
 	rob.remain_time = 0;
 	rob.name = U"トレース";
-	rob.rt = ROBOTTYPE::SEARCH;
+	rob.rt = ROBOTTYPE::RT_SEARCH;
 	robots_stay.push_back(rob);
 	rob.name = U"ドゥオ";
 	robots_stay.push_back(rob);
@@ -283,9 +283,9 @@ void Main()
 			my_wins[i]->draw();
 		}
 
-		for (int i = 0; i < logs.size(); i++)
+		/*for (int i = 0; i < logs.size(); i++)
 		{
 			Print(logs[i].text);
-		}
+		}*/
 	}
 }
