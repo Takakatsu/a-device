@@ -12,19 +12,30 @@ void Initialize()
 	//ウィンドウ処理用
 	g_clicktype = CLICKED_TYPE::NONE;
 
-	Robot rob;
-	rob.count_go = 0;
-	rob.endurance = 0;
-	rob.remain_time = 0;
-	rob.name = U"トレース";
-	rob.rt = ROBOTTYPE::RT_SEARCH;
-	robots_stay.push_back(rob);
-	rob.name = U"ドゥオ";
-	robots_stay.push_back(rob);
-	rob.name = U"ウーヌス";
-	robots_stay.push_back(rob);
-	rob.name = U"ニーヒル";
-	robots_stay.push_back(rob);
+	{
+		//アイテム数の初期化
+		for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
+		{
+			ItemBox.emplace((ITEMTYPE)i, 0);
+		}
+	}
+
+	{
+		//ロボットの初期化
+		Robot rob;
+		rob.count_go = 0;
+		rob.endurance = 0;
+		rob.remain_time = 0;
+		rob.name = U"トレース";
+		rob.rt = ROBOTTYPE::RT_SEARCH;
+		robots_stay.push_back(rob);
+		rob.name = U"ドゥオ";
+		robots_stay.push_back(rob);
+		rob.name = U"ウーヌス";
+		robots_stay.push_back(rob);
+		rob.name = U"ニーヒル";
+		robots_stay.push_back(rob);
+	}
 
 	//データベースの初期化
 	initialize_lib();

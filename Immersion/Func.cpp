@@ -6,20 +6,41 @@ Vec2 cursor_pos;
 CLICKED_TYPE g_clicktype;
 
 Array<MailData> MailLib;
+
+HashTable<ITEMTYPE, ItemData> ItemLib;
+HashTable<ITEMTYPE, double> ItemBox;
+
 HashTable<MAPTILE, TileData> TileLib;
 Array<Array<MapTip>> MAINMAP;
+
 HashTable<ROBOTTYPE, RobotData> RobotLib;
 Array<Robot> robots_stay;
 Array<Robot_Activated> robots_active;
 
 Array<GameLog> logs;
 Array<GameLog> logs_will;
+
 Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
 MyWindow* win_active;
 
 void initialize_lib()
 {
+	{
+		ItemData id;
+		id.name = U"木材α";
+		ItemLib.emplace(ITEMTYPE::IT_WOOD1, id);
+		id.name = U"木材β";
+		ItemLib.emplace(ITEMTYPE::IT_WOOD2, id);
+		id.name = U"石材α";
+		ItemLib.emplace(ITEMTYPE::IT_ROCK1, id);
+		id.name = U"石材β";
+		ItemLib.emplace(ITEMTYPE::IT_ROCK2, id);
+		id.name = U"鉱物α";
+		ItemLib.emplace(ITEMTYPE::IT_ORE1, id);
+		id.name = U"鉱物β";
+		ItemLib.emplace(ITEMTYPE::IT_ORE2, id);
+	}
 	{
 		TileData td;
 		td.c = Color(255, 0, 0);

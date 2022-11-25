@@ -52,8 +52,20 @@ extern Array<MailData> MailLib;
 //アイテム系
 enum ITEMTYPE
 {
-
+	IT_WOOD1,
+	IT_WOOD2,
+	IT_ROCK1,
+	IT_ROCK2,
+	IT_ORE1,
+	IT_ORE2,
+	IT_NUM,
 };
+typedef struct ItemData
+{
+	String name;//名称
+};
+extern HashTable<ITEMTYPE, ItemData> ItemLib;
+extern HashTable<ITEMTYPE, double> ItemBox;
 
 //マップ系
 enum MAPTILE
