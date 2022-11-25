@@ -36,6 +36,8 @@ ItemRate makeItemRate(ITEMTYPE it, double min, double max)
 void initialize_lib()
 {
 	{
+		//表示の時だけ係数をかける
+
 		ItemData id;
 		//液体の価値(消費量)は 1 : 3.5
 		id.name = U"液体α";
@@ -73,40 +75,131 @@ void initialize_lib()
 		TileLib.emplace(MAPTILE::MT_SHIP, td);
 		//草原
 		{
-			constexpr double ra_1 = 50, ra_2 = 5;//ベースの入手量(番号は存在性)
-			constexpr double w_1 = 1, w_2 = 1.5;//存在量(番号はアイテムタイプ)
+			//比率にして総和が1になるように。
+
+			constexpr double rat_1 = 0.75, rat_2 = 0.2;//メイン素材の存在率
 			constexpr double dis_1 = 0.2, dis_2 = 0.5;//ゆらぎ(番号は機械)
+
 			td.c = Color(0, 130, 0);
 			td.irs_1.clear();
-			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, ra_1 * w_1 * (1 - dis_1), ra_1 * w_1 * (1 + dis_1)));
-			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, ra_2 * w_2 * (1 - dis_1), ra_2 * w_2 * (1 + dis_1)));
+			{
+				constexpr double t0 = rat_1, t1 = dis_1;
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, t0 * (1 - t1), t0 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, (1 - t0) * (1 - t1), (1 - t0) * (1 + t1)));
+			}
 			td.irs_2.clear();
-			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, ra_1 * w_1 * (1 - dis_2), ra_1 * w_1 * (1 + dis_2)));
-			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, ra_2 * w_2 * (1 - dis_2), ra_2 * w_2 * (1 + dis_2)));
+			{
+				constexpr double t0 = rat_1, t1 = dis_2;
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, t0 * (1 - t1), t0 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, (1 - t0) * (1 - t1), (1 - t0) * (1 + t1)));
+			}
 			TileLib.emplace(MAPTILE::MT_GRASS1, td);//木1メイン
 			td.c = Color(0, 255, 0);
 			td.irs_1.clear();
-			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, ra_2 * w_1 * (1 - dis_1), ra_2 * w_1 * (1 + dis_1)));
-			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, ra_1 * w_2 * (1 - dis_1), ra_1 * w_2 * (1 + dis_1)));
+			{
+				constexpr double t0 = rat_2, t1 = dis_1;
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, t0 * (1 - t1), t0 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, (1 - t0) * (1 - t1), (1 - t0) * (1 + t1)));
+			}
 			td.irs_2.clear();
-			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, ra_2 * w_1 * (1 - dis_2), ra_2 * w_1 * (1 + dis_2)));
-			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, ra_1 * w_2 * (1 - dis_2), ra_1 * w_2 * (1 + dis_2)));
+			{
+				constexpr double t0 = rat_2, t1 = dis_2;
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, t0 * (1 - t1), t0 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, (1 - t0) * (1 - t1), (1 - t0) * (1 + t1)));
+			}
 			TileLib.emplace(MAPTILE::MT_GRASS2, td);//木2メイン
 		}
 		//岩場
 		{
+			constexpr double dis_1 = 0.2, dis_2 = 0.5;//ゆらぎ(番号は機械)
+			//縦に見て和が1ならok
+			//以下は石
+			constexpr double rat1_1 = 0.75, rat1_2 = 0.05, rat1_3 = 0.15;//各場所での素材1の存在率
+			constexpr double rat2_1 = 0.10, rat2_2 = 0.90, rat2_3 = 0.20;//各場所での素材2の存在率
+			constexpr double rat3_1 = 0.15, rat3_2 = 0.05, rat3_3 = 0.65;//各場所での素材3の存在率
+			//鉱石は等しく分布している
+			constexpr double r2at1 = 0.65, r2at2 = 0.20, r2at3 = 0.10, r2at4 = 0.05;
+			const ItemRate ir_or1_d1 = makeItemRate(ITEMTYPE::IT_ORE1, r2at1 * (1 - dis_1), r2at1 * (1 + dis_1));
+			const ItemRate ir_or2_d1 = makeItemRate(ITEMTYPE::IT_ORE2, r2at2 * (1 - dis_1), r2at2 * (1 + dis_1));
+			const ItemRate ir_or3_d1 = makeItemRate(ITEMTYPE::IT_ORE3, r2at3 * (1 - dis_1), r2at3 * (1 + dis_1));
+			const ItemRate ir_or4_d1 = makeItemRate(ITEMTYPE::IT_ORE4, r2at4 * (1 - dis_1), r2at4 * (1 + dis_1));
+			const ItemRate ir_or1_d2 = makeItemRate(ITEMTYPE::IT_ORE1, r2at1 * (1 - dis_2), r2at1 * (1 + dis_2));
+			const ItemRate ir_or2_d2 = makeItemRate(ITEMTYPE::IT_ORE2, r2at2 * (1 - dis_2), r2at2 * (1 + dis_2));
+			const ItemRate ir_or3_d2 = makeItemRate(ITEMTYPE::IT_ORE3, r2at3 * (1 - dis_2), r2at3 * (1 + dis_2));
+			const ItemRate ir_or4_d2 = makeItemRate(ITEMTYPE::IT_ORE4, r2at4 * (1 - dis_2), r2at4 * (1 + dis_2));
+
 			td.c = Color(80, 120, 48);
 			td.irs_1.clear();
+			td.irs_1.push_back(ir_or1_d1);
+			td.irs_1.push_back(ir_or2_d1);
+			td.irs_1.push_back(ir_or3_d1);
+			td.irs_1.push_back(ir_or4_d1);
+			{
+				constexpr double t1 = dis_1;
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK1, rat1_1 * (1 - t1), rat1_1 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK2, rat2_1 * (1 - t1), rat2_1 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK3, rat3_1 * (1 - t1), rat3_1 * (1 + t1)));
+			}
 			td.irs_2.clear();
-			TileLib.emplace(MAPTILE::MT_ROCK1, td);
+			td.irs_2.push_back(ir_or1_d2);
+			td.irs_2.push_back(ir_or2_d2);
+			td.irs_2.push_back(ir_or3_d2);
+			td.irs_2.push_back(ir_or4_d2);
+			{
+				constexpr double t1 = dis_2;
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK1, rat1_1 * (1 - t1), rat1_1 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK2, rat2_1 * (1 - t1), rat2_1 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK3, rat3_1 * (1 - t1), rat3_1 * (1 + t1)));
+			}
+			TileLib.emplace(MAPTILE::MT_ROCK1, td);//場所1
 			td.c = Color(180, 60, 48);
 			td.irs_1.clear();
+			td.irs_1.push_back(ir_or1_d1);
+			td.irs_1.push_back(ir_or2_d1);
+			td.irs_1.push_back(ir_or3_d1);
+			td.irs_1.push_back(ir_or4_d1);
+			{
+				constexpr double t1 = dis_1;
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK1, rat1_2 * (1 - t1), rat1_2 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK2, rat2_2 * (1 - t1), rat2_2 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK3, rat3_2 * (1 - t1), rat3_2 * (1 + t1)));
+			}
 			td.irs_2.clear();
-			TileLib.emplace(MAPTILE::MT_ROCK2, td);
+			td.irs_2.push_back(ir_or1_d2);
+			td.irs_2.push_back(ir_or2_d2);
+			td.irs_2.push_back(ir_or3_d2);
+			td.irs_2.push_back(ir_or4_d2);
+			{
+				constexpr double t1 = dis_2;
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK1, rat1_2 * (1 - t1), rat1_2 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK2, rat2_2 * (1 - t1), rat2_2 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK3, rat3_2 * (1 - t1), rat3_2 * (1 + t1)));
+			}
+			TileLib.emplace(MAPTILE::MT_ROCK2, td);//場所2
 			td.c = Color(116, 80, 48);
 			td.irs_1.clear();
+			td.irs_1.push_back(ir_or1_d1);
+			td.irs_1.push_back(ir_or2_d1);
+			td.irs_1.push_back(ir_or3_d1);
+			td.irs_1.push_back(ir_or4_d1);
+			{
+				constexpr double t1 = dis_1;
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK1, rat1_3 * (1 - t1), rat1_3 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK2, rat2_3 * (1 - t1), rat2_3 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK3, rat3_3 * (1 - t1), rat3_3 * (1 + t1)));
+			}
 			td.irs_2.clear();
-			TileLib.emplace(MAPTILE::MT_ROCK3, td);
+			td.irs_2.push_back(ir_or1_d2);
+			td.irs_2.push_back(ir_or2_d2);
+			td.irs_2.push_back(ir_or3_d2);
+			td.irs_2.push_back(ir_or4_d2);
+			{
+				constexpr double t1 = dis_2;
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK1, rat1_3 * (1 - t1), rat1_3 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK2, rat2_3 * (1 - t1), rat2_3 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK3, rat3_3 * (1 - t1), rat3_3 * (1 + t1)));
+			}
+			TileLib.emplace(MAPTILE::MT_ROCK3, td);//場所3
 		}
 		//砂場
 		td.c = Color(237, 180, 130);
