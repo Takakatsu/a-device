@@ -297,14 +297,26 @@ public:
 				if (strs[0] == U"help")
 				{
 					is_cmd = true;
-					clogs.push_front(U"log");
+					clogs.push_front(U"\"log\", \"resource\"");
 				}
 				if (strs[0] == U"log")
 				{
 					is_cmd = true;
 					for (int i = 0; i < logs.size(); i++)
 					{
-						clogs.push_front(U"  "+logs[i].text);
+						clogs.push_front(U"  " + logs[i].text);
+					}
+				}
+				if (strs[0] == U"resource")
+				{
+					is_cmd = true;
+					for (int i = 0; i < logs.size(); i++)
+					{
+						clogs.push_front(U"  " + logs[i].text);
+					}
+					for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
+					{
+						clogs.push_front(U"  " + ItemLib[(ITEMTYPE)i].name + Format(ItemBox[(ITEMTYPE)i]));
 					}
 				}
 			}
