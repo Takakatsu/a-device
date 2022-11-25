@@ -24,51 +24,128 @@ Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
 MyWindow* win_active;
 
+ItemRate makeItemRate(ITEMTYPE it, double min, double max)
+{
+	ItemRate ir;
+	ir.it = it;
+	ir.min = min;
+	ir.max = max;
+	return ir;
+}
+
 void initialize_lib()
 {
 	{
 		ItemData id;
+		//液体の価値(消費量)は 1 : 3.5
+		id.name = U"液体α";
+		ItemLib.emplace(ITEMTYPE::IT_LIQUID1, id);
+		id.name = U"液体β";
+		ItemLib.emplace(ITEMTYPE::IT_LIQUID2, id);
+		//木の価値(消費量)は 1 : 1.5
 		id.name = U"木材α";
 		ItemLib.emplace(ITEMTYPE::IT_WOOD1, id);
 		id.name = U"木材β";
 		ItemLib.emplace(ITEMTYPE::IT_WOOD2, id);
+		//石の価値(消費量)は 3 : 5 : 7
 		id.name = U"石材α";
 		ItemLib.emplace(ITEMTYPE::IT_ROCK1, id);
 		id.name = U"石材β";
 		ItemLib.emplace(ITEMTYPE::IT_ROCK2, id);
+		id.name = U"石材γ";
+		ItemLib.emplace(ITEMTYPE::IT_ROCK3, id);
+		//鉱物の価値(消費量)は 1 : 2.5 : 4 : 9.5
 		id.name = U"鉱物α";
 		ItemLib.emplace(ITEMTYPE::IT_ORE1, id);
 		id.name = U"鉱物β";
 		ItemLib.emplace(ITEMTYPE::IT_ORE2, id);
+		id.name = U"鉱物γ";
+		ItemLib.emplace(ITEMTYPE::IT_ORE3, id);
+		id.name = U"鉱物δ";
+		ItemLib.emplace(ITEMTYPE::IT_ORE4, id);
 	}
 	{
 		TileData td;
+		//自分の船
 		td.c = Color(255, 0, 0);
+		td.irs_1.clear();
+		td.irs_2.clear();
 		TileLib.emplace(MAPTILE::MT_SHIP, td);
-		td.c = Color(0, 255, 0);
-		TileLib.emplace(MAPTILE::MT_GRASS, td);
-		td.c = Color(116, 80, 48);
-		TileLib.emplace(MAPTILE::MT_ROCK, td);
+		//草原
+		{
+			constexpr double ra_1 = 50, ra_2 = 5;//ベースの入手量(番号は存在性)
+			constexpr double w_1 = 1, w_2 = 1.5;//存在量(番号はアイテムタイプ)
+			constexpr double dis_1 = 0.2, dis_2 = 0.5;//ゆらぎ(番号は機械)
+			td.c = Color(0, 130, 0);
+			td.irs_1.clear();
+			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, ra_1 * w_1 * (1 - dis_1), ra_1 * w_1 * (1 + dis_1)));
+			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, ra_2 * w_2 * (1 - dis_1), ra_2 * w_2 * (1 + dis_1)));
+			td.irs_2.clear();
+			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, ra_1 * w_1 * (1 - dis_2), ra_1 * w_1 * (1 + dis_2)));
+			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, ra_2 * w_2 * (1 - dis_2), ra_2 * w_2 * (1 + dis_2)));
+			TileLib.emplace(MAPTILE::MT_GRASS1, td);//木1メイン
+			td.c = Color(0, 255, 0);
+			td.irs_1.clear();
+			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, ra_2 * w_1 * (1 - dis_1), ra_2 * w_1 * (1 + dis_1)));
+			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, ra_1 * w_2 * (1 - dis_1), ra_1 * w_2 * (1 + dis_1)));
+			td.irs_2.clear();
+			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD1, ra_2 * w_1 * (1 - dis_2), ra_2 * w_1 * (1 + dis_2)));
+			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_WOOD2, ra_1 * w_2 * (1 - dis_2), ra_1 * w_2 * (1 + dis_2)));
+			TileLib.emplace(MAPTILE::MT_GRASS2, td);//木2メイン
+		}
+		//岩場
+		{
+			td.c = Color(80, 120, 48);
+			td.irs_1.clear();
+			td.irs_2.clear();
+			TileLib.emplace(MAPTILE::MT_ROCK1, td);
+			td.c = Color(180, 60, 48);
+			td.irs_1.clear();
+			td.irs_2.clear();
+			TileLib.emplace(MAPTILE::MT_ROCK2, td);
+			td.c = Color(116, 80, 48);
+			td.irs_1.clear();
+			td.irs_2.clear();
+			TileLib.emplace(MAPTILE::MT_ROCK3, td);
+		}
+		//砂場
 		td.c = Color(237, 180, 130);
+		td.irs_1.clear();
+		td.irs_2.clear();
 		TileLib.emplace(MAPTILE::MT_SAND, td);
+		//水場
 		td.c = Color(0, 0, 180);
+		td.irs_1.clear();
+		td.irs_2.clear();
 		TileLib.emplace(MAPTILE::MT_WATER, td);
 	}
 	{
-		PerlinNoise pn;
+		PerlinNoise pn = PerlinNoise(Random(UINT64_MAX));
+		PerlinNoise pn_sub = PerlinNoise(Random(UINT64_MAX));
 		for (int i = 0; i < MAP_CENTER_X * 2 + 1; i++)
 		{
 			Array<MapTip> tmptile;
 			for (int j = 0; j < MAP_CENTER_Y * 2 + 1; j++)
 			{
 				MapTip t;
-				t.is_found = false;
+				t.is_found = true;
 				//マップタイルの指定
 				double d = pn.noise2D(i / 10.0, j / 10.0);
 				if (d < -0.3)t.tile = MAPTILE::MT_WATER;
 				else if (d < -0.1)t.tile = MAPTILE::MT_SAND;
-				else if (d < 0.2)t.tile = MAPTILE::MT_GRASS;
-				else t.tile = MAPTILE::MT_ROCK;
+				else if (d < 0.2)//草は複数種類存在
+				{
+					double d_s = pn_sub.noise2D(i / 10.0, j / 10.0);
+					if (d_s > 0.1)t.tile = MAPTILE::MT_GRASS1;
+					else t.tile = MAPTILE::MT_GRASS2;
+				}
+				else//岩は複数種類存在
+				{
+					double d_s = pn_sub.noise2D(i / 10.0, j / 10.0);
+					if (d_s > 0.1)t.tile = MAPTILE::MT_ROCK1;
+					else if (d_s > 0)t.tile = MAPTILE::MT_ROCK2;
+					else t.tile = MAPTILE::MT_ROCK3;
+				}
 				//敵の指定
 				t.et = ENEMYTYPE::ET_NONE;
 				t.e_life = 0;

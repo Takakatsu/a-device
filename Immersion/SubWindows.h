@@ -316,7 +316,7 @@ public:
 					}
 					for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
 					{
-						clogs.push_front(U"  " + ItemLib[(ITEMTYPE)i].name + Format(ItemBox[(ITEMTYPE)i]));
+						clogs.push_front(U"  " + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemBox[(ITEMTYPE)i])+U"kg");
 					}
 				}
 			}

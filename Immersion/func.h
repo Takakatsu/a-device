@@ -1,4 +1,5 @@
 ﻿#pragma once
+ItemRate makeItemRate(ITEMTYPE, double, double);
 
 void initialize_lib();
 

@@ -52,12 +52,17 @@ extern Array<MailData> MailLib;
 //アイテム系
 enum ITEMTYPE
 {
+	IT_LIQUID1,
+	IT_LIQUID2,
 	IT_WOOD1,
 	IT_WOOD2,
 	IT_ROCK1,
 	IT_ROCK2,
+	IT_ROCK3,
 	IT_ORE1,
 	IT_ORE2,
+	IT_ORE3,
+	IT_ORE4,
 	IT_NUM,
 };
 typedef struct ItemData
@@ -67,18 +72,29 @@ typedef struct ItemData
 extern HashTable<ITEMTYPE, ItemData> ItemLib;
 extern HashTable<ITEMTYPE, double> ItemBox;
 
+//マップに於けるドロップ指定用構造体
+typedef struct ItemRate
+{
+	ITEMTYPE it;
+	double min, max;
+};
+
 //マップ系
 enum MAPTILE
 {
 	MT_SHIP,//宇宙船
-	MT_GRASS,//草原
-	MT_ROCK,//岩
+	MT_GRASS1,//草原1
+	MT_GRASS2,//草原2
+	MT_ROCK1,//岩1
+	MT_ROCK2,//岩2
+	MT_ROCK3,//岩3
 	MT_SAND,//砂場
 	MT_WATER,//水場
 };
 typedef struct TileData
 {
 	Color c;
+	Array<ItemRate> irs_1, irs_2;
 };
 extern HashTable<MAPTILE, TileData> TileLib;
 enum ENEMYTYPE

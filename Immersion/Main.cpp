@@ -266,6 +266,7 @@ void Main()
 	while (System::Update())
 	{
 		ClearPrint();
+
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
 
