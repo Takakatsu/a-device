@@ -138,6 +138,7 @@ typedef struct Robot
 typedef struct RobotData
 {
 	int max_endurance;
+	String name;
 };
 extern HashTable<ROBOTTYPE, RobotData> RobotLib;
 extern Array<Robot> robots_stay;

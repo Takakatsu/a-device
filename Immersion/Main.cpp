@@ -31,6 +31,7 @@ void Initialize()
 		robots_stay.push_back(rob);
 		rob.name = U"ドゥオ";
 		robots_stay.push_back(rob);
+		rob.rt = ROBOTTYPE::RT_SEARCH;
 		rob.name = U"ウーヌス";
 		robots_stay.push_back(rob);
 		rob.name = U"ニーヒル";

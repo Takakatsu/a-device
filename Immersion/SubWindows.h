@@ -84,12 +84,12 @@ private:
 public:
 	MAPViewer() : MyWindow()
 	{
-		font01 = Font(30);
+		font01 = Font(20);
 		pos_camera = Vec2(0, 0);
 	};
 	MAPViewer(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
-		font01 = Font(30);
+		font01 = Font(20);
 		pos_camera = Vec2(0, 0);
 	};
 	void click(Vec2 pos, bool is_left)
@@ -252,7 +252,8 @@ public:
 				{
 					RectF rf = robo_rect.movedBy(-robo_rect.size / 2).scaled(0.9);
 					rf.draw((selected_robo == &robots_stay[i]) ? Color(0, 0, 255) : (rf.contains(c_pos)) ? Color(0, 255, 0) : Color(255, 0, 0));
-					//font01(robots_stay[i].)
+					font01(robots_stay[i].name).draw(rf.pos);
+					font01(RobotLib[robots_stay[i].rt].name).draw(rf.pos + Vec2(0, rf.size.y / 2));
 					robo_rect.moveBy(Vec2(0, t));
 				}
 			}

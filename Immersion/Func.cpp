@@ -39,10 +39,15 @@ void initialize_lib()
 		//機械の初期化
 		RobotData rd;
 		rd.max_endurance = 1000;
+		rd.name = U"探査機";
 		RobotLib.emplace(ROBOTTYPE::RT_SEARCH, rd);
+		rd.name = U"回収機α";
 		RobotLib.emplace(ROBOTTYPE::RT_COLLECT1, rd);
+		rd.name = U"回収機β";
 		RobotLib.emplace(ROBOTTYPE::RT_COLLECT2, rd);
+		rd.name = U"戦闘機α";
 		RobotLib.emplace(ROBOTTYPE::RT_FIGHT1, rd);
+		rd.name = U"戦闘機β";
 		RobotLib.emplace(ROBOTTYPE::RT_FIGHT2, rd);
 	}
 	{
