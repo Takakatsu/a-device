@@ -252,6 +252,7 @@ public:
 				{
 					RectF rf = robo_rect.movedBy(-robo_rect.size / 2).scaled(0.9);
 					rf.draw((selected_robo == &robots_stay[i]) ? Color(0, 0, 255) : (rf.contains(c_pos)) ? Color(0, 255, 0) : Color(255, 0, 0));
+					//font01(robots_stay[i].)
 					robo_rect.moveBy(Vec2(0, t));
 				}
 			}
@@ -310,19 +311,21 @@ public:
 				if (strs[0] == U"resource")
 				{
 					is_cmd = true;
-					for (int i = 0; i < logs.size(); i++)
-					{
-						clogs.push_front(U"  " + logs[i].text);
-					}
+					bool is_printed = false;
 					for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
 					{
-						clogs.push_front(U"  " + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemBox[(ITEMTYPE)i])+U"kg");
+						if (ItemBox[(ITEMTYPE)i] > 0)
+						{
+							is_printed = true;
+							clogs.push_front(U"  " + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemBox[(ITEMTYPE)i])+U"kg");
+						}
 					}
+					if (!is_printed)clogs.push_front(U"there is no resource");
 				}
 			}
 			if (!is_cmd)
 			{
-				clogs.push_front(U"undefined command");
+				clogs.push_front(U"undefined command. Prease Type \"help\" Command.");
 			}
 
 			txtstt.clear();

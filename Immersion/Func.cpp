@@ -36,6 +36,16 @@ ItemRate makeItemRate(ITEMTYPE it, double min, double max)
 void initialize_lib()
 {
 	{
+		//機械の初期化
+		RobotData rd;
+		rd.max_endurance = 1000;
+		RobotLib.emplace(ROBOTTYPE::RT_SEARCH, rd);
+		RobotLib.emplace(ROBOTTYPE::RT_COLLECT1, rd);
+		RobotLib.emplace(ROBOTTYPE::RT_COLLECT2, rd);
+		RobotLib.emplace(ROBOTTYPE::RT_FIGHT1, rd);
+		RobotLib.emplace(ROBOTTYPE::RT_FIGHT2, rd);
+	}
+	{
 		//表示の時だけ係数をかける
 
 		ItemData id;
@@ -221,7 +231,7 @@ void initialize_lib()
 			for (int j = 0; j < MAP_CENTER_Y * 2 + 1; j++)
 			{
 				MapTip t;
-				t.is_found = true;
+				t.is_found = false;
 				//マップタイルの指定
 				double d = pn.noise2D(i / 10.0, j / 10.0);
 				if (d < -0.3)t.tile = MAPTILE::MT_WATER;
@@ -286,7 +296,7 @@ bool search_map(Point pos, Robot* robo)
 
 			bool is_break = false;
 			//耐久値が一定以上で破壊される
-			if (robo->endurance >= 100)
+			if (robo->endurance >= RobotLib[robo->rt].max_endurance)
 			{
 				is_break = true;
 			}
@@ -357,12 +367,26 @@ bool search_map(Point pos, Robot* robo)
 				break;
 				case ROBOTTYPE::RT_COLLECT1://アイテム収集系**must**
 				{
-
+					for (auto it = TileLib[MAINMAP[pos.x][pos.y].tile].irs_1.begin(); it != TileLib[MAINMAP[pos.x][pos.y].tile].irs_1.end();)
+					{
+						ItemForReward ifr;
+						ifr.it = it->it;
+						ifr.amount = Random(it->min, it->max);
+						rw.items.push_back(ifr);
+						++it;
+					}
 				}
 				break;
 				case ROBOTTYPE::RT_COLLECT2://アイテム収集系**must**
 				{
-
+					for (auto it = TileLib[MAINMAP[pos.x][pos.y].tile].irs_2.begin(); it != TileLib[MAINMAP[pos.x][pos.y].tile].irs_2.end();)
+					{
+						ItemForReward ifr;
+						ifr.it = it->it;
+						ifr.amount = Random(it->min, it->max);
+						rw.items.push_back(ifr);
+						++it;
+					}
 				}
 				break;
 				case ROBOTTYPE::RT_FIGHT1:

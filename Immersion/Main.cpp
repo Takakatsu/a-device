@@ -27,7 +27,7 @@ void Initialize()
 		rob.endurance = 0;
 		rob.remain_time = 0;
 		rob.name = U"トレース";
-		rob.rt = ROBOTTYPE::RT_SEARCH;
+		rob.rt = ROBOTTYPE::RT_COLLECT1;
 		robots_stay.push_back(rob);
 		rob.name = U"ドゥオ";
 		robots_stay.push_back(rob);
@@ -221,11 +221,20 @@ void Update_Robot()
 			{
 				MAINMAP[it->rw.pos.x][it->rw.pos.y].is_found = true;
 			}
+			for (int i = 0; i < it->rw.items.size(); i++)
+			{
+				ItemBox[it->rw.items[i].it] += it->rw.items[i].amount;
+			}
 
 			//ログ出力
 			GameLog lg;
 			lg.text = it->rb.name + U"は帰還しました";
 			logs.push_back(lg);
+			for (int i = 0; i < it->rw.items.size(); i++)
+			{
+				lg.text = it->rb.name + U"は" + ItemLib[it->rw.items[i].it].name + U"を" + Format(it->rw.items[i].amount) + U"回収しました";
+				logs.push_back(lg);
+			}
 
 			//所持しているロボットに追加
 			robots_stay.push_back((*it).rb);

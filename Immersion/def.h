@@ -71,7 +71,12 @@ typedef struct ItemData
 };
 extern HashTable<ITEMTYPE, ItemData> ItemLib;
 extern HashTable<ITEMTYPE, double> ItemBox;
-
+//報酬用アイテムの実体
+typedef struct ItemForReward
+{
+	ITEMTYPE it;
+	double amount;
+};
 //マップに於けるドロップ指定用構造体
 typedef struct ItemRate
 {
@@ -141,7 +146,7 @@ typedef struct Reward
 {
 	Point pos;//座標
 	bool found;//地形発見
-	//アイテム
+	Array<ItemForReward> items;//アイテム
 };
 //探索中のロボット
 typedef struct Robot_Activated
