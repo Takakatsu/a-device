@@ -73,6 +73,21 @@ public:
 	}
 };
 
+class Inventor : public MyWindow
+{
+private:
+public:
+	Inventor() : MyWindow()
+	{
+	};
+	Inventor(Vec2 p, Vec2 s) : MyWindow(p, s)
+	{
+	};
+	void draw()
+	{
+	}
+};
+
 class MAPViewer : public MyWindow
 {
 private:
