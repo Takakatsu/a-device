@@ -72,7 +72,7 @@ typedef struct ItemData
 extern HashTable<ITEMTYPE, ItemData> ItemLib;
 extern HashTable<ITEMTYPE, double> ItemBox;
 //報酬用アイテムの実体
-typedef struct ItemForReward
+typedef struct Item
 {
 	ITEMTYPE it;
 	double amount;
@@ -122,10 +122,11 @@ extern Array<Array<MapTip>> MAINMAP;
 enum ROBOTTYPE
 {
 	RT_SEARCH,
-	RT_FIGHT1,
-	RT_FIGHT2,
 	RT_COLLECT1,
 	RT_COLLECT2,
+	RT_FIGHT1,
+	RT_FIGHT2,
+	RT_NUM
 };
 typedef struct Robot
 {
@@ -137,8 +138,9 @@ typedef struct Robot
 };
 typedef struct RobotData
 {
-	int max_endurance;
 	String name;
+	int max_endurance;
+	Array<Item> materials;//素材
 };
 extern HashTable<ROBOTTYPE, RobotData> RobotLib;
 extern Array<Robot> robots_stay;
@@ -147,7 +149,7 @@ typedef struct Reward
 {
 	Point pos;//座標
 	bool found;//地形発見
-	Array<ItemForReward> items;//アイテム
+	Array<Item> items;//アイテム
 };
 //探索中のロボット
 typedef struct Robot_Activated

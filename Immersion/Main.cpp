@@ -260,6 +260,8 @@ void Main()
 	my_wins.push_back(&s_map);
 	CommandPrompt s_cmp = CommandPrompt(Vec2(300, 200), Vec2(200, 200));
 	my_wins.push_back(&s_cmp);
+	Inventor s_inv = Inventor(Vec2(350, 200), Vec2(200, 200));
+	my_wins.push_back(&s_inv);
 
 	//アイコン系
 	/*MyIcon ic_tmp = MyIcon(Point(0, 0), &s_tmp);
@@ -268,10 +270,12 @@ void Main()
 	my_icons.push_back(&ic_cal);
 	MyIcon ic_mail = MyIcon(Point(0, 2), &s_mail);
 	my_icons.push_back(&ic_mail);*/
-	MyIcon ic_map = MyIcon(Point(0, 3), &s_map);
+	MyIcon ic_map = MyIcon(Point(0, 1), &s_map);
 	my_icons.push_back(&ic_map);
 	MyIcon ic_cmp = MyIcon(Point(0, 2), &s_cmp);
 	my_icons.push_back(&ic_cmp);
+	MyIcon ic_inv = MyIcon(Point(0, 3), &s_inv);
+	my_icons.push_back(&ic_inv);
 
 	while (System::Update())
 	{

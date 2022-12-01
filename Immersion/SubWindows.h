@@ -76,6 +76,7 @@ public:
 class Inventor : public MyWindow
 {
 private:
+	//Array<ROBOTTYPE> selection;
 public:
 	Inventor() : MyWindow()
 	{
@@ -83,8 +84,53 @@ public:
 	Inventor(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
 	};
+	void update()
+	{
+		//selection.clear();
+		for (int i = 0; i < (int)ROBOTTYPE::RT_NUM; i++)
+		{
+			Array<Item> items = RobotLib[(ROBOTTYPE)i].materials;
+			bool is_creatable = true;
+			for (int j = 0; j < items.size(); j++)
+			{
+				if (ItemBox[items[j].it] < items[j].amount)is_creatable = false;
+			}
+			//if (is_creatable)selection.push_back((ROBOTTYPE)i);
+		}
+	}
+	RectF getSelectionRect(int i)
+	{
+		double margin = 10;
+		Vec2 s_size = Vec2(size.x - margin * 2, 30);
+		return RectF(Vec2(margin, margin + (margin + s_size.y) * i), s_size);
+	}
+	void click()
+	{
+
+	}
 	void draw()
 	{
+		{
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(rect);
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
+			//以下で描画
+			RectF(Vec2(0, 0), size).draw(Color(127));//背景
+			for (int i = 0; i < (int)ROBOTTYPE::RT_NUM; i++)
+			{
+				bool is_creatable = true;
+				for (int j = 0; j < RobotLib[(ROBOTTYPE)i].materials.size(); j++)
+				{
+					if (ItemBox[RobotLib[(ROBOTTYPE)i].materials[j].it] < RobotLib[(ROBOTTYPE)i].materials[j].amount)is_creatable = false;
+				}
+				if (is_creatable)
+				{
+					getSelectionRect(i).draw(is_creatable ? Color(255) : Color(127));
+				}
+			}
+		}
+		drawFlame();
 	}
 };
 
@@ -95,6 +141,7 @@ private:
 	Vec2 pos_camera;
 	const double r = 10;//図形の半径
 	const double m_r = 12;//マージンの半径
+	double scale = 1;//拡大量
 	Robot* selected_robo = nullptr;//選択されている機械
 public:
 	MAPViewer() : MyWindow()
@@ -107,6 +154,14 @@ public:
 		font01 = Font(20);
 		pos_camera = Vec2(0, 0);
 	};
+	void update()
+	{
+		if (win_active == this)
+		{
+			scale -= Mouse::Wheel() * 0.1;
+			scale = Clamp(scale, 1.0, 5.0);
+		}
+	}
 	void click(Vec2 pos, bool is_left)
 	{
 		if (is_left)
@@ -145,7 +200,7 @@ public:
 						Vec2 dis = Vec2(
 							(i - MAP_CENTER_X) * m_r * 1.5,
 							(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-						Polygon poly = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg)/*.draw(TileLib[MAINMAP[i][j].tile].c)*/.asPolygon();
+						Polygon poly = Shape2D::Hexagon(r * scale, rect.size / 2 + dis * scale, 30_deg).asPolygon();
 						if (poly.contains(pos - pos_camera))
 						{
 							//発見済みの座標の処理
@@ -205,7 +260,7 @@ public:
 		{
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
-			const ScopedViewport2D viewport(rect);
+			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(Color(0));//背景
@@ -224,7 +279,7 @@ public:
 							Vec2 dis = Vec2(
 								(i - MAP_CENTER_X) * m_r * 1.5,
 								(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-							Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
+							Shape2D::Hexagon(r * scale, rect.size / 2 + dis * scale, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
 						}
 						//未発見の座標
 						else
@@ -246,7 +301,7 @@ public:
 												(i - MAP_CENTER_X) * m_r * 1.5,
 												(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
 											//マウスオーバー判定等
-											Shape2D shape = Shape2D::Hexagon(r, rect.size / 2 + dis, 30_deg);
+											Shape2D shape = Shape2D::Hexagon(r * scale, rect.size / 2 + dis * scale, 30_deg);
 											shape.draw(shape.asPolygon().contains(c_pos - pos_camera) ? Color(255) : Color(127));
 											break;
 										}
@@ -333,7 +388,7 @@ public:
 						if (ItemBox[(ITEMTYPE)i] > 0)
 						{
 							is_printed = true;
-							clogs.push_front(U"  " + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemBox[(ITEMTYPE)i])+U"kg");
+							clogs.push_front(U"  " + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemBox[(ITEMTYPE)i]) + U"kg");
 						}
 					}
 					if (!is_printed)clogs.push_front(U"there is no resource");
