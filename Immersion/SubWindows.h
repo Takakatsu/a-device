@@ -142,6 +142,7 @@ private:
 	const double r = 10;//図形の半径
 	const double m_r = 12;//マージンの半径
 	double scale = 1;//拡大量
+	double scroll = 0;//機械スクロール
 	Robot* selected_robo = nullptr;//選択されている機械
 public:
 	MAPViewer() : MyWindow()
@@ -154,12 +155,37 @@ public:
 		font01 = Font(20);
 		pos_camera = Vec2(0, 0);
 	};
+	double get_right_panel_width()
+	{
+		return getContentsRectF().w / 4;
+	}
+	RectF right_panel()
+	{
+		double width = get_right_panel_width();
+		double s_x = width + 10;
+		double s_y = getContentsRectF().h + 20;
+		double p_x = getContentsRectF().rightX() - width;
+		double p_y = getContentsRectF().y - 10;
+		return RectF(Vec2(p_x, p_y), Vec2(s_x, s_y));
+	}
+	RectF right_panel_icons(int n)
+	{
+		RectF robo_rect = RectF(Vec2(getContentsRectF().rightX() - get_right_panel_width() / 2, getContentsRectF().y + 30 + scroll), Vec2(get_right_panel_width() - 10, 60));
+		return robo_rect.movedBy(Vec2(0, 65 * n)).movedBy(-robo_rect.size / 2);
+	}
 	void update()
 	{
 		if (win_active == this)
 		{
-			scale -= Mouse::Wheel() * 0.1;
-			scale = Clamp(scale, 1.0, 5.0);
+			if (right_panel().contains(cursor_pos))
+			{
+				scroll += Mouse::Wheel() * 3;
+			}
+			else
+			{
+				scale -= Mouse::Wheel() * 0.1;
+				scale = Clamp(scale, 1.0, 5.0);
+			}
 		}
 	}
 	void click(Vec2 pos, bool is_left)
@@ -173,17 +199,14 @@ public:
 
 			//UI
 			{
-				double t = size.x / 4;
-				RectF robo_rect = RectF(Vec2(getContentsRectF().size.x * 7 / 8, -((int)robots_stay.size() - 1) * 0.5 * t + getContentsRectF().size.y / 2), Vec2(t, t));
 				for (int i = 0; i < robots_stay.size(); i++)
 				{
-					RectF rf = robo_rect.movedBy(-robo_rect.size / 2).scaled(0.9);
+					RectF rf = right_panel_icons(i).movedBy(-getContentsRectF().pos);
 					if (rf.contains(pos))
 					{
 						selected_robo = &(robots_stay[i]);
 						return;
 					}
-					robo_rect.moveBy(Vec2(0, t));
 				}
 			}
 
@@ -315,16 +338,13 @@ public:
 
 			//ロボットUIの描画
 			{
-				RectF(Vec2(getContentsRectF().size.x * 3 / 4, -10), getContentsRectF().size + Vec2(10, 20)).draw(ColorF(1.0, 1.0, 1.0, 0.5));//背景
-				double t = size.x / 4;
-				RectF robo_rect = RectF(Vec2(getContentsRectF().size.x * 7 / 8, -((int)robots_stay.size() - 1) * 0.5 * t + getContentsRectF().size.y / 2), Vec2(t, t));
+				right_panel().movedBy(-getContentsRectF().pos).draw(ColorF(1.0, 1.0, 1.0, 0.5));//背景
 				for (int i = 0; i < robots_stay.size(); i++)
 				{
-					RectF rf = robo_rect.movedBy(-robo_rect.size / 2).scaled(0.9);
+					RectF rf = right_panel_icons(i).movedBy(-getContentsRectF().pos);
 					rf.draw((selected_robo == &robots_stay[i]) ? Color(0, 0, 255) : (rf.contains(c_pos)) ? Color(0, 255, 0) : Color(255, 0, 0));
 					font01(robots_stay[i].name).draw(rf.pos);
 					font01(RobotLib[robots_stay[i].rt].name).draw(rf.pos + Vec2(0, rf.size.y / 2));
-					robo_rect.moveBy(Vec2(0, t));
 				}
 			}
 		}
