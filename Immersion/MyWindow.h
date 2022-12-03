@@ -43,7 +43,7 @@ public:
 		{
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
-			const ScopedViewport2D viewport(rect);
+			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
 			Circle(Cursor::Pos(), 100).draw(Color(255, 255, 0));

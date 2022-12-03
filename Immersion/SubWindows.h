@@ -17,7 +17,7 @@ public:
 		{
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
-			const ScopedViewport2D viewport(rect);
+			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
 			RectF(Vec2(0, 0), size).draw(Color(0));
@@ -51,7 +51,7 @@ public:
 		{
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
-			const ScopedViewport2D viewport(rect);
+			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
 			RectF(Vec2(0, 0), size).draw(Color(127));//背景
@@ -76,7 +76,7 @@ public:
 class Inventor : public MyWindow
 {
 private:
-	//Array<ROBOTTYPE> selection;
+	bool is_buying = false;
 public:
 	Inventor() : MyWindow()
 	{
@@ -84,39 +84,19 @@ public:
 	Inventor(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
 	};
-	void update()
-	{
-		//selection.clear();
-		for (int i = 0; i < (int)ROBOTTYPE::RT_NUM; i++)
-		{
-			Array<Item> items = RobotLib[(ROBOTTYPE)i].materials;
-			bool is_creatable = true;
-			for (int j = 0; j < items.size(); j++)
-			{
-				if (ItemBox[items[j].it] < items[j].amount)is_creatable = false;
-			}
-			//if (is_creatable)selection.push_back((ROBOTTYPE)i);
-		}
-	}
 	RectF getSelectionRect(int i)
 	{
 		double margin = 10;
-		Vec2 s_size = Vec2(size.x - margin * 2, 30);
-		return RectF(Vec2(margin, margin + (margin + s_size.y) * i), s_size);
+		Vec2 s_size = Vec2(getContentsRectF().w - margin * 2, 30);
+		return RectF(Vec2(margin, margin + (margin + s_size.y) * i), s_size).movedBy(getContentsRectF().pos);
 	}
-	void click()
+	void click(Vec2 pos, bool is_left)
 	{
-
-	}
-	void draw()
-	{
+		if (is_buying)
 		{
-			//枠外描画を禁止&マウス移動
-			Rect rect = getContentsRectF().asRect();
-			const ScopedViewport2D viewport(rect);
-			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
-			//以下で描画
-			RectF(Vec2(0, 0), size).draw(Color(127));//背景
+		}
+		else
+		{
 			for (int i = 0; i < (int)ROBOTTYPE::RT_NUM; i++)
 			{
 				bool is_creatable = true;
@@ -124,10 +104,37 @@ public:
 				{
 					if (ItemBox[RobotLib[(ROBOTTYPE)i].materials[j].it] < RobotLib[(ROBOTTYPE)i].materials[j].amount)is_creatable = false;
 				}
-				if (is_creatable)
+				if (is_creatable && getSelectionRect(i).movedBy(-getContentsRectF().pos).contains(pos))
 				{
-					getSelectionRect(i).draw(is_creatable ? Color(255) : Color(127));
+					is_buying = true;
+					break;
 				}
+			}
+		}
+	}
+	void draw()
+	{
+		{
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
+			//以下で描画
+			RectF(Vec2(0, 0), size).draw(Color(32));//背景
+			for (int i = 0; i < (int)ROBOTTYPE::RT_NUM; i++)
+			{
+				bool is_creatable = true;
+				for (int j = 0; j < RobotLib[(ROBOTTYPE)i].materials.size(); j++)
+				{
+					if (ItemBox[RobotLib[(ROBOTTYPE)i].materials[j].it] < RobotLib[(ROBOTTYPE)i].materials[j].amount)is_creatable = false;
+				}
+				getSelectionRect(i).movedBy(-getContentsRectF().pos).draw(is_creatable ? Color(255) : Color(127));
+			}
+			//購入中は
+			if (is_buying)
+			{
+				RectF(Vec2(0, 0), size).draw(ColorF(0.0, 0.0, 0.0, 0.5));
+
 			}
 		}
 		drawFlame();
@@ -194,7 +201,7 @@ public:
 		{
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
-			const ScopedViewport2D viewport(rect);
+			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 
 			//UI
@@ -427,7 +434,7 @@ public:
 		{
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
-			const ScopedViewport2D viewport(rect);
+			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(col_bg);//背景
