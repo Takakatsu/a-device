@@ -76,13 +76,18 @@ public:
 class Inventor : public MyWindow
 {
 private:
+	Font font01;
+	TextEditState txtstt;
 	bool is_buying = false;
+	Robot robo;
 public:
 	Inventor() : MyWindow()
 	{
+		font01 = Font(20);
 	};
 	Inventor(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
+		font01 = Font(20);
 	};
 	RectF getSelectionRect(int i)
 	{
@@ -90,10 +95,39 @@ public:
 		Vec2 s_size = Vec2(getContentsRectF().w - margin * 2, 30);
 		return RectF(Vec2(margin, margin + (margin + s_size.y) * i), s_size).movedBy(getContentsRectF().pos);
 	}
+	RectF getButtonRect()
+	{
+		RectF rf = getContentsRectF();
+		RectF btn = RectF(Vec2(rf.w / 2, rf.h * 2 / 3), Vec2(30, 20));
+		btn.moveBy(-btn.size / 2);
+		return btn;
+	}
+	void update()
+	{
+		SimpleGUI::TextBox(txtstt, Vec2(-100, -100));
+		if (win_active == this && is_buying)
+		{
+			txtstt.active = true;
+			if (txtstt.enterKey)
+			{
+				buy();
+			}
+		}
+	}
+	void buy()
+	{
+		robo.name = txtstt.text;
+		robots_stay.push_back(robo);
+		is_buying = false;
+	}
 	void click(Vec2 pos, bool is_left)
 	{
 		if (is_buying)
 		{
+			if (getButtonRect().contains(pos))
+			{
+				buy();
+			}
 		}
 		else
 		{
@@ -106,6 +140,12 @@ public:
 				}
 				if (is_creatable && getSelectionRect(i).movedBy(-getContentsRectF().pos).contains(pos))
 				{
+					Robot rb;
+					rb.count_go = 0;
+					rb.endurance = RobotLib[(ROBOTTYPE)i].max_endurance;
+					rb.remain_time = 0;
+					rb.rt = (ROBOTTYPE)i;
+					robo = rb;
 					is_buying = true;
 					break;
 				}
@@ -134,7 +174,10 @@ public:
 			if (is_buying)
 			{
 				RectF(Vec2(0, 0), size).draw(ColorF(0.0, 0.0, 0.0, 0.5));
-
+				RectF rf = getContentsRectF();
+				font01(U"Enter the Name").drawAt(Vec2(rf.w / 2, rf.h / 3), Color(255));
+				font01(txtstt.text).drawAt(Vec2(rf.w / 2, rf.h / 2), Color(255));
+				getButtonRect().draw(Color(255));
 			}
 		}
 		drawFlame();

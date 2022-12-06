@@ -16,7 +16,7 @@ void Initialize()
 		//アイテム数の初期化
 		for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
 		{
-			ItemBox.emplace((ITEMTYPE)i, 0);
+			ItemBox.emplace((ITEMTYPE)i, 1.5);
 		}
 	}
 
