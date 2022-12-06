@@ -177,7 +177,7 @@ public:
 				RectF rf = getContentsRectF();
 				font01(U"Enter the Name").drawAt(Vec2(rf.w / 2, rf.h / 3), Color(255));
 				font01(txtstt.text).drawAt(Vec2(rf.w / 2, rf.h / 2), Color(255));
-				getButtonRect().draw(Color(255));
+				getButtonRect().draw(getButtonRect().mouseOver() ? Color(255) : Color(127));
 			}
 		}
 		drawFlame();
@@ -409,7 +409,8 @@ private:
 	Font font01;
 	Array<String> clogs;
 	Color col_bg = Color(0), col_txt = Color(0, 255, 0);
-	String dir = U"s: > ";
+	const String dir = U"s: > ";
+	const String indent = U"   ";
 protected:
 public:
 	CommandPrompt() : MyWindow()
@@ -432,41 +433,132 @@ public:
 			clogs.push_front(dir + txtstt.text);
 
 			bool is_cmd = false;
+			bool is_too_many_arg = false;
 			//ここでコマンドの処理をしなければならない
 			Array<String> strs = txtstt.text.split(' ');
-			if (strs.size() > 0)
+			int len = strs.size();
+			if (len > 0)
 			{
 				if (strs[0] == U"help")
 				{
 					is_cmd = true;
-					clogs.push_front(U"\"log\", \"resource\"");
+					if (len == 1)
+					{
+						clogs.push_front(U"\"clear\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\"");
+					}
+					else
+					{
+						is_too_many_arg = true;
+					}
+				}
+				if (strs[0] == U"clear")
+				{
+					is_cmd = true;
+					if (len == 1)
+					{
+						clogs.clear();
+					}
+					else
+					{
+						is_too_many_arg = true;
+					}
+				}
+				if (strs[0] == U"echo")
+				{
+					is_cmd = true;
+					strs.pop_front();
+					if (strs.isEmpty())
+					{
+						clogs.push_front(U"There is no argument. Please Retype Command.");
+					}
+					else
+					{
+						String expl = strs.join(U" ", U"\0", U"\0");
+						clogs.push_front(indent + expl);
+					}
+				}
+				if (strs[0] == U"eval")
+				{
+					is_cmd = true;
+					strs.pop_front();
+					if (strs.isEmpty())
+					{
+						clogs.push_front(U"There is no argument. Please Retype Command.");
+					}
+					else
+					{
+						String expl = strs.join(U" ", U"\0", U"\0");
+						clogs.push_front(indent + expl);
+						clogs.push_front(indent + Format(Eval(expl)));
+					}
 				}
 				if (strs[0] == U"log")
 				{
 					is_cmd = true;
-					for (int i = 0; i < logs.size(); i++)
+					if (len == 1)
 					{
-						clogs.push_front(U"  " + logs[i].text);
+						for (int i = 0; i < logs.size(); i++)
+						{
+							clogs.push_front(indent + logs[i].text);
+						}
+					}
+					else
+					{
+						is_too_many_arg = true;
+					}
+				}
+				if (strs[0] == U"machine")
+				{
+					is_cmd = true;
+					if (len == 1)
+					{
+						if (robots_active.isEmpty())clogs.push_front(U"There is no active machine.");
+						else clogs.push_front(U"Active machine.");
+						for (int i = 0; i < robots_active.size(); i++)
+						{
+							clogs.push_front(indent + robots_active[i].rb.name+U" "+ RobotLib[robots_active[i].rb.rt].name);
+						}
+						if (robots_stay.isEmpty())clogs.push_front(U"There is no inactive machine.");
+						else clogs.push_front(U"Inactive machine.");
+						for (int i = 0; i < robots_stay.size(); i++)
+						{
+							clogs.push_front(indent + robots_stay[i].name + U" " + RobotLib[robots_stay[i].rt].name);
+						}
+					}
+					else
+					{
+						is_too_many_arg = true;
 					}
 				}
 				if (strs[0] == U"resource")
 				{
 					is_cmd = true;
-					bool is_printed = false;
-					for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
+					if (len == 1)
 					{
-						if (ItemBox[(ITEMTYPE)i] > 0)
+						bool is_printed = false;
+						for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
 						{
-							is_printed = true;
-							clogs.push_front(U"  " + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemBox[(ITEMTYPE)i]) + U"kg");
+							if (ItemBox[(ITEMTYPE)i] > 0)
+							{
+								is_printed = true;
+								clogs.push_front(indent + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemBox[(ITEMTYPE)i]) + U"kg");
+							}
 						}
+						if (!is_printed)clogs.push_front(U"There is no resource.");
 					}
-					if (!is_printed)clogs.push_front(U"there is no resource");
+					else
+					{
+						is_too_many_arg = true;
+					}
 				}
 			}
 			if (!is_cmd)
 			{
-				clogs.push_front(U"undefined command. Prease Type \"help\" Command.");
+				clogs.push_front(U"Undefined command. Please Type \"help\" Command.");
+			}
+			if (is_too_many_arg)
+			{
+				clogs.push_front(U"Too many argument. Please Retype Command.");
 			}
 
 			txtstt.clear();
@@ -482,11 +574,29 @@ public:
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(col_bg);//背景
 
-			Vec2 basePos = Vec2();
+			Vec2 basePos = Vec2(0,getContentsRectF().h-font01.height());
 			Vec2 penPos = Vec2(basePos);
 			//入力中の奴
 			{
 				int i = -(int)dir.size();
+				for (const auto& glyph : font01.getGlyphs(dir + txtstt.text))
+				{
+					// 改行文字なら
+					if (glyph.codePoint == U'\n')
+					{
+						penPos.y -= font01.height();
+						continue;
+					}
+					//画面内に描画可能かの判定
+					if (penPos.x + glyph.xAdvance > rect.w)
+					{
+						penPos.x = 0;
+						penPos.y -= font01.height();
+					}
+					penPos.x += glyph.xAdvance;
+				}
+				Vec2 tmpPos = penPos;
+				penPos.x = basePos.x;
 				for (const auto& glyph : font01.getGlyphs(dir + txtstt.text))
 				{
 					// 改行文字なら
@@ -510,13 +620,31 @@ public:
 					}
 					i++;
 				}
+				penPos = tmpPos;
 				penPos.x = basePos.x;
-				penPos.y += font01.height();
-
+				penPos.y -= font01.height();
 			}
 			//過去ログ
 			for (int i = 0; i < clogs.size(); i++)
 			{
+				for (const auto& glyph : font01.getGlyphs(clogs[i]))
+				{
+					// 改行文字なら
+					if (glyph.codePoint == U'\n')
+					{
+						penPos.y -= font01.height();
+						continue;
+					}
+					//画面内に描画可能かの判定
+					if (penPos.x + glyph.xAdvance > rect.w)
+					{
+						penPos.x = 0;
+						penPos.y -= font01.height();
+					}
+					penPos.x += glyph.xAdvance;
+				}
+				Vec2 tmpPos = penPos;
+				penPos.x = basePos.x;
 				for (const auto& glyph : font01.getGlyphs(clogs[i]))
 				{
 					// 改行文字なら
@@ -535,9 +663,10 @@ public:
 					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), col_txt);
 					penPos.x += glyph.xAdvance;
 				}
+				penPos = tmpPos;
 				penPos.x = basePos.x;
-				penPos.y += font01.height();
-				if (penPos.y > rect.h)
+				penPos.y -= font01.height();
+				if (penPos.y < 0)
 				{
 					break;
 				}
