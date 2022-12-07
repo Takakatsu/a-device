@@ -313,5 +313,16 @@ void Main()
 		{
 			Print(logs[i].text);
 		}*/
+		const DateTime t = DateTime::Now();
+		Print(
+			Format(t.year + 1372) + U" "
+			+ Format(t.month / 2 + 1) + U" "
+			+ Format(t.month % 2 + 1) + U" "
+			+ Format(t.day) + U" "
+			+ Format(t.hour / 6) + U":"
+			+ Format(t.hour % 6) + U":"
+			+ Format(t.minute / 15) + U":"
+			+ Format(t.minute % 15) + U":"
+			+ Format(t.second / 2));
 	}
 }

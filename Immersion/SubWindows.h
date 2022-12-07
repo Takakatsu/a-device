@@ -444,7 +444,7 @@ public:
 					is_cmd = true;
 					if (len == 1)
 					{
-						clogs.push_front(U"\"clear\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\"");
+						clogs.push_front(U"\"clear\", \"date\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\"");
 					}
 					else
 					{
@@ -457,6 +457,24 @@ public:
 					if (len == 1)
 					{
 						clogs.clear();
+					}
+					else
+					{
+						is_too_many_arg = true;
+					}
+				}
+				if (strs[0] == U"date")
+				{
+					is_cmd = true;
+					if (len == 1)
+					{
+						const DateTime t = DateTime::Now();
+						clogs.push_front(
+							Format(t.year + 1372) + U" " + Format(t.month / 2 + 1) + U" "
+							+ Format(t.month % 2 + 1) + U" " + Format(t.day) + U" "
+							+ Format(t.hour / 6) + U":" + Format(t.hour % 6) + U":"
+							+ Format(t.minute / 15) + U":" + Format(t.minute % 15) + U":"
+							+ Format(t.second / 2));
 					}
 					else
 					{
@@ -516,7 +534,7 @@ public:
 						else clogs.push_front(U"Active machine.");
 						for (int i = 0; i < robots_active.size(); i++)
 						{
-							clogs.push_front(indent + robots_active[i].rb.name+U" "+ RobotLib[robots_active[i].rb.rt].name);
+							clogs.push_front(indent + robots_active[i].rb.name + U" " + RobotLib[robots_active[i].rb.rt].name);
 						}
 						if (robots_stay.isEmpty())clogs.push_front(U"There is no inactive machine.");
 						else clogs.push_front(U"Inactive machine.");
@@ -574,7 +592,7 @@ public:
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(col_bg);//背景
 
-			Vec2 basePos = Vec2(0,getContentsRectF().h-font01.height());
+			Vec2 basePos = Vec2(0, getContentsRectF().h - font01.height());
 			Vec2 penPos = Vec2(basePos);
 			//入力中の奴
 			{
