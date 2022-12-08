@@ -69,24 +69,40 @@ void Mouse_Operation()
 				if (ct == CLICKED_TYPE::CONTENTS)
 				{
 					win_active->click(pos - win_active->getContentsRectF().pos, left_down);
-					break;
 				}
 				//タイトルバーの各種ボタン処理(右クリック時は処理しない)
 				if (left_down)
 				{
-					if (ct == CLICKED_TYPE::T_BAR_CLOSE)
+					switch (ct)
+					{
+					case TITLE_BAR:
+					{
+						if (win_active->getIsMax())
+						{
+							win_active->dealSizeMax();
+							RectF rf_new = win_active->getContentsRectF();
+							win_active->setPos(Vec2(pos.x - rf_new.w / 2, 0));
+						}
+					}
+						break;
+					case T_BAR_CLOSE:
 					{
 						my_wins.remove(win_active);
 						win_active = nullptr;
-						break;
 					}
-					if (ct == CLICKED_TYPE::T_BAR_MAX)
+						break;
+					case T_BAR_MAX:
 					{
 						win_active->dealSizeMax();
 					}
-					if (ct == CLICKED_TYPE::T_BAR_MIN)
+						break;
+					case T_BAR_MIN:
 					{
 						win_active->dealSizeMin();
+					}
+						break;
+					default:
+						break;
 					}
 				}
 				break;
@@ -270,11 +286,11 @@ void Main()
 	my_icons.push_back(&ic_cal);
 	MyIcon ic_mail = MyIcon(Point(0, 2), &s_mail);
 	my_icons.push_back(&ic_mail);*/
-	MyIcon ic_map = MyIcon(Point(0, 1), &s_map);
+	MyIcon ic_map = MyIcon(Point(0, 0), &s_map);
 	my_icons.push_back(&ic_map);
-	MyIcon ic_cmp = MyIcon(Point(0, 2), &s_cmp);
+	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp);
 	my_icons.push_back(&ic_cmp);
-	MyIcon ic_inv = MyIcon(Point(0, 3), &s_inv);
+	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv);
 	my_icons.push_back(&ic_inv);
 
 	while (System::Update())
@@ -313,16 +329,5 @@ void Main()
 		{
 			Print(logs[i].text);
 		}*/
-		const DateTime t = DateTime::Now();
-		Print(
-			Format(t.year + 1372) + U" "
-			+ Format(t.month / 2 + 1) + U" "
-			+ Format(t.month % 2 + 1) + U" "
-			+ Format(t.day) + U" "
-			+ Format(t.hour / 6) + U":"
-			+ Format(t.hour % 6) + U":"
-			+ Format(t.minute / 15) + U":"
-			+ Format(t.minute % 15) + U":"
-			+ Format(t.second / 2));
 	}
 }

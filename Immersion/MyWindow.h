@@ -212,6 +212,10 @@ public:
 		}
 		is_max = !is_max;
 	}
+	bool getIsMax()
+	{
+		return is_max;
+	}
 	void dealSizeMin()
 	{
 		is_min = true;
