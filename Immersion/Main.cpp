@@ -16,6 +16,7 @@ void Initialize()
 		//アイテム数の初期化
 		for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
 		{
+			//デバッグの為、全て1.5で初期化
 			ItemBox.emplace((ITEMTYPE)i, 1.5);
 		}
 	}
@@ -324,10 +325,5 @@ void Main()
 		{
 			my_wins[i]->draw();
 		}
-
-		/*for (int i = 0; i < logs.size(); i++)
-		{
-			Print(logs[i].text);
-		}*/
 	}
 }

@@ -229,7 +229,7 @@ public:
 		{
 			if (right_panel().contains(cursor_pos))
 			{
-				scroll += Mouse::Wheel() * 3;
+				scroll -= Mouse::Wheel() * 10;
 			}
 			else
 			{
@@ -409,6 +409,7 @@ private:
 	Font font01;
 	Array<String> clogs;
 	Color col_bg = Color(0), col_txt = Color(0, 255, 0);
+	double scroll = 0;
 	const String dir = U"s: > ";
 	const String indent = U"   ";
 protected:
@@ -427,6 +428,14 @@ public:
 		if (win_active == this)
 		{
 			txtstt.active = true;
+		}
+		if (getContentsRectF().contains(cursor_pos))
+		{
+			scroll -= Mouse::Wheel() * 10;
+		}
+		if (txtstt.textChanged && (-scroll < 0 || getContentsRectF().h < -scroll))
+		{
+			scroll = 0;
 		}
 		if (txtstt.enterKey)
 		{
@@ -559,7 +568,7 @@ public:
 							if (ItemBox[(ITEMTYPE)i] > 0)
 							{
 								is_printed = true;
-								clogs.push_front(indent + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemBox[(ITEMTYPE)i]) + U"kg");
+								clogs.push_front(indent + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemAmount2Visual((ITEMTYPE)i, ItemBox[(ITEMTYPE)i])) + U"kg");
 							}
 						}
 						if (!is_printed)clogs.push_front(U"There is no resource.");
@@ -592,7 +601,7 @@ public:
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(col_bg);//背景
 
-			Vec2 basePos = Vec2(0, getContentsRectF().h - font01.height());
+			Vec2 basePos = Vec2(0, getContentsRectF().h - font01.height() + scroll);
 			Vec2 penPos = Vec2(basePos);
 			//入力中の奴
 			{
@@ -684,7 +693,7 @@ public:
 				penPos = tmpPos;
 				penPos.x = basePos.x;
 				penPos.y -= font01.height();
-				if (penPos.y < 0)
+				if (penPos.y < -font01.height())
 				{
 					break;
 				}

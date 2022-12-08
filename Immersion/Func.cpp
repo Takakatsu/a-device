@@ -24,6 +24,27 @@ Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
 MyWindow* win_active;
 
+double ItemAmount2Visual(ITEMTYPE it, double n)
+{
+	switch (it)
+	{
+	case IT_LIQUID1:return n * 0.8734;
+	case IT_LIQUID2:return n * 3.1628;
+	case IT_WOOD1:return n * 5.4753;
+	case IT_WOOD2:return n * 6.1734;
+	case IT_ROCK1:return n * 8.8374;
+	case IT_ROCK2:return n * 10.8473;
+	case IT_ROCK3:return n * 9.2749;
+	case IT_ORE1:return n * 0.2485;
+	case IT_ORE2:return n * 0.1294;
+	case IT_ORE3:return n * 0.4182;
+	case IT_ORE4:return n * 0.1837;
+	default:
+		break;
+	}
+	return 0;
+}
+
 ItemRate makeItemRate(ITEMTYPE it, double min, double max)
 {
 	ItemRate ir;
