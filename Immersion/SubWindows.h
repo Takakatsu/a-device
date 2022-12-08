@@ -408,7 +408,7 @@ private:
 	TextEditState txtstt;
 	Font font01;
 	Array<String> clogs;
-	Color col_bg = Color(0), col_txt = Color(0, 255, 0);
+	Color col_bg = Color(0x00), col_txt = Color(0x26, 0xc3, 0x0f);
 	double scroll = 0;
 	const String dir = U"s: > ";
 	const String indent = U"   ";
@@ -448,12 +448,64 @@ public:
 			int len = strs.size();
 			if (len > 0)
 			{
+				//言語変更
+				//プロンプト色変更
 				if (strs[0] == U"help")
 				{
 					is_cmd = true;
 					if (len == 1)
 					{
-						clogs.push_front(U"\"clear\", \"date\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\"");
+						clogs.push_front(U"\"clear\", \"date\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\" ,\"style\"");
+					}
+					else if (len == 2)
+					{
+						if (strs[1] == U"clear")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Delete logs on display.");
+						}
+						if (strs[1] == U"date")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Displays date and time.");
+						}
+						if (strs[1] == U"echo")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Displays the characters entered.");
+						}
+						if (strs[1] == U"eval")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Calculate the given expression.");
+						}
+						if (strs[1] == U"help")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Displays a list of commands.");
+							clogs.push_front(indent + U"Displays the usage of the command given as an argument.");
+						}
+						if (strs[1] == U"log")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Displays the log.");
+						}
+						if (strs[1] == U"machine")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Displays a list of owned machines.");
+						}
+						if (strs[1] == U"resource")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Displays a list of resources owned.");
+						}
+						if (strs[1] == U"style")
+						{
+							clogs.push_back(strs[1]);
+							clogs.push_front(indent + U"Displays a list of color styles.");
+							clogs.push_front(indent + U"Changes to the color style given as an argument.");
+						}
 					}
 					else
 					{
@@ -572,6 +624,42 @@ public:
 							}
 						}
 						if (!is_printed)clogs.push_front(U"There is no resource.");
+					}
+					else
+					{
+						is_too_many_arg = true;
+					}
+				}
+				if (strs[0] == U"style")
+				{
+					is_cmd = true;
+					if (len == 1)
+					{
+						clogs.push_front(indent +
+							U"\"blood\", \"default\", \"monochrome\", \"wood\"");
+					}
+					else if (len == 2)
+					{
+						if (strs[1] == U"blood")
+						{
+							col_bg = Color(0x2b, 0x00, 0x00);
+							col_txt = Color(0xcc, 0x0e, 0x13);
+						}
+						if (strs[1] == U"default")
+						{
+							col_bg = Color(0x00);
+							col_txt = Color(0x26, 0xc3, 0x0f);
+						}
+						if (strs[1] == U"monochrome")
+						{
+							col_bg = Color(0x22, 0x23, 0x23);
+							col_txt = Color(0xf0, 0xf6, 0xf0);
+						}
+						if (strs[1] == U"wood")
+						{
+							col_bg = Color(0x4a, 0x3b, 0x2a);
+							col_txt = Color(0xaa, 0x66, 0x00);
+						}
 					}
 					else
 					{
