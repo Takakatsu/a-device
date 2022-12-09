@@ -219,7 +219,7 @@ void Update_Log()
 		{
 			const DateTime t = DateTime::Now();
 			it->time = t;
-			logs.push_back(*it);
+			logs.push_front(*it);
 			it = logs_will.erase(it);
 		}
 	}
@@ -251,11 +251,11 @@ void Update_Robot()
 			GameLog lg;
 			lg.text = it->rb.name + U"は帰還しました";
 			lg.time = DateTime::Now();
-			logs.push_back(lg);
+			logs.push_front(lg);
 			for (int i = 0; i < it->rw.items.size(); i++)
 			{
 				lg.text = it->rb.name + U"は" + ItemLib[it->rw.items[i].it].name + U"を" + Format(it->rw.items[i].amount) + U"kg 回収しました";
-				logs.push_back(lg);
+				logs.push_front(lg);
 			}
 
 			//所持しているロボットに追加
@@ -316,6 +316,32 @@ void Main()
 		}
 		Update_Robot();
 		Update_Log();
+
+		//追加されたログをメッセージに変換
+		for (int i = logs.size()-1; i >= 0; i--)
+		{
+			if (!logs[i].is_notified)
+			{
+				GameLog gl = logs[i];
+				gl.remain_time = 10;
+				logs_tmp.push_front(gl);
+				logs[i].is_notified = true;
+			}
+		}
+		//メッセージの表示
+		for (auto it=logs_tmp.begin();it!=logs_tmp.end();)
+		{
+			if (it->remain_time > 0)
+			{
+				Print(it->text);
+				it->remain_time -= delta;
+				++it;
+			}
+			else
+			{
+				it = logs_tmp.erase(it);
+			}
+		}
 
 		//////描画//////
 		TextureFilter::Nearest();

@@ -20,7 +20,7 @@ Array<Robot_Activated> robots_active;
 
 Array<GameLog> logs;
 Array<GameLog> logs_will;
-//Array<GameLog>
+Array<GameLog> logs_tmp;
 
 Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
@@ -484,7 +484,7 @@ bool search_map(Point pos, Robot* robo)
 				GameLog lg;
 				lg.time = DateTime::Now();
 				lg.text = robo->name + U"は探索に向かいました";
-				logs.push_back(lg);
+				logs.push_front(lg);
 			}
 			//死亡可能性ログの出力
 			if (is_break)
@@ -492,7 +492,7 @@ bool search_map(Point pos, Robot* robo)
 				GameLog lg;
 				lg.text = robo->name + U"は予定された時間までに帰還しませんでした";
 				lg.remain_time = b_rnd_max + distance;
-				logs_will.push_back(lg);
+				logs_will.push_front(lg);
 			}
 			//破壊された機械が確率で復活
 			bool is_revive = false;

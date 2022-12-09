@@ -479,48 +479,48 @@ public:
 					{
 						if (strs[1] == U"clear")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Delete logs on display.");
 						}
 						if (strs[1] == U"date")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Displays date and time.");
 						}
 						if (strs[1] == U"echo")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Displays the characters entered.");
 						}
 						if (strs[1] == U"eval")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Calculate the given expression.");
 						}
 						if (strs[1] == U"help")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Displays a list of commands.");
 							clogs.push_front(indent + U"Displays the usage of the command given as an argument.");
 						}
 						if (strs[1] == U"log")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Displays the log.");
 						}
 						if (strs[1] == U"machine")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Displays a list of owned machines.");
 						}
 						if (strs[1] == U"resource")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Displays a list of resources owned.");
 						}
 						if (strs[1] == U"style")
 						{
-							clogs.push_back(strs[1]);
+							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Displays a list of color styles.");
 							clogs.push_front(indent + U"Changes to the color style given as an argument.");
 						}
@@ -548,7 +548,7 @@ public:
 					if (len == 1)
 					{
 						const DateTime t = DateTime::Now();
-						clogs.push_back(DateTime2GameTime(t));
+						clogs.push_front(DateTime2GameTime(t));
 					}
 					else
 					{

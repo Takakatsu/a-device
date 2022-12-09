@@ -169,10 +169,12 @@ typedef struct GameLog
 	double remain_time;//表示されるまでの時間
 	DateTime time;//表示された時間？
 	String text;//本体
+	bool is_notified = false;//通知されたか否か
 };
 
 extern Array<GameLog> logs;//表示されうるログ
 extern Array<GameLog> logs_will;//未だ表示されないログ
+extern Array<GameLog> logs_tmp;//一時的に表示されるログ(メッセージ？)
 
 #include "MyWindow.h"
 
