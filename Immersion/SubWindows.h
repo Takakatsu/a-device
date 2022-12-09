@@ -416,11 +416,11 @@ protected:
 public:
 	CommandPrompt() : MyWindow()
 	{
-		font01 = Font(20);
+		font01 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	};
 	CommandPrompt(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
-		font01 = Font(20);
+		font01 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	};
 	void update()
 	{
@@ -444,12 +444,11 @@ public:
 			bool is_cmd = false;
 			bool is_too_many_arg = false;
 			//ここでコマンドの処理をしなければならない
-			Array<String> strs = txtstt.text.split(' ');
+			const Array<String> strs = txtstt.text.split(' ');
 			int len = strs.size();
 			if (len > 0)
 			{
 				//言語変更
-				//プロンプト色変更
 				if (strs[0] == U"help")
 				{
 					is_cmd = true;
@@ -545,28 +544,30 @@ public:
 				if (strs[0] == U"echo")
 				{
 					is_cmd = true;
-					strs.pop_front();
-					if (strs.isEmpty())
+					Array<String> t_strs = strs;
+					t_strs.pop_front();
+					if (t_strs.isEmpty())
 					{
 						clogs.push_front(U"There is no argument. Please Retype Command.");
 					}
 					else
 					{
-						String expl = strs.join(U" ", U"\0", U"\0");
+						String expl = t_strs.join(U" ", U"\0", U"\0");
 						clogs.push_front(indent + expl);
 					}
 				}
 				if (strs[0] == U"eval")
 				{
 					is_cmd = true;
-					strs.pop_front();
-					if (strs.isEmpty())
+					Array<String> t_strs = strs;
+					t_strs.pop_front();
+					if (t_strs.isEmpty())
 					{
 						clogs.push_front(U"There is no argument. Please Retype Command.");
 					}
 					else
 					{
-						String expl = strs.join(U" ", U"\0", U"\0");
+						String expl = t_strs.join(U" ", U"\0", U"\0");
 						clogs.push_front(indent + expl);
 						clogs.push_front(indent + Format(Eval(expl)));
 					}
