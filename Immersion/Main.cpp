@@ -7,7 +7,7 @@ void Initialize()
 	Window::Resize(1920, 1080);
 	Scene::SetResizeMode(ResizeMode::Keep);
 	Scene::Resize(SCENE_WIDTH, SCENE_HEIGHT);
-	Scene::SetBackground(Color(255));
+	Scene::SetBackground(Color(0));
 	Window::SetFullscreen(true);
 
 	//ウィンドウ処理用
@@ -265,9 +265,25 @@ void Update_Robot()
 	}
 }
 
+void Update_Message()
+{
+	//追加されたログをメッセージに変換
+	for (int i = logs.size() - 1; i >= 0; i--)
+	{
+		if (!logs[i].is_notified)
+		{
+			GameLog gl = logs[i];
+			gl.remain_time = 10;
+			logs_tmp.push_front(gl);
+			logs[i].is_notified = true;
+		}
+	}
+}
+
 void Main()
 {
 	Initialize();
+	Font font_message = Font(15);
 
 	//以下はグローバル変数として扱う物とその処理
 	//ウィンドウ系
@@ -316,32 +332,7 @@ void Main()
 		}
 		Update_Robot();
 		Update_Log();
-
-		//追加されたログをメッセージに変換
-		for (int i = logs.size()-1; i >= 0; i--)
-		{
-			if (!logs[i].is_notified)
-			{
-				GameLog gl = logs[i];
-				gl.remain_time = 10;
-				logs_tmp.push_front(gl);
-				logs[i].is_notified = true;
-			}
-		}
-		//メッセージの表示
-		for (auto it=logs_tmp.begin();it!=logs_tmp.end();)
-		{
-			if (it->remain_time > 0)
-			{
-				Print(it->text);
-				it->remain_time -= delta;
-				++it;
-			}
-			else
-			{
-				it = logs_tmp.erase(it);
-			}
-		}
+		Update_Message();
 
 		//////描画//////
 		TextureFilter::Nearest();
@@ -351,12 +342,65 @@ void Main()
 			my_icons[i]->draw();
 		}
 
-		//描画は配列で後ろから
+		//ウィンドウ描画は配列で後ろから
 		for (int i = my_wins.size() - 1; i >= 0; i--)
 		{
 			my_wins[i]->draw();
 		}
 
+		//メッセージの表示&処理
+		{
+			double y_pos = SCENE_HEIGHT;
+			constexpr double height = 60;
+			constexpr double width = 240;
+			for (auto it = logs_tmp.begin(); it != logs_tmp.end();)
+			{
+				if (it->remain_time > 0)
+				{
+					//出現時
+					if (it->remain_time > 9)
+					{
+						double th = (10 - it->remain_time) * height;
+						Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - th), Vec2(width, th)).asRect();
+						const ScopedViewport2D viewport(rect);
+						rect.pos = Point(0, 0);
+						rect.draw(Color(127)).drawFrame();
+						font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+						y_pos -= th;
+					}
+					//継続時
+					else if (it->remain_time > 1)
+					{
+						Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - height), Vec2(width, height)).asRect();
+						const ScopedViewport2D viewport(rect);
+						rect.pos = Point(0, 0);
+						rect.draw(Color(127)).drawFrame();
+						font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+						y_pos -= height;
+					}
+					//撤退時
+					else
+					{
+						double th = it->remain_time * height;
+						Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - th), Vec2(width, th)).asRect();
+						const ScopedViewport2D viewport(rect);
+						rect.pos = Point(0, 0);
+						rect.draw(Color(127)).drawFrame();
+						font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+						y_pos -= th;
+					}
+					Print(it->text);
+					it->remain_time -= delta;
+					++it;
+				}
+				else
+				{
+					it = logs_tmp.erase(it);
+				}
+			}
+		}
+
+		//終了処理
 		if (is_game_exit)System::Exit();
 	}
 }
