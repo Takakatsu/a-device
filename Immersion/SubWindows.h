@@ -406,7 +406,8 @@ class CommandPrompt : public MyWindow
 {
 private:
 	TextEditState txtstt;
-	Font font01;
+	Font font00, font01, font02, font03, font04;
+	char fontsize = 2;
 	Array<String> clogs;
 	Color col_bg = Color(0x00), col_txt = Color(0x26, 0xc3, 0x0f);
 	double scroll = 0;
@@ -416,11 +417,21 @@ protected:
 public:
 	CommandPrompt() : MyWindow()
 	{
-		font01 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
+		font00 = Font(10, U"resource/GenEiNuGothic-EB.ttf");
+		font01 = Font(13, U"resource/GenEiNuGothic-EB.ttf");
+		font02 = Font(17, U"resource/GenEiNuGothic-EB.ttf");
+		font03 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
+		font04 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
+		size_min = Vec2(Max(size_min.x, SCENE_WIDTH / 3.0), size_min.y + font04.height());
 	};
 	CommandPrompt(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
-		font01 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
+		font00 = Font(10, U"resource/GenEiNuGothic-EB.ttf");
+		font01 = Font(13, U"resource/GenEiNuGothic-EB.ttf");
+		font02 = Font(17, U"resource/GenEiNuGothic-EB.ttf");
+		font03 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
+		font04 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
+		size_min = Vec2(Max(size_min.x, SCENE_WIDTH / 3.0), size_min.y + font04.height());
 	};
 	void update()
 	{
@@ -428,6 +439,14 @@ public:
 		if (win_active == this)
 		{
 			txtstt.active = true;
+			if ((KeyControl + KeyNumAdd).down())
+			{
+				fontsize = (fontsize + 1) % 5;
+			}
+			if ((KeyControl + KeyNumSubtract).down())
+			{
+				fontsize = (fontsize + 4) % 5;
+			}
 		}
 		if (getContentsRectF().contains(cursor_pos))
 		{
@@ -454,7 +473,7 @@ public:
 					is_cmd = true;
 					if (len == 1)
 					{
-						clogs.push_front(U"\"clear\", \"date\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\" ,\"style\"");
+						clogs.push_front(U"\"clear\", \"date\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\", \"style\"");
 					}
 					else if (len == 2)
 					{
@@ -529,12 +548,7 @@ public:
 					if (len == 1)
 					{
 						const DateTime t = DateTime::Now();
-						clogs.push_front(
-							Format(t.year + 1372) + U" " + Format(t.month / 2 + 1) + U" "
-							+ Format(t.month % 2 + 1) + U" " + Format(t.day) + U" "
-							+ Format(t.hour / 6) + U":" + Format(t.hour % 6) + U":"
-							+ Format(t.minute / 15) + U":" + Format(t.minute % 15) + U":"
-							+ Format(t.second / 2));
+						clogs.push_back(DateTime2GameTime(t));
 					}
 					else
 					{
@@ -579,7 +593,7 @@ public:
 					{
 						for (int i = 0; i < logs.size(); i++)
 						{
-							clogs.push_front(indent + logs[i].text);
+							clogs.push_front(indent + DateTime2GameTime(logs[i].time) + logs[i].text);
 						}
 					}
 					else
@@ -683,6 +697,30 @@ public:
 	void draw()
 	{
 		{
+			Font* use_font;
+			switch (fontsize)
+			{
+			case 0:
+				use_font = &font00;
+				break;
+			case 1:
+				use_font = &font01;
+				break;
+			case 2:
+				use_font = &font02;
+				break;
+			case 3:
+				use_font = &font03;
+				break;
+			case 4:
+				use_font = &font04;
+				break;
+			default:
+				use_font = &font00;
+				fontsize = 0;
+				break;
+			}
+
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
 			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
@@ -690,99 +728,99 @@ public:
 			//以下で描画
 			RectF(Vec2(-10, -10), size + Vec2(20, 20)).draw(col_bg);//背景
 
-			Vec2 basePos = Vec2(0, getContentsRectF().h - font01.height() + scroll);
+			Vec2 basePos = Vec2(0, getContentsRectF().h - use_font->height() + scroll);
 			Vec2 penPos = Vec2(basePos);
 			//入力中の奴
 			{
 				int i = -(int)dir.size();
-				for (const auto& glyph : font01.getGlyphs(dir + txtstt.text))
+				for (const auto& glyph : use_font->getGlyphs(dir + txtstt.text))
 				{
 					// 改行文字なら
 					if (glyph.codePoint == U'\n')
 					{
-						penPos.y -= font01.height();
+						penPos.y -= use_font->height();
 						continue;
 					}
 					//画面内に描画可能かの判定
 					if (penPos.x + glyph.xAdvance > rect.w)
 					{
 						penPos.x = 0;
-						penPos.y -= font01.height();
+						penPos.y -= use_font->height();
 					}
 					penPos.x += glyph.xAdvance;
 				}
 				Vec2 tmpPos = penPos;
 				penPos.x = basePos.x;
-				for (const auto& glyph : font01.getGlyphs(dir + txtstt.text))
+				for (const auto& glyph : use_font->getGlyphs(dir + txtstt.text))
 				{
 					// 改行文字なら
 					if (glyph.codePoint == U'\n')
 					{
 						penPos.x = basePos.x;
-						penPos.y += font01.height();
+						penPos.y += use_font->height();
 						continue;
 					}
 					//画面内に描画可能かの判定
 					if (penPos.x + glyph.xAdvance > rect.w)
 					{
 						penPos.x = basePos.x;
-						penPos.y += font01.height();
+						penPos.y += use_font->height();
 					}
 					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), col_txt);
 					penPos.x += glyph.xAdvance;
 					if (i == txtstt.cursorPos - 1)
 					{
-						RectF(penPos, Vec2(10, font01.height())).draw(col_txt);
+						RectF(penPos, Vec2(10, use_font->height())).draw(col_txt);
 					}
 					i++;
 				}
 				penPos = tmpPos;
 				penPos.x = basePos.x;
-				penPos.y -= font01.height();
+				penPos.y -= use_font->height();
 			}
 			//過去ログ
 			for (int i = 0; i < clogs.size(); i++)
 			{
-				for (const auto& glyph : font01.getGlyphs(clogs[i]))
+				for (const auto& glyph : use_font->getGlyphs(clogs[i]))
 				{
 					// 改行文字なら
 					if (glyph.codePoint == U'\n')
 					{
-						penPos.y -= font01.height();
+						penPos.y -= use_font->height();
 						continue;
 					}
 					//画面内に描画可能かの判定
 					if (penPos.x + glyph.xAdvance > rect.w)
 					{
 						penPos.x = 0;
-						penPos.y -= font01.height();
+						penPos.y -= use_font->height();
 					}
 					penPos.x += glyph.xAdvance;
 				}
 				Vec2 tmpPos = penPos;
 				penPos.x = basePos.x;
-				for (const auto& glyph : font01.getGlyphs(clogs[i]))
+				for (const auto& glyph : use_font->getGlyphs(clogs[i]))
 				{
 					// 改行文字なら
 					if (glyph.codePoint == U'\n')
 					{
 						penPos.x = basePos.x;
-						penPos.y += font01.height();
+						penPos.y += use_font->height();
 						continue;
 					}
 					//画面内に描画可能かの判定
 					if (penPos.x + glyph.xAdvance > rect.w)
 					{
 						penPos.x = basePos.x;
-						penPos.y += font01.height();
+						penPos.y += use_font->height();
 					}
 					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), col_txt);
 					penPos.x += glyph.xAdvance;
 				}
 				penPos = tmpPos;
 				penPos.x = basePos.x;
-				penPos.y -= font01.height();
-				if (penPos.y < -font01.height())
+				penPos.y -= use_font->height();
+				if (penPos.y < -use_font->height())
 				{
 					break;
 				}

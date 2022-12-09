@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+String DateTime2GameTime(const DateTime&);
 double ItemAmount2Visual(ITEMTYPE, double);
 
 ItemRate makeItemRate(ITEMTYPE, double, double);

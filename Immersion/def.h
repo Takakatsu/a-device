@@ -4,6 +4,9 @@
 
 //////定数//////
 
+#define SCENE_WIDTH 960
+#define SCENE_HEIGHT 540
+
 //マップ系
 #define MAP_CENTER_X 32
 #define MAP_CENTER_Y 32
@@ -16,6 +19,7 @@
 #define MARGIN_TITLEBAR 30//タイトルバーの太さ
 #define MARGIN_TITLEBAR_BUTTON 50//タイトルバーのボタンの太さ
 
+extern bool is_game_exit;
 //デルタ秒
 extern double delta;
 //マウス座標

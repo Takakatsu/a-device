@@ -2,10 +2,11 @@
 
 void Initialize()
 {
+	System::SetTerminationTriggers(UserAction::NoAction);
 	//ウィンドウサイズ等の初期設定
 	Window::Resize(1920, 1080);
 	Scene::SetResizeMode(ResizeMode::Keep);
-	Scene::Resize(960, 540);
+	Scene::Resize(SCENE_WIDTH, SCENE_HEIGHT);
 	Scene::SetBackground(Color(255));
 	Window::SetFullscreen(true);
 
@@ -85,23 +86,23 @@ void Mouse_Operation()
 							win_active->setPos(Vec2(pos.x - rf_new.w / 2, 0));
 						}
 					}
-						break;
+					break;
 					case T_BAR_CLOSE:
 					{
 						my_wins.remove(win_active);
 						win_active = nullptr;
 					}
-						break;
+					break;
 					case T_BAR_MAX:
 					{
 						win_active->dealSizeMax();
 					}
-						break;
+					break;
 					case T_BAR_MIN:
 					{
 						win_active->dealSizeMin();
 					}
-						break;
+					break;
 					default:
 						break;
 					}
@@ -216,6 +217,8 @@ void Update_Log()
 		}
 		else
 		{
+			const DateTime t = DateTime::Now();
+			it->time = t;
 			logs.push_back(*it);
 			it = logs_will.erase(it);
 		}
@@ -247,10 +250,11 @@ void Update_Robot()
 			//ログ出力
 			GameLog lg;
 			lg.text = it->rb.name + U"は帰還しました";
+			lg.time = DateTime::Now();
 			logs.push_back(lg);
 			for (int i = 0; i < it->rw.items.size(); i++)
 			{
-				lg.text = it->rb.name + U"は" + ItemLib[it->rw.items[i].it].name + U"を" + Format(it->rw.items[i].amount) + U"回収しました";
+				lg.text = it->rb.name + U"は" + ItemLib[it->rw.items[i].it].name + U"を" + Format(it->rw.items[i].amount) + U"kg 回収しました";
 				logs.push_back(lg);
 			}
 
@@ -296,6 +300,7 @@ void Main()
 
 	while (System::Update())
 	{
+		if (KeyEscape.down())is_game_exit = true;
 		ClearPrint();
 
 		delta = Scene::DeltaTime();
@@ -325,5 +330,7 @@ void Main()
 		{
 			my_wins[i]->draw();
 		}
+
+		if (is_game_exit)System::Exit();
 	}
 }

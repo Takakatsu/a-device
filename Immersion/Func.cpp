@@ -1,5 +1,6 @@
 ﻿#include "def.h"
 
+bool is_game_exit = false;
 double delta;
 Vec2 cursor_pos;
 
@@ -19,10 +20,21 @@ Array<Robot_Activated> robots_active;
 
 Array<GameLog> logs;
 Array<GameLog> logs_will;
+//Array<GameLog>
 
 Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
 MyWindow* win_active;
+
+String DateTime2GameTime(const DateTime &t)
+{
+	return String(
+		Format(t.year + 1372) + U" " + Format(t.month / 2 + 1) + U" "
+		+ Format(t.month % 2 + 1) + U" " + Format(t.day) + U" "
+		+ Format(t.hour / 6) + U":" + Format(t.hour % 6) + U":"
+		+ Format(t.minute / 15) + U":" + Format(t.minute % 15) + U":"
+		+ Format(t.second / 2));
+}
 
 double ItemAmount2Visual(ITEMTYPE it, double n)
 {
@@ -470,6 +482,7 @@ bool search_map(Point pos, Robot* robo)
 			//ログの送信
 			{
 				GameLog lg;
+				lg.time = DateTime::Now();
 				lg.text = robo->name + U"は探索に向かいました";
 				logs.push_back(lg);
 			}
