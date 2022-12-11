@@ -1,6 +1,7 @@
 ﻿#include "def.h"
 
 bool is_game_exit = false;
+double passed_time = 0;
 double delta;
 Vec2 cursor_pos;
 
@@ -26,7 +27,10 @@ Array<MyWindow*> my_wins;
 Array<MyIcon*> my_icons;
 MyWindow* win_active;
 
-String DateTime2GameTime(const DateTime &t)
+HashTable<String, Audio> AudioLib;
+HashTable<String, Texture> TextureLib;
+
+String DateTime2GameTime(const DateTime& t)
 {
 	return String(
 		Format(t.year + 1372) + U" " + Format(t.month / 2 + 1) + U" "
@@ -345,6 +349,14 @@ void initialize_lib()
 		md.title = U"指令";
 		md.text = U"異星を調査せよ";*/
 		/*MailLib.push_back(md);*/
+	}
+	{
+		//各種音源のセットアップ
+		AudioLib.emplace(U"SetUpBGM", Audio(U"resource/computer_startup.ogg"));
+	}
+	{
+		//各種画像のセットアップ
+		TextureLib.emplace(U"OSIcon", Texture(U"resource/icon.png"));
 	}
 }
 

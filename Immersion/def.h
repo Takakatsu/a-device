@@ -20,6 +20,9 @@
 #define MARGIN_TITLEBAR_BUTTON 50//タイトルバーのボタンの太さ
 
 extern bool is_game_exit;
+
+//時間
+extern double passed_time;
 //デルタ秒
 extern double delta;
 //マウス座標
@@ -180,6 +183,9 @@ extern Array<GameLog> logs_tmp;//一時的に表示されるログ(メッセー�
 
 extern Array<MyWindow*> my_wins;
 extern MyWindow* win_active;
+
+extern HashTable<String, Audio> AudioLib;
+extern HashTable<String, Texture> TextureLib;
 
 #include "SubWindows.h"
 
