@@ -311,11 +311,11 @@ void Main()
 	my_icons.push_back(&ic_cal);
 	MyIcon ic_mail = MyIcon(Point(0, 2), &s_mail);
 	my_icons.push_back(&ic_mail);*/
-	MyIcon ic_map = MyIcon(Point(0, 0), &s_map);
+	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP");
 	my_icons.push_back(&ic_map);
-	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp);
+	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP");
 	my_icons.push_back(&ic_cmp);
-	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv);
+	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV");
 	my_icons.push_back(&ic_inv);
 
 	while (System::Update())
@@ -385,7 +385,7 @@ void Main()
 			Update_Message();
 
 			//////描画//////
-			TextureFilter::Nearest();
+			TextureLib[U"BackGround"].draw(Point(0, 0));
 
 			for (int i = 0; i < my_icons.size(); i++)
 			{

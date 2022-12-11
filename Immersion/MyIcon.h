@@ -5,6 +5,7 @@ class MyIcon
 {
 private:
 protected:
+	String texture;
 	Point pos;
 	MyWindow* win;
 public:
@@ -13,10 +14,11 @@ public:
 		pos = Point();
 		win = nullptr;
 	}
-	MyIcon(Point p,MyWindow* w)
+	MyIcon(Point p,MyWindow* w,String str)
 	{
 		pos = Point(p);
 		win = w;
+		texture = str;
 	}
 	virtual void click()
 	{
@@ -34,10 +36,15 @@ public:
 	}
 	virtual void draw()
 	{
-		getRect().draw(Palette::Beige);
+		//getRect().draw(Palette::Beige);
+		TextureLib[texture].draw(getRect().pos);
 	}
 	RectF getRect()
 	{
 		return RectF(pos * MARGIN_ICON + Vec2(16, 16), Vec2(ICON_SIZE, ICON_SIZE));
+	}
+	String getTexture()
+	{
+		return texture;
 	}
 };

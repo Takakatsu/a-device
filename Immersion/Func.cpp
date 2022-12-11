@@ -356,7 +356,11 @@ void initialize_lib()
 	}
 	{
 		//各種画像のセットアップ
+		TextureLib.emplace(U"BackGround", Texture(U"resource/bg.png"));
 		TextureLib.emplace(U"OSIcon", Texture(U"resource/icon.png"));
+		TextureLib.emplace(U"ICON_MAP", Texture(U"resource/icon_map.png"));
+		TextureLib.emplace(U"ICON_INV", Texture(U"resource/icon_inventor.png"));
+		TextureLib.emplace(U"ICON_CMP", Texture(U"resource/icon_command.png"));
 	}
 }
 
