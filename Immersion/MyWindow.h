@@ -208,7 +208,7 @@ public:
 			pos_tmp = pos;
 			size_tmp = size;
 			pos = Vec2(0, 0);
-			size = Scene::Size();
+			size = Point(SCENE_WIDTH, SCENE_HEIGHT - UNDERBAR_HEIGHT);
 		}
 		is_max = !is_max;
 	}
@@ -218,6 +218,10 @@ public:
 	}
 	void dealSizeMin()
 	{
-		is_min = true;
+		is_min = !is_min;
+	}
+	bool getIsMin()
+	{
+		return is_min;
 	}
 };

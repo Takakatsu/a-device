@@ -18,6 +18,7 @@
 #define MARGIN_FLAME 4//フレームの幅
 #define MARGIN_TITLEBAR 30//タイトルバーの太さ
 #define MARGIN_TITLEBAR_BUTTON 50//タイトルバーのボタンの太さ
+#define UNDERBAR_HEIGHT 32//下のバーの太さ
 
 extern bool is_game_exit;
 

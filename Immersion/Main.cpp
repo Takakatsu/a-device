@@ -60,56 +60,60 @@ void Mouse_Operation()
 		win_active = nullptr;
 		for (int i = 0; i < my_wins.size(); i++)
 		{
-			//ウィンドウをクリックしてた時
-			CLICKED_TYPE ct = my_wins[i]->getPosType(pos);
-			if (ct != CLICKED_TYPE::NONE)
+			//最小化していない場合
+			if (!my_wins[i]->getIsMin())
 			{
-				click_dealed = true;
-				win_active = my_wins[i];
-				g_clicktype = ct;
-				my_wins.remove_at(i);
-				my_wins.push_front(win_active);
-				//コンテンツクリック時にクリック処理呼び出し
-				if (ct == CLICKED_TYPE::CONTENTS)
+				//ウィンドウをクリックしてた時
+				CLICKED_TYPE ct = my_wins[i]->getPosType(pos);
+				if (ct != CLICKED_TYPE::NONE)
 				{
-					win_active->click(pos - win_active->getContentsRectF().pos, left_down);
-				}
-				//タイトルバーの各種ボタン処理(右クリック時は処理しない)
-				if (left_down)
-				{
-					switch (ct)
+					click_dealed = true;
+					win_active = my_wins[i];
+					g_clicktype = ct;
+					my_wins.remove_at(i);
+					my_wins.push_front(win_active);
+					//コンテンツクリック時にクリック処理呼び出し
+					if (ct == CLICKED_TYPE::CONTENTS)
 					{
-					case TITLE_BAR:
+						win_active->click(pos - win_active->getContentsRectF().pos, left_down);
+					}
+					//タイトルバーの各種ボタン処理(右クリック時は処理しない)
+					if (left_down)
 					{
-						if (win_active->getIsMax())
+						switch (ct)
+						{
+						case TITLE_BAR:
+						{
+							if (win_active->getIsMax())
+							{
+								win_active->dealSizeMax();
+								RectF rf_new = win_active->getContentsRectF();
+								win_active->setPos(Vec2(pos.x - rf_new.w / 2, 0));
+							}
+						}
+						break;
+						case T_BAR_CLOSE:
+						{
+							my_wins.remove(win_active);
+							win_active = nullptr;
+						}
+						break;
+						case T_BAR_MAX:
 						{
 							win_active->dealSizeMax();
-							RectF rf_new = win_active->getContentsRectF();
-							win_active->setPos(Vec2(pos.x - rf_new.w / 2, 0));
+						}
+						break;
+						case T_BAR_MIN:
+						{
+							win_active->dealSizeMin();
+						}
+						break;
+						default:
+							break;
 						}
 					}
 					break;
-					case T_BAR_CLOSE:
-					{
-						my_wins.remove(win_active);
-						win_active = nullptr;
-					}
-					break;
-					case T_BAR_MAX:
-					{
-						win_active->dealSizeMax();
-					}
-					break;
-					case T_BAR_MIN:
-					{
-						win_active->dealSizeMin();
-					}
-					break;
-					default:
-						break;
-					}
 				}
-				break;
 			}
 		}
 		if (!click_dealed)
@@ -395,7 +399,10 @@ void Main()
 			//ウィンドウ描画は配列で後ろから
 			for (int i = my_wins.size() - 1; i >= 0; i--)
 			{
-				my_wins[i]->draw();
+				if (!my_wins[i]->getIsMin())
+				{
+					my_wins[i]->draw();
+				}
 			}
 
 			//メッセージの表示&処理
@@ -446,6 +453,15 @@ void Main()
 					{
 						it = logs_tmp.erase(it);
 					}
+				}
+			}
+
+			//下のバーの表示
+			{
+				Rect(Point(0, SCENE_HEIGHT - UNDERBAR_HEIGHT), Point(SCENE_WIDTH, UNDERBAR_HEIGHT)).draw(Color(200));
+				for (int i = 0; i < my_icons.size(); i++)
+				{
+					TextureLib[my_icons[i]->getTexture()].scaled(0.5).draw(i* UNDERBAR_HEIGHT, SCENE_HEIGHT - UNDERBAR_HEIGHT);
 				}
 			}
 
