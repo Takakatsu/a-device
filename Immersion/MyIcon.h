@@ -43,6 +43,29 @@ public:
 			if (win_active->getIsMin())win_active->dealSizeMin();
 		}
 	}
+	virtual void click_undericon()
+	{
+		if (!my_wins.includes(win))
+		{
+			*win = MyWindow(Vec2(300, 300), Vec2(200, 200));
+			my_wins.push_front(win);
+		}
+		else
+		{
+			if (!my_wins.isEmpty())
+			{
+				//一番上のウィンドウだった場合は場所をリセット
+				if (my_wins[0] == win)
+				{
+					win->setPos(Point(0, 0));
+				}
+			}
+			win_active = win;
+			my_wins.remove(win);
+			my_wins.push_front(win_active);
+			if (win_active->getIsMin())win_active->dealSizeMin();
+		}
+	}
 	virtual void draw()
 	{
 		TextureLib[texture].draw(getRect().pos);

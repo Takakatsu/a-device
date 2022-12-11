@@ -58,61 +58,90 @@ void Mouse_Operation()
 		bool click_dealed = false;
 		Vec2 pos = Cursor::PosF();
 		win_active = nullptr;
-		for (int i = 0; i < my_wins.size(); i++)
+		//アンダーバーアイコンクリック処理
 		{
-			//最小化していない場合
-			if (!my_wins[i]->getIsMin())
+			if (Rect(Point(0, SCENE_HEIGHT - UNDERBAR_HEIGHT), Point(SCENE_WIDTH, UNDERBAR_HEIGHT)).contains(pos))
 			{
-				//ウィンドウをクリックしてた時
-				CLICKED_TYPE ct = my_wins[i]->getPosType(pos);
-				if (ct != CLICKED_TYPE::NONE)
+				constexpr int t = 4;
+				//ホームメニュー
+				if (Rect(Point(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(32, 32)).contains(pos))
 				{
-					click_dealed = true;
-					win_active = my_wins[i];
-					g_clicktype = ct;
-					my_wins.remove_at(i);
-					my_wins.push_front(win_active);
-					//コンテンツクリック時にクリック処理呼び出し
-					if (ct == CLICKED_TYPE::CONTENTS)
+
+				}
+				else
+				{
+					for (int i = 0; i < my_icons.size(); i++)
 					{
-						win_active->click(pos - win_active->getContentsRectF().pos, left_down);
-					}
-					//タイトルバーの各種ボタン処理(右クリック時は処理しない)
-					if (left_down)
-					{
-						switch (ct)
+						//各種アイコンのクリック処理
+						if (Rect(Point((int)((i + 1.5) * UNDERBAR_HEIGHT + t * i), SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(32, 32)).contains(pos))
 						{
-						case TITLE_BAR:
-						{
-							if (win_active->getIsMax())
-							{
-								win_active->dealSizeMax();
-								RectF rf_new = win_active->getContentsRectF();
-								win_active->setPos(Vec2(pos.x - rf_new.w / 2, 0));
-							}
-						}
-						break;
-						case T_BAR_CLOSE:
-						{
-							my_wins.remove(win_active);
-							win_active = nullptr;
-						}
-						break;
-						case T_BAR_MAX:
-						{
-							win_active->dealSizeMax();
-						}
-						break;
-						case T_BAR_MIN:
-						{
-							win_active->dealSizeMin();
-						}
-						break;
-						default:
+							my_icons[i]->click_undericon();
 							break;
 						}
 					}
-					break;
+				}
+				click_dealed = true;
+			}
+		}
+		//各種ウィンドウクリック処理
+		if (!click_dealed)
+		{
+			for (int i = 0; i < my_wins.size(); i++)
+			{
+				//最小化していない場合
+				if (!my_wins[i]->getIsMin())
+				{
+					//ウィンドウをクリックしてた時
+					CLICKED_TYPE ct = my_wins[i]->getPosType(pos);
+					if (ct != CLICKED_TYPE::NONE)
+					{
+						click_dealed = true;
+						win_active = my_wins[i];
+						g_clicktype = ct;
+						my_wins.remove_at(i);
+						my_wins.push_front(win_active);
+						//コンテンツクリック時にクリック処理呼び出し
+						if (ct == CLICKED_TYPE::CONTENTS)
+						{
+							win_active->click(pos - win_active->getContentsRectF().pos, left_down);
+						}
+						//タイトルバーの各種ボタン処理(右クリック時は処理しない)
+						if (left_down)
+						{
+							switch (ct)
+							{
+							case TITLE_BAR:
+							{
+								if (win_active->getIsMax())
+								{
+									win_active->dealSizeMax();
+									RectF rf_new = win_active->getContentsRectF();
+									win_active->setPos(Vec2(pos.x - rf_new.w / 2, 0));
+								}
+							}
+							break;
+							case T_BAR_CLOSE:
+							{
+								my_wins.remove(win_active);
+								win_active = nullptr;
+							}
+							break;
+							case T_BAR_MAX:
+							{
+								win_active->dealSizeMax();
+							}
+							break;
+							case T_BAR_MIN:
+							{
+								win_active->dealSizeMin();
+							}
+							break;
+							default:
+								break;
+							}
+						}
+						break;
+					}
 				}
 			}
 		}
@@ -407,7 +436,7 @@ void Main()
 
 			//メッセージの表示&処理
 			{
-				double y_pos = SCENE_HEIGHT;
+				double y_pos = SCENE_HEIGHT - UNDERBAR_HEIGHT;
 				constexpr double height = 60;
 				constexpr double width = 240;
 				for (auto it = logs_tmp.begin(); it != logs_tmp.end();)
@@ -459,13 +488,14 @@ void Main()
 			//下のバーの表示
 			{
 				Rect(Point(0, SCENE_HEIGHT - UNDERBAR_HEIGHT), Point(SCENE_WIDTH, UNDERBAR_HEIGHT)).draw(Color(200));
+				constexpr int t = 4;
+				TextureLib[U"ICON_OS"].scaled(0.5).draw(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t);
 				for (int i = 0; i < my_icons.size(); i++)
 				{
-					TextureLib[my_icons[i]->getTexture()].scaled(0.5).draw(i* UNDERBAR_HEIGHT, SCENE_HEIGHT - UNDERBAR_HEIGHT);
+					TextureLib[my_icons[i]->getTexture()].scaled(0.5).draw((i + 1.5) * UNDERBAR_HEIGHT + t * i, SCENE_HEIGHT - UNDERBAR_HEIGHT + t);
 				}
 			}
 
-			//終了処理
 		}
 		break;
 		case 2:
@@ -473,6 +503,7 @@ void Main()
 		default:
 			break;
 		}
+		//終了処理
 		if (is_game_exit)System::Exit();
 	}
 }
