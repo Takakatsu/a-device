@@ -341,14 +341,14 @@ void initialize_lib()
 	}
 	{
 		MailData md;
-		/*md.from = U"不明";
+		md.from = U"不明";
 		md.title = U"無題";
 		md.text = U"fjzh0n348flka04hoah3hqfaj-zj0rhaonwo4hhfnalalonosjda";
 		MailLib.push_back(md);
 		md.from = U"第五支部管制室";
 		md.title = U"指令";
-		md.text = U"異星を調査せよ";*/
-		/*MailLib.push_back(md);*/
+		md.text = U"異星を調査せよ";
+		MailLib.push_back(md);
 	}
 	{
 		//各種音源のセットアップ

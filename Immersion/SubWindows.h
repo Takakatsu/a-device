@@ -2,31 +2,6 @@
 #include "def.h"
 #include "MyWindow.h"
 
-class Calculator : public MyWindow
-{
-private:
-protected:
-public:
-	Calculator() : MyWindow() {};
-	Calculator(Vec2 p, Vec2 s) : MyWindow(p, s) {};
-	void update()
-	{
-	}
-	void draw()
-	{
-		{
-			//枠外描画を禁止&マウス移動
-			Rect rect = getContentsRectF().asRect();
-			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
-			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
-			//以下で描画
-			RectF(Vec2(0, 0), size).draw(Color(0));
-			Circle(Cursor::Pos(), 100).draw(Color(255, 255, 255));
-		}
-		drawFlame();
-	}
-};
-
 class MailSoft : public MyWindow
 {
 private:
@@ -36,13 +11,13 @@ private:
 public:
 	MailSoft() : MyWindow()
 	{
-		font01 = Font(30);
+		font01 = Font(13);
 		is_reading = false;
 		mail_num = 0;
 	};
 	MailSoft(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
-		font01 = Font(30);
+		font01 = Font(13);
 		is_reading = false;
 		mail_num = 0;
 	};
@@ -61,11 +36,47 @@ public:
 			}
 			else
 			{
-				RectF mailline = RectF(Vec2(0, 0), Vec2(180, 50));
+				double y_pos = 0;
+				constexpr double margin = 5;
+				Rect rf = getContentsRectF().asRect();
+				const double x_pos_title_start = rf.w / 4, x_pos_text_start = rf.w / 2, x_pos_text_end = rf.w;
 				for (int i = 0; i < MailLib.size(); i++)
 				{
-					font01(MailLib[i].from).draw(mailline, Color(0));
-					mailline.moveBy(Vec2(0, 50));
+					double text_y_pos = y_pos + margin;
+					{
+						Vec2 penPos = Vec2(margin, text_y_pos);
+						const double x_max = x_pos_title_start - margin;
+						for (const auto& glyph : font01.getGlyphs(MailLib[i].from))
+						{
+							if (glyph.codePoint == U'\n')continue;
+							if (penPos.x + glyph.xAdvance > x_max)break;
+							glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0));
+							penPos.x += glyph.xAdvance;
+						}
+					}
+					{
+						Vec2 penPos = Vec2(x_pos_title_start + margin, text_y_pos);
+						const double x_max = x_pos_text_start - margin;
+						for (const auto& glyph : font01.getGlyphs(MailLib[i].title))
+						{
+							if (glyph.codePoint == U'\n')continue;
+							if (penPos.x + glyph.xAdvance > x_max)break;
+							glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0));
+							penPos.x += glyph.xAdvance;
+						}
+					}
+					{
+						Vec2 penPos = Vec2(x_pos_text_start + margin, text_y_pos);
+						const double x_max = x_pos_text_end - margin;
+						for (const auto& glyph : font01.getGlyphs(MailLib[i].text))
+						{
+							if (glyph.codePoint == U'\n')continue;
+							if (penPos.x + glyph.xAdvance > x_max)break;
+							glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0));
+							penPos.x += glyph.xAdvance;
+						}
+					}
+					y_pos += font01.height() + margin * 2;;
 				}
 			}
 		}

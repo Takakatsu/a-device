@@ -318,7 +318,7 @@ void Update_Message()
 void Main()
 {
 	Initialize();
-	char game_phase = 0;
+	char game_phase = 1;
 	Font font_message = Font(15);
 	Font font_initiation = Font(15);
 
@@ -328,14 +328,14 @@ void Main()
 	my_wins.push_back(&s_tmp);
 	Calculator s_cal = Calculator(Vec2(250, 0), Vec2(200, 200));
 	my_wins.push_back(&s_cal);
-	MailSoft s_mail = MailSoft(Vec2(250, 200), Vec2(200, 200));
 	my_wins.push_back(&s_mail);*/
+	MailSoft s_mail = MailSoft(Vec2(250, 200), Vec2(200, 200));
 	MAPViewer s_map = MAPViewer(Vec2(250, 200), Vec2(200, 200));
-	my_wins.push_back(&s_map);
 	CommandPrompt s_cmp = CommandPrompt(Vec2(300, 200), Vec2(200, 200));
-	my_wins.push_back(&s_cmp);
 	Inventor s_inv = Inventor(Vec2(350, 200), Vec2(200, 200));
-	my_wins.push_back(&s_inv);
+	/*my_wins.push_back(&s_map);
+	my_wins.push_back(&s_cmp);
+	my_wins.push_back(&s_inv);*/
 
 	//アイコン系
 	/*MyIcon ic_tmp = MyIcon(Point(0, 0), &s_tmp);
@@ -346,6 +346,8 @@ void Main()
 	my_icons.push_back(&ic_mail);*/
 	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP");
 	my_icons.push_back(&ic_map);
+	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MAP");
+	my_icons.push_back(&ic_mail);
 	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP");
 	my_icons.push_back(&ic_cmp);
 	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV");
