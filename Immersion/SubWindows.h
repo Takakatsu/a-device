@@ -8,6 +8,7 @@ private:
 	Font font01;
 	bool is_reading;//メールを読んでるか否か
 	int mail_num;//選択中のメールの番号
+	Array<Rect> mail_rects;
 public:
 	MailSoft() : MyWindow()
 	{
@@ -21,27 +22,67 @@ public:
 		is_reading = false;
 		mail_num = 0;
 	};
+	void update()
+	{
+		if (KeySpace.down())
+		{
+			is_reading = !is_reading;
+		}
+		if (KeyDown.down())
+		{
+			mail_num = (mail_num + 1) % MailLib.size();
+		}
+		if (KeyUp.down())
+		{
+			mail_num = (mail_num + MailLib.size() - 1) % MailLib.size();
+		}
+	}
+	void click(Vec2 pos, bool is_left)
+	{
+		if (is_left)
+		{
+			//枠外描画を禁止&マウス移動
+			Rect rect = getContentsRectF().asRect();
+			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
+			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
+
+			//UI
+			{
+				for (int i = 0; i < mail_rects.size(); i++)
+				{
+					if (mail_rects[i].contains(pos) && MailLib.size() > i)
+					{
+						if (mail_num == i || !is_reading)
+						{
+							is_reading = !is_reading;
+						}
+						mail_num = i;
+					}
+				}
+			}
+		}
+	}
 	void draw()
 	{
 		{
+			mail_rects.clear();
 			//枠外描画を禁止&マウス移動
 			Rect rect = getContentsRectF().asRect();
 			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
 			RectF(Vec2(0, 0), size).draw(Color(127));//背景
-			if (is_reading)
-			{
-
-			}
-			else
 			{
 				double y_pos = 0;
 				constexpr double margin = 5;
 				Rect rf = getContentsRectF().asRect();
-				const double x_pos_title_start = rf.w / 4, x_pos_text_start = rf.w / 2, x_pos_text_end = rf.w;
+				const double x_pos_title_start = rf.w / 5, x_pos_text_start = rf.w * 2 / 5, x_pos_text_end = rf.w;
 				for (int i = 0; i < MailLib.size(); i++)
 				{
+					double y_pos_tmp = y_pos;
+					if (i != 0)Line(Vec2(0, y_pos), Vec2(rf.w, y_pos)).draw(Color(0));
+					Line(Vec2(x_pos_title_start, y_pos + margin), Vec2(x_pos_title_start, y_pos + margin + font01.height())).draw(Color(0));
+					Line(Vec2(x_pos_text_start, y_pos + margin), Vec2(x_pos_text_start, y_pos + margin + font01.height())).draw(Color(0));
 					double text_y_pos = y_pos + margin;
 					{
 						Vec2 penPos = Vec2(margin, text_y_pos);
@@ -68,15 +109,35 @@ public:
 					{
 						Vec2 penPos = Vec2(x_pos_text_start + margin, text_y_pos);
 						const double x_max = x_pos_text_end - margin;
+						bool first_n = true;
 						for (const auto& glyph : font01.getGlyphs(MailLib[i].text))
 						{
-							if (glyph.codePoint == U'\n')continue;
-							if (penPos.x + glyph.xAdvance > x_max)break;
-							glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0));
-							penPos.x += glyph.xAdvance;
+							if (is_reading && mail_num == i)
+							{
+								if (glyph.codePoint == U'\n' || penPos.x + glyph.xAdvance > x_max)
+								{
+									penPos.x = x_pos_text_start + margin;
+									penPos.y += font01.height() + margin * 2;
+									y_pos += font01.height() + margin * 2;
+									Line(Vec2(x_pos_text_start + margin, y_pos), Vec2(x_pos_text_end - margin, y_pos)).draw(Color(0));
+									continue;
+								}
+								glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0));
+								penPos.x += glyph.xAdvance;
+							}
+							else
+							{
+								if (glyph.codePoint == U'\n')continue;
+								if (penPos.x + glyph.xAdvance > x_max)break;
+								glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0));
+								penPos.x += glyph.xAdvance;
+							}
 						}
 					}
-					y_pos += font01.height() + margin * 2;;
+					y_pos += font01.height() + margin * 2;
+					Rect rc = Rect(Point(0, (int)y_pos_tmp), Point((int)x_pos_text_end, (int)(y_pos - y_pos_tmp)));
+					if (rc.contains(cursor_pos - rf.pos))rc.draw(ColorF(1.0, 1.0, 1.0, 0.5));
+					mail_rects.push_back(rc);
 				}
 			}
 		}

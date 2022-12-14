@@ -347,7 +347,31 @@ void initialize_lib()
 		MailLib.push_back(md);
 		md.from = U"第五支部管制室";
 		md.title = U"指令";
-		md.text = U"異星を調査せよ";
+		md.text = U"内容\najdofnow\najdofnow\najdofnow\najdofnow\najdofnow\najdofnow";
+		MailLib.push_back(md);
+		md.from = U"差出人";
+		md.title = U"タイトル";
+		md.text = U"内容";
+		MailLib.push_back(md);
+		md.from = U"差出人";
+		md.title = U"タイトル";
+		md.text = U"内容";
+		MailLib.push_back(md);
+		md.from = U"差出人";
+		md.title = U"タイトル";
+		md.text = U"内容";
+		MailLib.push_back(md);
+		md.from = U"差出人";
+		md.title = U"タイトル";
+		md.text = U"内容";
+		MailLib.push_back(md);
+		md.from = U"差出人";
+		md.title = U"タイトル";
+		md.text = U"内容";
+		MailLib.push_back(md);
+		md.from = U"差出人";
+		md.title = U"タイトル";
+		md.text = U"内容";
 		MailLib.push_back(md);
 	}
 	{
