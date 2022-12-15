@@ -318,7 +318,15 @@ void Update_Message()
 void Main()
 {
 	Initialize();
-	char game_phase = 1;
+
+	const MSRenderTexture renderTexture{ Scene::Size() };
+	const PixelShader psPosterize = HLSL{ U"example/shader/hlsl/posterize.hlsl", U"PS" };
+	if (not psPosterize)
+	{
+		throw Error{ U"Failed to load a shader file" };
+	}
+
+	char game_phase = 0;
 	Font font_message = Font(15);
 	Font font_initiation = Font(15);
 
@@ -361,150 +369,159 @@ void Main()
 
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
-
-		switch (game_phase)
+		renderTexture.clear(Color(0));
 		{
-		case 0:
-		{
-			passed_time += delta;
-			if (!AudioLib[U"SetUpBGM"].isPlaying())
+			// レンダーターゲットを renderTexture に設定
+			const ScopedRenderTarget2D target{ renderTexture };
+			switch (game_phase)
 			{
-				AudioLib[U"SetUpBGM"].play();
-			}
-			if (passed_time < 3)
+			case 0:
 			{
-				if (RandomBool(0.005))
+				passed_time += delta;
+				if (!AudioLib[U"SetUpBGM"].isPlaying())
 				{
-					Rect(Point(0, 0), Scene::Size()).draw(Color(127));
+					AudioLib[U"SetUpBGM"].play();
 				}
-			}
-			else if (passed_time < 10)
-			{
-				String p = String((int(passed_time * 4)) % 4, '.');
-				font_initiation(U"Setup Initialization" + p).draw(Point(0, 0), Color(255));
-			}
-			else if (passed_time < 30)
-			{
-				TextureLib[U"OSIcon"].drawAt(Point(SCENE_WIDTH / 2, SCENE_HEIGHT / 3));
-				constexpr int n = 17;
-				for (int i = 0; i < n; i++)
+				if (passed_time < 3)
 				{
-					const double t = passed_time - i;
-					double sum = 0;
-					for (int j = 1; j <= 5; j += 2)
+					if (RandomBool(0.005))
 					{
-						sum -= Sin(t * j) / j;
-					}
-					Circle(Vec2(SCENE_WIDTH / 2 + i * 30, SCENE_HEIGHT * 3 / 4 + Sin(sum) * 50), 5).drawFrame(3, Color(255));
-					Circle(Vec2(SCENE_WIDTH / 2 - i * 30, SCENE_HEIGHT * 3 / 4 + Sin(sum) * 50), 5).drawFrame(3, Color(255));
-				}
-			}
-			else
-			{
-				game_phase = 1;
-			}
-		}
-		break;
-		case 1:
-		{
-			//マウス操作
-			Mouse_Operation();
-
-			//各種処理
-			for (int i = 0; i < my_wins.size(); i++)
-			{
-				my_wins[i]->update();
-			}
-			Update_Robot();
-			Update_Log();
-			Update_Message();
-
-			//////描画//////
-			TextureLib[U"BackGround"].draw(Point(0, 0));
-
-			for (int i = 0; i < my_icons.size(); i++)
-			{
-				my_icons[i]->draw();
-			}
-
-			//ウィンドウ描画は配列で後ろから
-			for (int i = my_wins.size() - 1; i >= 0; i--)
-			{
-				if (!my_wins[i]->getIsMin())
-				{
-					my_wins[i]->draw();
-				}
-			}
-
-			//メッセージの表示&処理
-			{
-				double y_pos = SCENE_HEIGHT - UNDERBAR_HEIGHT;
-				constexpr double height = 60;
-				constexpr double width = 240;
-				for (auto it = logs_tmp.begin(); it != logs_tmp.end();)
-				{
-					if (it->remain_time > 0)
-					{
-						//出現時
-						if (it->remain_time > 9)
-						{
-							double th = (10 - it->remain_time) * height;
-							Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - th), Vec2(width, th)).asRect();
-							const ScopedViewport2D viewport(rect);
-							rect.pos = Point(0, 0);
-							rect.draw(Color(127)).drawFrame();
-							font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
-							y_pos -= th;
-						}
-						//継続時
-						else if (it->remain_time > 1)
-						{
-							Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - height), Vec2(width, height)).asRect();
-							const ScopedViewport2D viewport(rect);
-							rect.pos = Point(0, 0);
-							rect.draw(Color(127)).drawFrame();
-							font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
-							y_pos -= height;
-						}
-						//撤退時
-						else
-						{
-							double th = it->remain_time * height;
-							Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - th), Vec2(width, th)).asRect();
-							const ScopedViewport2D viewport(rect);
-							rect.pos = Point(0, 0);
-							rect.draw(Color(127)).drawFrame();
-							font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
-							y_pos -= th;
-						}
-						it->remain_time -= delta;
-						++it;
-					}
-					else
-					{
-						it = logs_tmp.erase(it);
+						Rect(Point(0, 0), Scene::Size()).draw(Color(127));
 					}
 				}
+				else if (passed_time < 10)
+				{
+					String p = String((int(passed_time * 4)) % 4, '.');
+					font_initiation(U"Setup Initialization" + p).draw(Point(0, 0), Color(255));
+				}
+				else if (passed_time < 30)
+				{
+					TextureLib[U"OSIcon"].drawAt(Point(SCENE_WIDTH / 2, SCENE_HEIGHT / 3));
+					constexpr int n = 17;
+					for (int i = 0; i < n; i++)
+					{
+						const double t = passed_time - i;
+						double sum = 0;
+						for (int j = 1; j <= 5; j += 2)
+						{
+							sum -= Sin(t * j) / j;
+						}
+						Circle(Vec2(SCENE_WIDTH / 2 + i * 30, SCENE_HEIGHT * 3 / 4 + Sin(sum) * 50), 5).drawFrame(3, Color(255));
+						Circle(Vec2(SCENE_WIDTH / 2 - i * 30, SCENE_HEIGHT * 3 / 4 + Sin(sum) * 50), 5).drawFrame(3, Color(255));
+					}
+				}
+				else
+				{
+					game_phase = 1;
+				}
 			}
-
-			//下のバーの表示
+			break;
+			case 1:
 			{
-				Rect(Point(0, SCENE_HEIGHT - UNDERBAR_HEIGHT), Point(SCENE_WIDTH, UNDERBAR_HEIGHT)).draw(Color(200));
-				constexpr int t = 4;
-				TextureLib[U"ICON_OS"].scaled(0.5).draw(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t);
+				//マウス操作
+				Mouse_Operation();
+
+				//各種処理
+				for (int i = 0; i < my_wins.size(); i++)
+				{
+					my_wins[i]->update();
+				}
+				Update_Robot();
+				Update_Log();
+				Update_Message();
+
+				//////描画//////
+				TextureLib[U"BackGround"].draw(Point(0, 0));
+
 				for (int i = 0; i < my_icons.size(); i++)
 				{
-					TextureLib[my_icons[i]->getTexture()].scaled(0.5).draw((i + 1.5) * UNDERBAR_HEIGHT + t * i, SCENE_HEIGHT - UNDERBAR_HEIGHT + t);
+					my_icons[i]->draw();
 				}
-			}
 
-		}
-		break;
-		case 2:
+				//ウィンドウ描画は配列で後ろから
+				for (int i = my_wins.size() - 1; i >= 0; i--)
+				{
+					if (!my_wins[i]->getIsMin())
+					{
+						my_wins[i]->draw();
+					}
+				}
+
+				//メッセージの表示&処理
+				{
+					double y_pos = SCENE_HEIGHT - UNDERBAR_HEIGHT;
+					constexpr double height = 60;
+					constexpr double width = 240;
+					for (auto it = logs_tmp.begin(); it != logs_tmp.end();)
+					{
+						if (it->remain_time > 0)
+						{
+							//出現時
+							if (it->remain_time > 9)
+							{
+								double th = (10 - it->remain_time) * height;
+								Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - th), Vec2(width, th)).asRect();
+								const ScopedViewport2D viewport(rect);
+								rect.pos = Point(0, 0);
+								rect.draw(Color(127)).drawFrame();
+								font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+								y_pos -= th;
+							}
+							//継続時
+							else if (it->remain_time > 1)
+							{
+								Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - height), Vec2(width, height)).asRect();
+								const ScopedViewport2D viewport(rect);
+								rect.pos = Point(0, 0);
+								rect.draw(Color(127)).drawFrame();
+								font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+								y_pos -= height;
+							}
+							//撤退時
+							else
+							{
+								double th = it->remain_time * height;
+								Rect rect = RectF(Vec2(SCENE_WIDTH - width, y_pos - th), Vec2(width, th)).asRect();
+								const ScopedViewport2D viewport(rect);
+								rect.pos = Point(0, 0);
+								rect.draw(Color(127)).drawFrame();
+								font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+								y_pos -= th;
+							}
+							it->remain_time -= delta;
+							++it;
+						}
+						else
+						{
+							it = logs_tmp.erase(it);
+						}
+					}
+				}
+
+				//下のバーの表示
+				{
+					Rect(Point(0, SCENE_HEIGHT - UNDERBAR_HEIGHT), Point(SCENE_WIDTH, UNDERBAR_HEIGHT)).draw(Color(200));
+					constexpr int t = 4;
+					TextureLib[U"ICON_OS"].scaled(0.5).draw(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t);
+					for (int i = 0; i < my_icons.size(); i++)
+					{
+						TextureLib[my_icons[i]->getTexture()].scaled(0.5).draw((i + 1.5) * UNDERBAR_HEIGHT + t * i, SCENE_HEIGHT - UNDERBAR_HEIGHT + t);
+					}
+				}
+
+			}
 			break;
-		default:
-			break;
+			case 2:
+				break;
+			default:
+				break;
+			}
 		}
+		Graphics2D::Flush();
+		renderTexture.resolve();
+
+		const ScopedCustomShader2D shader{ psPosterize };
+		renderTexture.draw();
 		//終了処理
 		if (is_game_exit)System::Exit();
 	}
