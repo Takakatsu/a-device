@@ -315,18 +315,31 @@ void Update_Message()
 	}
 }
 
+struct MyPCFilter
+{
+	float time;
+};
+
+struct Swirl
+{
+	float angle;
+};
+
 void Main()
 {
 	Initialize();
 
 	const MSRenderTexture renderTexture{ Scene::Size() };
-	const PixelShader psPosterize = HLSL{ U"example/shader/hlsl/posterize.hlsl", U"PS" };
+	const PixelShader psPosterize = HLSL{ U"example/shader/hlsl/oldpc_filter.hlsl", U"PS" }
+	| GLSL{ U"example/shader/glsl/swirl.frag", {{U"PSConstants2D", 0}, {U"MyPCFilter", 1}} };
+	//const PixelShader psPosterize = HLSL{ U"example/shader/hlsl/posterize.hlsl", U"PS" };
+	//const PixelShader psOneColor = HLSL{ U"example/shader/hlsl/posterize.hlsl", U"PS" };
 	if (not psPosterize)
 	{
 		throw Error{ U"Failed to load a shader file" };
 	}
 
-	char game_phase = 0;
+	char game_phase = 1;
 	Font font_message = Font(15);
 	Font font_initiation = Font(15);
 
@@ -361,8 +374,13 @@ void Main()
 	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV");
 	my_icons.push_back(&ic_inv);
 
+	ConstantBuffer<MyPCFilter> pc_filter;
+
 	while (System::Update())
 	{
+		//変数が変えられない？
+		pc_filter->time = Random(1.0,5.0);
+
 		if (KeyEscape.down())is_game_exit = true;
 
 		ClearPrint();
@@ -372,6 +390,7 @@ void Main()
 		renderTexture.clear(Color(0));
 		{
 			// レンダーターゲットを renderTexture に設定
+			Graphics2D::SetPSConstantBuffer(1, pc_filter);
 			const ScopedRenderTarget2D target{ renderTexture };
 			switch (game_phase)
 			{
