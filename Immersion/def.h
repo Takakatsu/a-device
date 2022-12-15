@@ -4,8 +4,10 @@
 
 //////定数//////
 
-#define SCENE_WIDTH 960
-#define SCENE_HEIGHT 540
+//#define SCENE_WIDTH 960
+//#define SCENE_HEIGHT 540
+#define SCENE_WIDTH 1920
+#define SCENE_HEIGHT 1080
 
 //マップ系
 #define MAP_CENTER_X 32
@@ -180,13 +182,13 @@ extern Array<GameLog> logs;//表示されうるログ
 extern Array<GameLog> logs_will;//未だ表示されないログ
 extern Array<GameLog> logs_tmp;//一時的に表示されるログ(メッセージ？)
 
+extern HashTable<String, Audio> AudioLib;
+extern HashTable<String, Texture> TextureLib;
+
 #include "MyWindow.h"
 
 extern Array<MyWindow*> my_wins;
 extern MyWindow* win_active;
-
-extern HashTable<String, Audio> AudioLib;
-extern HashTable<String, Texture> TextureLib;
 
 #include "SubWindows.h"
 

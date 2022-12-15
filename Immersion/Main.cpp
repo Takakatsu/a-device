@@ -329,42 +329,26 @@ void Main()
 {
 	Initialize();
 
-	const MSRenderTexture renderTexture{ Scene::Size() };
+	const MSRenderTexture renderTexture_all{ Scene::Size() };
 	const PixelShader psPosterize = HLSL{ U"example/shader/hlsl/oldpc_filter.hlsl", U"PS" }
 	| GLSL{ U"example/shader/glsl/swirl.frag", {{U"PSConstants2D", 0}, {U"MyPCFilter", 1}} };
-	//const PixelShader psPosterize = HLSL{ U"example/shader/hlsl/posterize.hlsl", U"PS" };
-	//const PixelShader psOneColor = HLSL{ U"example/shader/hlsl/posterize.hlsl", U"PS" };
-	if (not psPosterize)
+	if (!psPosterize)
 	{
 		throw Error{ U"Failed to load a shader file" };
 	}
 
-	char game_phase = 1;
-	Font font_message = Font(15);
-	Font font_initiation = Font(15);
+	char game_phase = 0;
+	Font font_message = Font(20);
+	Font font_initiation = Font(20);
 
 	//以下はグローバル変数として扱う物とその処理
 	//ウィンドウ系
-	/*MyWindow s_tmp = MyWindow(Vec2(300, 300), Vec2(200, 200));
-	my_wins.push_back(&s_tmp);
-	Calculator s_cal = Calculator(Vec2(250, 0), Vec2(200, 200));
-	my_wins.push_back(&s_cal);
-	my_wins.push_back(&s_mail);*/
 	MailSoft s_mail = MailSoft(Vec2(250, 200), Vec2(200, 200));
 	MAPViewer s_map = MAPViewer(Vec2(250, 200), Vec2(200, 200));
 	CommandPrompt s_cmp = CommandPrompt(Vec2(300, 200), Vec2(200, 200));
 	Inventor s_inv = Inventor(Vec2(350, 200), Vec2(200, 200));
-	/*my_wins.push_back(&s_map);
-	my_wins.push_back(&s_cmp);
-	my_wins.push_back(&s_inv);*/
 
 	//アイコン系
-	/*MyIcon ic_tmp = MyIcon(Point(0, 0), &s_tmp);
-	my_icons.push_back(&ic_tmp);
-	MyIcon ic_cal = MyIcon(Point(0, 1), &s_cal);
-	my_icons.push_back(&ic_cal);
-	MyIcon ic_mail = MyIcon(Point(0, 2), &s_mail);
-	my_icons.push_back(&ic_mail);*/
 	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP");
 	my_icons.push_back(&ic_map);
 	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MAP");
@@ -379,7 +363,7 @@ void Main()
 	while (System::Update())
 	{
 		//変数が変えられない？
-		pc_filter->time = Random(1.0,5.0);
+		pc_filter->time = Random(1.0, 5.0);
 
 		if (KeyEscape.down())is_game_exit = true;
 
@@ -387,11 +371,11 @@ void Main()
 
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
-		renderTexture.clear(Color(0));
+		renderTexture_all.clear(Color(0));
 		{
-			// レンダーターゲットを renderTexture に設定
+			// レンダーターゲットを renderTexture_all に設定
 			Graphics2D::SetPSConstantBuffer(1, pc_filter);
-			const ScopedRenderTarget2D target{ renderTexture };
+			const ScopedRenderTarget2D target{ renderTexture_all };
 			switch (game_phase)
 			{
 			case 0:
@@ -411,6 +395,7 @@ void Main()
 				else if (passed_time < 10)
 				{
 					String p = String((int(passed_time * 4)) % 4, '.');
+
 					font_initiation(U"Setup Initialization" + p).draw(Point(0, 0), Color(255));
 				}
 				else if (passed_time < 30)
@@ -450,7 +435,7 @@ void Main()
 				Update_Message();
 
 				//////描画//////
-				TextureLib[U"BackGround"].draw(Point(0, 0));
+				TextureLib[U"BackGround"].scaled(2).draw(Point(0, 0));
 
 				for (int i = 0; i < my_icons.size(); i++)
 				{
@@ -537,10 +522,10 @@ void Main()
 			}
 		}
 		Graphics2D::Flush();
-		renderTexture.resolve();
+		renderTexture_all.resolve();
 
 		const ScopedCustomShader2D shader{ psPosterize };
-		renderTexture.draw();
+		renderTexture_all.draw();
 		//終了処理
 		if (is_game_exit)System::Exit();
 	}

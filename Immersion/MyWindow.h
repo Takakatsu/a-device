@@ -57,7 +57,12 @@ public:
 		{
 			if (i == 5)continue;
 			Color c = (i % 2 == 0) ? Color(255, 0, 0) : Color(0, 255, 0);
-			getFlameRectF(i).draw(c);
+			/*TextureLib[U"Frame"](Point(MARGIN_FLAME* ((i - 1) % 3), MARGIN_FLAME* (3 - i / 3)), Point(MARGIN_FLAME, MARGIN_FLAME)).draw()
+				.draw(getFlameRectF(i).asRect());*/
+			getFlameRectF(i)(TextureLib[U"Frame"](
+				Point(MARGIN_FLAME * 2 * ((i - 1) % 3), MARGIN_FLAME * 2 * (2 - (i - 1) / 3)),
+				Point(MARGIN_FLAME * 2, MARGIN_FLAME * 2))).draw();
+			// getFlameRectF(i).draw(c);
 		}
 		//タイトルバー
 		for (int i = 0; i < 4; i++)

@@ -136,7 +136,7 @@ public:
 					}
 					y_pos += font01.height() + margin * 2;
 					Rect rc = Rect(Point(0, (int)y_pos_tmp), Point((int)x_pos_text_end, (int)(y_pos - y_pos_tmp)));
-					if (rc.contains(cursor_pos - rf.pos))rc.draw(ColorF(1.0, 1.0, 1.0, 0.5));
+					if (rc.contains(cursor_pos - rf.pos))rc.draw(ColorF(1.0, 1.0, 1.0, 0.3));
 					mail_rects.push_back(rc);
 				}
 			}

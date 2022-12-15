@@ -386,6 +386,7 @@ void initialize_lib()
 		TextureLib.emplace(U"ICON_MAP", Texture(U"resource/icon_map.png"));
 		TextureLib.emplace(U"ICON_INV", Texture(U"resource/icon_inventor.png"));
 		TextureLib.emplace(U"ICON_CMP", Texture(U"resource/icon_command.png"));
+		TextureLib.emplace(U"Frame", Texture(U"resource/frame.png"));
 	}
 }
 
