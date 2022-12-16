@@ -545,10 +545,15 @@ public:
 					is_cmd = true;
 					if (len == 1)
 					{
-						clogs.push_front(U"\"clear\", \"date\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\", \"style\"");
+						clogs.push_front(U"\"cat\", \"clear\", \"date\", \"echo\", \"eval\", \"help\", \"log\", \"machine\", \"resource\", \"style\"");
 					}
 					else if (len == 2)
 					{
+						if (strs[1] == U"cat")
+						{
+							clogs.push_front(strs[1]);
+							clogs.push_front(indent + U"Show cat.");
+						}
 						if (strs[1] == U"clear")
 						{
 							clogs.push_front(strs[1]);
@@ -595,6 +600,28 @@ public:
 							clogs.push_front(strs[1]);
 							clogs.push_front(indent + U"Displays a list of color styles.");
 							clogs.push_front(indent + U"Changes to the color style given as an argument.");
+						}
+					}
+					else
+					{
+						is_too_many_arg = true;
+					}
+				}
+				if (strs[0] == U"cat")
+				{
+					is_cmd = true;
+					if (len == 1)
+					{
+						Array<Array<String>> cats =
+						{
+							{U"  ｡｡",U" ﾟ●゜"},
+							{U"    ∧,,∧",U"（=・ω・）",U"（,, ｕｕﾉ"},
+							{U"(=･ω･=)"}
+						};
+						Array<String> cat = cats.choice();
+						for (int i = 0; i < cat.size(); i++)
+						{
+							clogs.push_front(indent + cat[i]);
 						}
 					}
 					else
@@ -898,6 +925,6 @@ public:
 				}
 			}
 		}
-		drawFlame();
+		drawFlame(col_txt);
 	}
 };

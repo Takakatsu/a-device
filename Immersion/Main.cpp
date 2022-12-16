@@ -337,7 +337,7 @@ void Main()
 		throw Error{ U"Failed to load a shader file" };
 	}
 
-	char game_phase = 0;
+	char game_phase = 1;
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
 
