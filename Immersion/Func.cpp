@@ -387,6 +387,9 @@ void initialize_lib()
 		TextureLib.emplace(U"ICON_INV", Texture(U"resource/icon_inventor.png"));
 		TextureLib.emplace(U"ICON_CMP", Texture(U"resource/icon_command.png"));
 		TextureLib.emplace(U"Frame", Texture(U"resource/frame.png"));
+		TextureLib.emplace(U"Button_Close", Texture(U"resource/button_close.png"));
+		TextureLib.emplace(U"Button_Max", Texture(U"resource/button_max.png"));
+		TextureLib.emplace(U"Button_Min", Texture(U"resource/button_min.png"));
 	}
 }
 

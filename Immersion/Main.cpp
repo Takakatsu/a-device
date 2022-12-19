@@ -337,7 +337,7 @@ void Main()
 		throw Error{ U"Failed to load a shader file" };
 	}
 
-	char game_phase = 1;
+	char game_phase = 0;
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
 
@@ -380,6 +380,7 @@ void Main()
 			{
 			case 0:
 			{
+				Cursor::RequestStyle(CursorStyle::Hidden);
 				passed_time += delta;
 				if (!AudioLib[U"SetUpBGM"].isPlaying())
 				{
@@ -422,6 +423,7 @@ void Main()
 			break;
 			case 1:
 			{
+				Cursor::RequestStyle(CursorStyle::Default);
 				//マウス操作
 				Mouse_Operation();
 

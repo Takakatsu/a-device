@@ -62,10 +62,10 @@ public:
 				Point(MARGIN_FLAME * 2, MARGIN_FLAME * 2))).draw(color);
 		}
 		//タイトルバー
-		for (int i = 0; i < 4; i++)
-		{
-			getTitleBar(i).draw(Color(0, 0, (i * 50 + 30)));
-		}
+		getTitleBar(0).draw(Color(0));
+		getTitleBar(1)(TextureLib[U"Button_Min"]).draw(color);
+		getTitleBar(2)(TextureLib[U"Button_Max"]).draw(color);
+		getTitleBar(3)(TextureLib[U"Button_Close"]).draw(color);
 	}
 	virtual void click(Vec2 pos, bool is_left)//呼び出すときは内部座標で処理する
 	{
