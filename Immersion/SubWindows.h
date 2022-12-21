@@ -152,6 +152,7 @@ private:
 	TextEditState txtstt;
 	bool is_buying = false;
 	Robot robo;
+	Array<Item> buy_resource;
 public:
 	Inventor() : MyWindow()
 	{
@@ -190,6 +191,10 @@ public:
 	{
 		robo.name = txtstt.text;
 		robots_stay.push_back(robo);
+		for (int i = 0; i < buy_resource.size(); i++)
+		{
+			ItemBox[buy_resource[i].it] -= buy_resource[i].it;
+		}
 		is_buying = false;
 	}
 	void click(Vec2 pos, bool is_left)
@@ -203,20 +208,21 @@ public:
 		}
 		else
 		{
-			for (int i = 0; i < (int)ROBOTTYPE::RT_NUM; i++)
+			for (int i = 0; i < Recipes.size(); i++)
 			{
 				bool is_creatable = true;
-				for (int j = 0; j < RobotLib[(ROBOTTYPE)i].materials.size(); j++)
+				for (int j = 0; j < Recipes[i].second.size(); j++)
 				{
-					if (ItemBox[RobotLib[(ROBOTTYPE)i].materials[j].it] < RobotLib[(ROBOTTYPE)i].materials[j].amount)is_creatable = false;
+					if (ItemBox[Recipes[i].second[j].it] < Recipes[i].second[j].amount)is_creatable = false;
 				}
 				if (is_creatable && getSelectionRect(i).movedBy(-getContentsRectF().pos).contains(pos))
 				{
 					Robot rb;
 					rb.count_go = 0;
-					rb.endurance = RobotLib[(ROBOTTYPE)i].max_endurance;
+					rb.endurance = RobotLib[Recipes[i].first].max_endurance;
 					rb.remain_time = 0;
-					rb.rt = (ROBOTTYPE)i;
+					rb.rt = Recipes[i].first;
+					buy_resource = Recipes[i].second;
 					robo = rb;
 					is_buying = true;
 					break;
@@ -233,15 +239,18 @@ public:
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
 			RectF(Vec2(0, 0), size).draw(Color(32));//背景
-			for (int i = 0; i < (int)ROBOTTYPE::RT_NUM; i++)
+			for (int i = 0; i < Recipes.size(); i++)
 			{
 				bool is_creatable = true;
-				for (int j = 0; j < RobotLib[(ROBOTTYPE)i].materials.size(); j++)
+				for (int j = 0; j < Recipes[i].second.size(); j++)
 				{
-					if (ItemBox[RobotLib[(ROBOTTYPE)i].materials[j].it] < RobotLib[(ROBOTTYPE)i].materials[j].amount)is_creatable = false;
+					if (ItemBox[Recipes[i].second[j].it] < Recipes[i].second[j].amount)is_creatable = false;
 				}
-				getSelectionRect(i).movedBy(-getContentsRectF().pos).draw(is_creatable ? Color(255) : Color(127));
+				RectF rc = getSelectionRect(i).movedBy(-getContentsRectF().pos);
+				rc.draw(is_creatable ? Color(255) : Color(127));
+				font01(RobotLib[Recipes[i].first].name).drawAt(rc.center(),Color(0));
 			}
+
 			//購入中は
 			if (is_buying)
 			{

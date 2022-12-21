@@ -153,6 +153,7 @@ typedef struct RobotData
 	Array<Item> materials;//素材
 };
 extern HashTable<ROBOTTYPE, RobotData> RobotLib;
+extern Array<std::pair<ROBOTTYPE, Array<Item>>> Recipes;
 extern Array<Robot> robots_stay;
 //報酬(探索報酬は戻ってきたときに与えられる)
 typedef struct Reward

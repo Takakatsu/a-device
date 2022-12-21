@@ -16,6 +16,7 @@ HashTable<MAPTILE, TileData> TileLib;
 Array<Array<MapTip>> MAINMAP;
 
 HashTable<ROBOTTYPE, RobotData> RobotLib;
+Array<std::pair<ROBOTTYPE, Array<Item>>> Recipes;
 Array<Robot> robots_stay;
 Array<Robot_Activated> robots_active;
 
@@ -120,6 +121,51 @@ void initialize_lib()
 			it.amount = 4.5;
 			rd.materials.push_back(it);
 			RobotLib.emplace(ROBOTTYPE::RT_FIGHT2, rd);
+		}
+	}
+	{
+		//レシピの初期化
+		std::pair<ROBOTTYPE, Array<Item>> rc;
+		Item it;
+		{
+			rc.first = ROBOTTYPE::RT_SEARCH;
+			it.amount = 0.5;
+			it.it = ITEMTYPE::IT_WOOD1;
+			rc.second.push_back(it);
+			Recipes.push_back(rc);
+			rc.second.clear();
+		}
+		{
+			rc.first = ROBOTTYPE::RT_COLLECT1;
+			it.amount = 0.5;
+			it.it = ITEMTYPE::IT_WOOD1;
+			rc.second.push_back(it);
+			Recipes.push_back(rc);
+			rc.second.clear();
+		}
+		{
+			rc.first = ROBOTTYPE::RT_COLLECT2;
+			it.amount = 1.5;
+			it.it = ITEMTYPE::IT_WOOD1;
+			rc.second.push_back(it);
+			Recipes.push_back(rc);
+			rc.second.clear();
+		}
+		{
+			rc.first = ROBOTTYPE::RT_FIGHT1;
+			it.amount = 2.5;
+			it.it = ITEMTYPE::IT_WOOD1;
+			rc.second.push_back(it);
+			Recipes.push_back(rc);
+			rc.second.clear();
+		}
+		{
+			rc.first = ROBOTTYPE::RT_FIGHT2;
+			it.amount = 3.5;
+			it.it = ITEMTYPE::IT_WOOD1;
+			rc.second.push_back(it);
+			Recipes.push_back(rc);
+			rc.second.clear();
 		}
 	}
 	{
