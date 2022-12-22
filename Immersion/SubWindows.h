@@ -500,7 +500,7 @@ public:
 
 			//ロボットUIの描画
 			{
-				right_panel().movedBy(-getContentsRectF().pos).draw(ColorF(1.0, 1.0, 1.0, 0.5));//背景
+				right_panel().movedBy(-getContentsRectF().pos).draw(col_main.withAlpha(128));//背景
 				for (int i = 0; i < robots_stay.size(); i++)
 				{
 					RectF rf = right_panel_icons(i).movedBy(-getContentsRectF().pos);

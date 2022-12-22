@@ -430,9 +430,11 @@ void initialize_lib()
 		TextureLib.emplace(U"BackGround", Texture(U"resource/bg.png"));
 		TextureLib.emplace(U"OSIcon", Texture(U"resource/icon.png"));
 		TextureLib.emplace(U"ICON_OS", Texture(U"resource/icon_os.png"));
+
 		TextureLib.emplace(U"ICON_MAP", Texture(U"resource/icon_map.png"));
 		TextureLib.emplace(U"ICON_INV", Texture(U"resource/icon_inventor.png"));
 		TextureLib.emplace(U"ICON_CMP", Texture(U"resource/icon_command.png"));
+		TextureLib.emplace(U"ICON_MIL", Texture(U"resource/icon_mail.png"));
 
 		TextureLib.emplace(U"Frame", Texture(U"resource/frame.png"));
 		TextureLib.emplace(U"Button_Close", Texture(U"resource/button_close.png"));

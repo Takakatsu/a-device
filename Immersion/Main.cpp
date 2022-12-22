@@ -346,7 +346,7 @@ void Main()
 	//アイコン系
 	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP");
 	my_icons.push_back(&ic_map);
-	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MAP");
+	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL");
 	my_icons.push_back(&ic_mail);
 	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP");
 	my_icons.push_back(&ic_cmp);
