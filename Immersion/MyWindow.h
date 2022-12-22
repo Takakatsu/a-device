@@ -57,9 +57,10 @@ public:
 		{
 			if (i == 5)continue;
 			Color c = (i % 2 == 0) ? Color(255, 0, 0) : Color(0, 255, 0);
+			const int frameimg_margin = 8;
 			getFlameRectF(i)(TextureLib[U"Frame"](
-				Point(MARGIN_FLAME * 2 * ((i - 1) % 3), MARGIN_FLAME * 2 * (2 - (i - 1) / 3)),
-				Point(MARGIN_FLAME * 2, MARGIN_FLAME * 2))).draw(color);
+				Point(frameimg_margin* ((i - 1) % 3), frameimg_margin* (2 - (i - 1) / 3)),
+				Point(frameimg_margin, frameimg_margin))).draw(color);
 		}
 		//タイトルバー
 		getTitleBar(0).draw(Color(0));

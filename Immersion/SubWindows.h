@@ -148,7 +148,7 @@ public:
 class Inventor : public MyWindow
 {
 private:
-	Font font01;
+	Font font01, font02;
 	TextEditState txtstt;
 	bool is_buying = false;
 	Robot robo;
@@ -156,16 +156,18 @@ private:
 public:
 	Inventor() : MyWindow()
 	{
-		font01 = Font(20);
+		font01 = Font(30);
+		font02 = Font(14);
 	};
 	Inventor(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
-		font01 = Font(20);
+		font01 = Font(30);
+		font02 = Font(14);
 	};
 	RectF getSelectionRect(int i)
 	{
 		double margin = 10;
-		Vec2 s_size = Vec2(getContentsRectF().w - margin * 2, 30);
+		Vec2 s_size = Vec2(getContentsRectF().w - margin * 2, font01.height() + font02.height());
 		return RectF(Vec2(margin, margin + (margin + s_size.y) * i), s_size).movedBy(getContentsRectF().pos);
 	}
 	RectF getButtonRect()
@@ -193,7 +195,7 @@ public:
 		robots_stay.push_back(robo);
 		for (int i = 0; i < buy_resource.size(); i++)
 		{
-			ItemBox[buy_resource[i].it] -= buy_resource[i].it;
+			ItemBox[buy_resource[i].it] -= buy_resource[i].amount;
 		}
 		is_buying = false;
 	}
@@ -248,7 +250,21 @@ public:
 				}
 				RectF rc = getSelectionRect(i).movedBy(-getContentsRectF().pos);
 				rc.draw(is_creatable ? Color(255) : Color(127));
-				font01(RobotLib[Recipes[i].first].name).drawAt(rc.center(),Color(0));
+				{
+					Rect rc_dim = getOverlappingRectF(rect, rc.movedBy(rect.pos)).asRect();
+					const ScopedViewport2D viewport2(Rect(rc_dim.pos - Point(1, 1), rc_dim.size + Point(2, 2)));
+					const Transformer2D transformer2{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos + rc.pos) };
+					//内容の描画
+					TextureLib[RobotLib[Recipes[i].first].texture_name].resized(font01.height()).draw(Vec2(0, 0));
+					font01(RobotLib[Recipes[i].first].name).draw(Vec2(font01.height(), 0), Color(0));
+					String str = U"";
+					for (int j = 0; j < Recipes[i].second.size(); j++)
+					{
+						if (j != 0)str += U", ";
+						str += ItemLib[Recipes[i].second[j].it].name + U": " + Format(ItemAmount2Visual(Recipes[i].second[j].it, Recipes[i].second[j].amount));
+					}
+					font02(str).draw(Vec2(0, font01.height()), Color(0));
+				}
 			}
 
 			//購入中は

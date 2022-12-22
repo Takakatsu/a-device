@@ -320,11 +320,6 @@ struct MyPCFilter
 	float time;
 };
 
-struct Swirl
-{
-	float angle;
-};
-
 void Main()
 {
 	Initialize();
@@ -337,7 +332,7 @@ void Main()
 		throw Error{ U"Failed to load a shader file" };
 	}
 
-	char game_phase = 0;
+	char game_phase = 1;
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
 
@@ -362,7 +357,6 @@ void Main()
 
 	while (System::Update())
 	{
-		//変数が変えられない？
 		pc_filter->time = Random(1.0, 5.0);
 
 		if (KeyEscape.down())is_game_exit = true;

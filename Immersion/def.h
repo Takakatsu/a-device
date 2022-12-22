@@ -151,6 +151,7 @@ typedef struct RobotData
 	String name;
 	int max_endurance;
 	Array<Item> materials;//素材
+	String texture_name;//テクスチャの名前
 };
 extern HashTable<ROBOTTYPE, RobotData> RobotLib;
 extern Array<std::pair<ROBOTTYPE, Array<Item>>> Recipes;

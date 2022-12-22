@@ -84,6 +84,7 @@ void initialize_lib()
 			it.it = ITEMTYPE::IT_WOOD1;
 			it.amount = 0.5;
 			rd.materials.push_back(it);
+			rd.texture_name = U"Machine_Search";
 			RobotLib.emplace(ROBOTTYPE::RT_SEARCH, rd);
 		}
 		{
@@ -93,6 +94,7 @@ void initialize_lib()
 			it.it = ITEMTYPE::IT_WOOD1;
 			it.amount = 1.5;
 			rd.materials.push_back(it);
+			rd.texture_name = U"Machine_Collect1";
 			RobotLib.emplace(ROBOTTYPE::RT_COLLECT1, rd);
 		}
 		{
@@ -102,6 +104,7 @@ void initialize_lib()
 			it.it = ITEMTYPE::IT_WOOD1;
 			it.amount = 2.5;
 			rd.materials.push_back(it);
+			rd.texture_name = U"Machine_Collect2";
 			RobotLib.emplace(ROBOTTYPE::RT_COLLECT2, rd);
 		}
 		{
@@ -111,6 +114,7 @@ void initialize_lib()
 			it.it = ITEMTYPE::IT_WOOD1;
 			it.amount = 3.5;
 			rd.materials.push_back(it);
+			rd.texture_name = U"Machine_Fight1";
 			RobotLib.emplace(ROBOTTYPE::RT_FIGHT1, rd);
 		}
 		{
@@ -120,6 +124,7 @@ void initialize_lib()
 			it.it = ITEMTYPE::IT_WOOD1;
 			it.amount = 4.5;
 			rd.materials.push_back(it);
+			rd.texture_name = U"Machine_Fight2";
 			RobotLib.emplace(ROBOTTYPE::RT_FIGHT2, rd);
 		}
 	}
@@ -172,24 +177,20 @@ void initialize_lib()
 		//表示の時だけ係数をかける
 
 		ItemData id;
-		//液体の価値(消費量)は 1 : 3.5
 		id.name = U"液体α";
 		ItemLib.emplace(ITEMTYPE::IT_LIQUID1, id);
 		id.name = U"液体β";
 		ItemLib.emplace(ITEMTYPE::IT_LIQUID2, id);
-		//木の価値(消費量)は 1 : 1.5
 		id.name = U"木材α";
 		ItemLib.emplace(ITEMTYPE::IT_WOOD1, id);
 		id.name = U"木材β";
 		ItemLib.emplace(ITEMTYPE::IT_WOOD2, id);
-		//石の価値(消費量)は 3 : 5 : 7
 		id.name = U"石材α";
 		ItemLib.emplace(ITEMTYPE::IT_ROCK1, id);
 		id.name = U"石材β";
 		ItemLib.emplace(ITEMTYPE::IT_ROCK2, id);
 		id.name = U"石材γ";
 		ItemLib.emplace(ITEMTYPE::IT_ROCK3, id);
-		//鉱物の価値(消費量)は 1 : 2.5 : 4 : 9.5
 		id.name = U"鉱物α";
 		ItemLib.emplace(ITEMTYPE::IT_ORE1, id);
 		id.name = U"鉱物β";
@@ -432,10 +433,17 @@ void initialize_lib()
 		TextureLib.emplace(U"ICON_MAP", Texture(U"resource/icon_map.png"));
 		TextureLib.emplace(U"ICON_INV", Texture(U"resource/icon_inventor.png"));
 		TextureLib.emplace(U"ICON_CMP", Texture(U"resource/icon_command.png"));
+
 		TextureLib.emplace(U"Frame", Texture(U"resource/frame.png"));
 		TextureLib.emplace(U"Button_Close", Texture(U"resource/button_close.png"));
 		TextureLib.emplace(U"Button_Max", Texture(U"resource/button_max.png"));
 		TextureLib.emplace(U"Button_Min", Texture(U"resource/button_min.png"));
+
+		TextureLib.emplace(U"Machine_Search", Texture(U"resource/machine_find.png"));
+		TextureLib.emplace(U"Machine_Collect1", Texture(U"resource/machine_get1.png"));
+		TextureLib.emplace(U"Machine_Collect2", Texture(U"resource/machine_get2.png"));
+		TextureLib.emplace(U"Machine_Fight1", Texture(U"resource/machine_attack1.png"));
+		TextureLib.emplace(U"Machine_Fight2", Texture(U"resource/machine_attack2.png"));
 	}
 }
 
@@ -611,4 +619,13 @@ bool search_map(Point pos, Robot* robo)
 		++it;
 	}
 	return false;
+}
+
+RectF getOverlappingRectF(const RectF& rf1, const RectF& rf2)
+{
+	Vec2 lu = Vec2(Max(rf1.pos.x, rf2.pos.x), Max(rf1.pos.y, rf2.pos.y));
+	Vec2 rd = Vec2(Min(rf1.pos.x + rf1.size.x, rf2.pos.x + rf2.size.x), Min(rf1.pos.y + rf1.size.y, rf2.pos.y + rf2.size.y));
+	RectF rc = RectF(lu, rd-lu);
+	if (lu.x > rd.x || lu.y > rd.y)rc = RectF(Vec2(0, 0), Vec2(0, 0));
+	return rc;
 }
