@@ -290,22 +290,28 @@ public:
 class MAPViewer : public MyWindow
 {
 private:
-	Font font01;
+	Font font01, font02;
 	Vec2 pos_camera;
 	const double r = 10;//図形の半径
 	const double m_r = 12;//マージンの半径
 	double scale = 1;//拡大量
 	double scroll = 0;//機械スクロール
 	Robot* selected_robo = nullptr;//選択されている機械
+	const double margin_frame = 3;
+	const Color col_main = Color(0x41, 0x69, 0xe1),
+		col_br = Color(0x1e, 0x90, 0xff),
+		col_cl = Color(0x00, 0xbf, 0xff);
 public:
 	MAPViewer() : MyWindow()
 	{
-		font01 = Font(20);
+		font01 = Font(25);
+		font02 = Font(13);
 		pos_camera = Vec2(0, 0);
 	};
 	MAPViewer(Vec2 p, Vec2 s) : MyWindow(p, s)
 	{
-		font01 = Font(20);
+		font01 = Font(25);
+		font02 = Font(13);
 		pos_camera = Vec2(0, 0);
 	};
 	double get_right_panel_width()
@@ -323,8 +329,11 @@ public:
 	}
 	RectF right_panel_icons(int n)
 	{
-		RectF robo_rect = RectF(Vec2(getContentsRectF().rightX() - get_right_panel_width() / 2, getContentsRectF().y + 30 + scroll), Vec2(get_right_panel_width() - 10, 60));
-		return robo_rect.movedBy(Vec2(0, 65 * n)).movedBy(-robo_rect.size / 2);
+		const double mag_f = 10;
+		RectF robo_rect = RectF(
+			Vec2(getContentsRectF().rightX() - get_right_panel_width() / 2, getContentsRectF().y + 30 + scroll),
+			Vec2(get_right_panel_width() - mag_f * 2, font01.height() + font02.height() + margin_frame * 2));
+		return robo_rect.movedBy(Vec2(0, (robo_rect.h + mag_f) * n)).movedBy(-robo_rect.size / 2);
 	}
 	void update()
 	{
@@ -495,13 +504,20 @@ public:
 				for (int i = 0; i < robots_stay.size(); i++)
 				{
 					RectF rf = right_panel_icons(i).movedBy(-getContentsRectF().pos);
-					rf.draw((selected_robo == &robots_stay[i]) ? Color(0, 0, 255) : (rf.contains(c_pos)) ? Color(0, 255, 0) : Color(255, 0, 0));
-					font01(robots_stay[i].name).draw(rf.pos);
-					font01(RobotLib[robots_stay[i].rt].name).draw(rf.pos + Vec2(0, rf.size.y / 2));
+					rf.draw((selected_robo == &robots_stay[i]) ? col_cl : (rf.contains(c_pos)) ? col_br : col_main)
+						.drawFrame(margin_frame / 2, 0, Color(0));
+					rf = RectF(rf.pos + Vec2(1, 1) * margin_frame, rf.size - Vec2(1, 1) * 2 * margin_frame);
+					Rect rc_dim = getOverlappingRectF(rect, rf.movedBy(rect.pos)).asRect();
+					const ScopedViewport2D viewport2(Rect(rc_dim.pos - Point(1, 1), rc_dim.size + Point(2, 2)));
+					const Transformer2D transformer2{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos + rf.pos) };
+
+					TextureLib[RobotLib[robots_stay[i].rt].texture_name].resized(font01.height()).draw(Vec2(0, 0));
+					font01(robots_stay[i].name).draw(Vec2(font01.height(), 0),Color(0));
+					font02(RobotLib[robots_stay[i].rt].name).draw(Vec2(0, font01.height()), Color(0));
 				}
 			}
 		}
-		drawFlame();
+		drawFlame(col_main);
 	}
 };
 
