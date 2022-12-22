@@ -512,7 +512,7 @@ public:
 					const Transformer2D transformer2{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos + rf.pos) };
 
 					TextureLib[RobotLib[robots_stay[i].rt].texture_name].resized(font01.height()).draw(Vec2(0, 0));
-					font01(robots_stay[i].name).draw(Vec2(font01.height(), 0),Color(0));
+					font01(robots_stay[i].name).draw(Vec2(font01.height(), 0), Color(0));
 					font02(RobotLib[robots_stay[i].rt].name).draw(Vec2(0, font01.height()), Color(0));
 				}
 			}

@@ -374,7 +374,24 @@ void initialize_lib()
 					else t.tile = MAPTILE::MT_ROCK3;
 				}
 				//敵の指定
-				t.et = ENEMYTYPE::ET_NONE;
+				{
+					t.et = ENEMYTYPE::ET_NONE;
+					double distance = Vec2(Abs(MAP_CENTER_X - i), Abs(MAP_CENTER_Y - j)).length();
+					double parcent = Clamp((distance - MAP_CENTER_X / 7) / 21, 0.0, 1.0);
+					if (RandomBool(parcent))
+					{
+						if (RandomBool()) t.et = ENEMYTYPE::ET_TYPE2;
+						else t.et = ENEMYTYPE::ET_TYPE1;
+					}
+					//超えられない壁
+					distance = Vec2(Abs(MAP_CENTER_X - i), Abs(MAP_CENTER_Y - j)).length();
+					parcent = Clamp((distance - MAP_CENTER_X / 3) / 21, 0.0, 1.0);
+					if (RandomBool(parcent))
+					{
+						t.et = ENEMYTYPE::ET_WALL;
+					}
+				}
+
 				t.e_life = 0;
 				if (i == MAP_CENTER_X && j == MAP_CENTER_Y)
 				{
@@ -627,7 +644,7 @@ RectF getOverlappingRectF(const RectF& rf1, const RectF& rf2)
 {
 	Vec2 lu = Vec2(Max(rf1.pos.x, rf2.pos.x), Max(rf1.pos.y, rf2.pos.y));
 	Vec2 rd = Vec2(Min(rf1.pos.x + rf1.size.x, rf2.pos.x + rf2.size.x), Min(rf1.pos.y + rf1.size.y, rf2.pos.y + rf2.size.y));
-	RectF rc = RectF(lu, rd-lu);
+	RectF rc = RectF(lu, rd - lu);
 	if (lu.x > rd.x || lu.y > rd.y)rc = RectF(Vec2(0, 0), Vec2(0, 0));
 	return rc;
 }
