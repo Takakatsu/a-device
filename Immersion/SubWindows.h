@@ -153,6 +153,11 @@ private:
 	bool is_buying = false;
 	Robot robo;
 	Array<Item> buy_resource;
+	const int frame_padding = 5;
+	const Color
+		col_bg = Color(0xa7, 0x54, 0xcb),
+		col_lt = Color(0xc3, 0x8b, 0xdc),
+		col_dk = Color(0x8b, 0x36, 0xb0);
 public:
 	Inventor() : MyWindow()
 	{
@@ -167,7 +172,7 @@ public:
 	RectF getSelectionRect(int i)
 	{
 		double margin = 10;
-		Vec2 s_size = Vec2(getContentsRectF().w - margin * 2, font01.height() + font02.height());
+		Vec2 s_size = Vec2(getContentsRectF().w - margin * 2, font01.height() + font02.height() + frame_padding * 2);
 		return RectF(Vec2(margin, margin + (margin + s_size.y) * i), s_size).movedBy(getContentsRectF().pos);
 	}
 	RectF getButtonRect()
@@ -240,7 +245,7 @@ public:
 			const ScopedViewport2D viewport(Rect(rect.pos - Point(1, 1), rect.size + Point(2, 2)));
 			const Transformer2D transformer{ Mat3x2::Identity(), Mat3x2::Translate(rect.pos) };
 			//以下で描画
-			RectF(Vec2(0, 0), size).draw(Color(32));//背景
+			RectF(Vec2(0, 0), size).draw(col_bg);//背景
 			for (int i = 0; i < Recipes.size(); i++)
 			{
 				bool is_creatable = true;
@@ -249,7 +254,8 @@ public:
 					if (ItemBox[Recipes[i].second[j].it] < Recipes[i].second[j].amount)is_creatable = false;
 				}
 				RectF rc = getSelectionRect(i).movedBy(-getContentsRectF().pos);
-				rc.draw(is_creatable ? Color(255) : Color(127));
+				rc.draw(is_creatable ? col_lt : col_dk).drawFrame(frame_padding / 2, 0, Color(0));
+				rc = RectF(rc.pos + Vec2(frame_padding, frame_padding), rc.size - Vec2(1, 1) * 2 * frame_padding);
 				{
 					Rect rc_dim = getOverlappingRectF(rect, rc.movedBy(rect.pos)).asRect();
 					const ScopedViewport2D viewport2(Rect(rc_dim.pos - Point(1, 1), rc_dim.size + Point(2, 2)));
@@ -277,7 +283,7 @@ public:
 				getButtonRect().draw(getButtonRect().mouseOver() ? Color(255) : Color(127));
 			}
 		}
-		drawFlame();
+		drawFlame(col_bg);
 	}
 };
 
