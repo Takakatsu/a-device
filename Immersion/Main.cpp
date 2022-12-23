@@ -333,6 +333,7 @@ void Main()
 	}
 
 	char game_phase = 1;
+	bool is_invoked_msg_1 = false;
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
 
@@ -417,8 +418,24 @@ void Main()
 			break;
 			case 1:
 			{
-				Cursor::RequestStyle(CursorStyle::Default);
+				//限定イベント
+				if (!is_invoked_msg_1&&MouseL.down())
+				{
+					MailData md;
+					md.from = U"supporter-bot";
+					md.title = U"通知";
+					md.text = U"幾つかの装置が破損しました。\n一時的に端末を停止します。";
+					md.text = U"以下の破損が確認されました。\n・推進用スラスター\n・気圧調整装置\n・\n・\n・";
+					MailLib.push_front(md);
+					GameLog lg;
+					lg.text = U"メッセージが追加されました";
+					lg.time = DateTime::Now();
+					logs.push_front(lg);
+					is_invoked_msg_1 = true;
+				}
+
 				//マウス操作
+				Cursor::RequestStyle(CursorStyle::Default);
 				Mouse_Operation();
 
 				//各種処理
@@ -451,7 +468,7 @@ void Main()
 				{
 					double y_pos = SCENE_HEIGHT - UNDERBAR_HEIGHT;
 					constexpr double height = 60;
-					constexpr double width = 240;
+					constexpr double width = 480;
 					for (auto it = logs_tmp.begin(); it != logs_tmp.end();)
 					{
 						if (it->remain_time > 0)
