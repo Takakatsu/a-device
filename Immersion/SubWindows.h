@@ -120,7 +120,7 @@ public:
 									penPos.y += font01.height() + margin * 2;
 									y_pos += font01.height() + margin * 2;
 									Line(Vec2(x_pos_text_start + margin, y_pos), Vec2(x_pos_text_end - margin, y_pos)).draw(Color(0));
-									continue;
+									if(glyph.codePoint==U'\n')continue;
 								}
 								glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0));
 								penPos.x += glyph.xAdvance;

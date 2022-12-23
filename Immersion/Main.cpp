@@ -333,7 +333,7 @@ void Main()
 	}
 
 	char game_phase = 1;
-	bool is_invoked_msg_1 = false;
+	char state_event_msg = 0;
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
 
@@ -412,6 +412,7 @@ void Main()
 				}
 				else
 				{
+					passed_time = 0;
 					game_phase = 1;
 				}
 			}
@@ -419,19 +420,37 @@ void Main()
 			case 1:
 			{
 				//限定イベント
-				if (!is_invoked_msg_1&&MouseL.down())
+				if (state_event_msg == 0 && MouseL.down())
 				{
 					MailData md;
 					md.from = U"supporter-bot";
 					md.title = U"通知";
-					md.text = U"幾つかの装置が破損しました。\n一時的に端末を停止します。";
-					md.text = U"以下の破損が確認されました。\n・推進用スラスター\n・気圧調整装置\n・\n・\n・";
+					md.text = U"以下の破損が確認されました。\n・推進用スラスター\n・気圧調整装置\n・搭乗者の脳機能\n・船外ユニット各種\n\nプロトコル「墜落」に従い、セットアップを行います。";
 					MailLib.push_front(md);
 					GameLog lg;
 					lg.text = U"メッセージが追加されました";
 					lg.time = DateTime::Now();
 					logs.push_front(lg);
-					is_invoked_msg_1 = true;
+					state_event_msg = 1;
+					passed_time = 0;
+				}
+				else if (state_event_msg == 1)
+				{
+					passed_time += delta;
+					if (my_wins.includes(&s_mail) && passed_time > 5)
+					{
+						MailData md;
+						md.from = U"supporter-bot";
+						md.title = U"正常化プログラム";
+						md.text = U"記憶は正常でしょうか？\n先程貴方は探査予定の惑星へと墜落しました。\n指令に関しては過去のメッセージにも残っている通り、この惑星の探査及び生存圏の確保となります。\n\n船外ユニットが破損したため外に出ることは叶いませんが、船内からでも探査機を派遣することは可能なので、そちらより探査を行ってください。\n\nまた、気圧制御装置にも破損が見られるため30分以上の生存は絶望的ですが、次の探査者の為に情報の入手を進めてください。";
+						MailLib.push_front(md);
+						GameLog lg;
+						lg.text = U"メッセージが追加されました";
+						lg.time = DateTime::Now();
+						logs.push_front(lg);
+						state_event_msg = 2;
+						passed_time = 0;
+					}
 				}
 
 				//マウス操作
