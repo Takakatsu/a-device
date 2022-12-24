@@ -448,7 +448,9 @@ void initialize_lib()
 	}
 	{
 		//各種音源のセットアップ
-		AudioLib.emplace(U"SetUpBGM", Audio(U"resource/computer_startup.ogg"));
+		AudioLib.emplace(U"SetUpBGM", Audio(U"resource/computer_startup.ogg", Arg::loopBegin = 30s, Arg::loopEnd = 60s));
+		AudioLib.emplace(U"SE_MSG", Audio(U"resource/se_message.ogg"));
+		AudioLib.emplace(U"SE_TOUCH", Audio(U"resource/se_touch.ogg"));
 	}
 	{
 		//各種画像のセットアップ
@@ -611,6 +613,7 @@ bool search_map(Point pos, Robot* robo)
 				lg.time = DateTime::Now();
 				lg.text = robo->name + U"は探索に向かいました";
 				logs.push_front(lg);
+				AudioLib[U"SE_TOUCH"].playOneShot();
 			}
 			//死亡可能性ログの出力
 			if (is_break)

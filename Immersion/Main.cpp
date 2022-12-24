@@ -292,6 +292,7 @@ void Update_Robot()
 				lg.text = it->rb.name + U"は" + ItemLib[it->rw.items[i].it].name + U"を" + Format(it->rw.items[i].amount) + U"kg 回収しました";
 				logs.push_front(lg);
 			}
+			AudioLib[U"SE_MSG"].playOneShot();
 
 			//所持しているロボットに追加
 			robots_stay.push_back((*it).rb);
@@ -332,7 +333,7 @@ void Main()
 		throw Error{ U"Failed to load a shader file" };
 	}
 
-	char game_phase = 1;
+	char game_phase = 0;
 	char state_event_msg = 0;
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
@@ -431,6 +432,7 @@ void Main()
 					lg.text = U"メッセージが追加されました";
 					lg.time = DateTime::Now();
 					logs.push_front(lg);
+					AudioLib[U"SE_MSG"].playOneShot();
 					state_event_msg = 1;
 					passed_time = 0;
 				}
@@ -448,6 +450,7 @@ void Main()
 						lg.text = U"メッセージが追加されました";
 						lg.time = DateTime::Now();
 						logs.push_front(lg);
+						AudioLib[U"SE_MSG"].playOneShot();
 						state_event_msg = 2;
 						passed_time = 0;
 					}
