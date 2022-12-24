@@ -457,16 +457,34 @@ void Main()
 				}
 				else if (state_event_msg == 2)
 				{
-					Print(passed_time);
 					//エンディングへ向かうメッセージの処理
 					passed_time += delta;
 					if (passed_time >= 1500)
 					{
-						//ここでスコアを評価し、スコアごとに違うメッセージを送る
 						MailData md;
 						md.from = U"不明";
 						md.title = U"無題";
-						md.text = U"";
+						//スコア評価
+						int cnt_num = 0, cnt_opn = 0;
+						for (int i = 0; i < MAINMAP.size(); i++)
+						{
+							for (int j = 0; j < MAINMAP[i].size(); j++)
+							{
+								if (MAINMAP[i][j].et != ET_WALL) {
+									cnt_num++;
+									if (MAINMAP[i][j].is_found)cnt_opn++;
+								}
+							}
+						}
+						double score = cnt_opn / (double)cnt_num;
+						if (score > 0.2)
+						{
+							md.text = U"";
+						}
+						else
+						{
+							md.text = U"";
+						}
 						MailLib.push_back(md);
 						GameLog lg;
 						lg.text = U"メッセージが追加されました";
