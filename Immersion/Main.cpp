@@ -455,6 +455,37 @@ void Main()
 						passed_time = 0;
 					}
 				}
+				else if (state_event_msg == 2)
+				{
+					Print(passed_time);
+					//エンディングへ向かうメッセージの処理
+					passed_time += delta;
+					if (passed_time >= 1500)
+					{
+						//ここでスコアを評価し、スコアごとに違うメッセージを送る
+						MailData md;
+						md.from = U"不明";
+						md.title = U"無題";
+						md.text = U"";
+						MailLib.push_back(md);
+						GameLog lg;
+						lg.text = U"メッセージが追加されました";
+						lg.time = DateTime::Now();
+						logs.push_front(lg);
+						AudioLib[U"SE_MSG"].playOneShot();
+						state_event_msg = 3;
+						passed_time = 0;
+					}
+				}
+				else if (state_event_msg == 3)
+				{
+					//エンディングへと
+					passed_time += delta;
+					if (passed_time >= 30)
+					{
+						game_phase = 2;
+					}
+				}
 
 				//マウス操作
 				Cursor::RequestStyle(CursorStyle::Default);
