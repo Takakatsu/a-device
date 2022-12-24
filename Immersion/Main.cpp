@@ -426,7 +426,7 @@ void Main()
 					md.from = U"supporter-bot";
 					md.title = U"通知";
 					md.text = U"以下の破損が確認されました。\n・推進用スラスター\n・気圧調整装置\n・搭乗者の脳機能\n・船外ユニット各種\n\nプロトコル「墜落」に従い、セットアップを行います。";
-					MailLib.push_front(md);
+					MailLib.push_back(md);
 					GameLog lg;
 					lg.text = U"メッセージが追加されました";
 					lg.time = DateTime::Now();
@@ -437,13 +437,13 @@ void Main()
 				else if (state_event_msg == 1)
 				{
 					passed_time += delta;
-					if (my_wins.includes(&s_mail) && passed_time > 5)
+					if (my_wins.includes(&s_mail) && passed_time > 30)
 					{
 						MailData md;
 						md.from = U"supporter-bot";
 						md.title = U"正常化プログラム";
 						md.text = U"記憶は正常でしょうか？\n先程貴方は探査予定の惑星へと墜落しました。\n指令に関しては過去のメッセージにも残っている通り、この惑星の探査及び生存圏の確保となります。\n\n船外ユニットが破損したため外に出ることは叶いませんが、船内からでも探査機を派遣することは可能なので、そちらより探査を行ってください。\n\nまた、気圧制御装置にも破損が見られるため30分以上の生存は絶望的ですが、次の探査者の為に情報の入手を進めてください。";
-						MailLib.push_front(md);
+						MailLib.push_back(md);
 						GameLog lg;
 						lg.text = U"メッセージが追加されました";
 						lg.time = DateTime::Now();

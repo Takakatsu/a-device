@@ -24,17 +24,20 @@ public:
 	};
 	void update()
 	{
-		if (KeySpace.down())
+		if (win_active == this)
 		{
-			is_reading = !is_reading;
-		}
-		if (KeyDown.down())
-		{
-			mail_num = (mail_num + 1) % MailLib.size();
-		}
-		if (KeyUp.down())
-		{
-			mail_num = (mail_num + MailLib.size() - 1) % MailLib.size();
+			if (KeySpace.down())
+			{
+				is_reading = !is_reading;
+			}
+			if (KeyUp.down())
+			{
+				mail_num = (mail_num + 1) % MailLib.size();
+			}
+			if (KeyDown.down())
+			{
+				mail_num = (mail_num + MailLib.size() - 1) % MailLib.size();
+			}
 		}
 	}
 	void click(Vec2 pos, bool is_left)
@@ -48,16 +51,18 @@ public:
 
 			//UI
 			{
-				for (int i = 0; i < mail_rects.size(); i++)
+				int cnt = 0;
+				for (int i = mail_rects.size() - 1; i >= 0; i--)
 				{
 					if (mail_rects[i].contains(pos) && MailLib.size() > i)
 					{
-						if (mail_num == i || !is_reading)
+						if (mail_num == cnt || !is_reading)
 						{
 							is_reading = !is_reading;
 						}
-						mail_num = i;
+						mail_num = cnt;
 					}
+					cnt++;
 				}
 			}
 		}
@@ -77,10 +82,10 @@ public:
 				constexpr double margin = 5;
 				Rect rf = getContentsRectF().asRect();
 				const double x_pos_title_start = rf.w / 5, x_pos_text_start = rf.w * 2 / 5, x_pos_text_end = rf.w;
-				for (int i = 0; i < MailLib.size(); i++)
+				for (int i = MailLib.size() - 1; i >= 0; i--)
 				{
 					double y_pos_tmp = y_pos;
-					if (i != 0)Line(Vec2(0, y_pos), Vec2(rf.w, y_pos)).draw(Color(0));
+					if (i != MailLib.size() - 1)Line(Vec2(0, y_pos), Vec2(rf.w, y_pos)).draw(Color(0));
 					Line(Vec2(x_pos_title_start, y_pos + margin), Vec2(x_pos_title_start, y_pos + margin + font01.height())).draw(Color(0));
 					Line(Vec2(x_pos_text_start, y_pos + margin), Vec2(x_pos_text_start, y_pos + margin + font01.height())).draw(Color(0));
 					double text_y_pos = y_pos + margin;
@@ -120,7 +125,7 @@ public:
 									penPos.y += font01.height() + margin * 2;
 									y_pos += font01.height() + margin * 2;
 									Line(Vec2(x_pos_text_start + margin, y_pos), Vec2(x_pos_text_end - margin, y_pos)).draw(Color(0));
-									if(glyph.codePoint==U'\n')continue;
+									if (glyph.codePoint == U'\n')continue;
 								}
 								glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), Color(0));
 								penPos.x += glyph.xAdvance;
