@@ -78,52 +78,32 @@ void initialize_lib()
 		RobotData rd;
 		Item it;
 		{
-			rd.materials.clear();
 			rd.name = U"探査機";
 			rd.max_endurance = 1000;
-			it.it = ITEMTYPE::IT_WOOD1;
-			it.amount = 0.5;
-			rd.materials.push_back(it);
 			rd.texture_name = U"Machine_Search";
 			RobotLib.emplace(ROBOTTYPE::RT_SEARCH, rd);
 		}
 		{
-			rd.materials.clear();
 			rd.name = U"回収機α";
 			rd.max_endurance = 1000;
-			it.it = ITEMTYPE::IT_WOOD1;
-			it.amount = 1.5;
-			rd.materials.push_back(it);
 			rd.texture_name = U"Machine_Collect1";
 			RobotLib.emplace(ROBOTTYPE::RT_COLLECT1, rd);
 		}
 		{
-			rd.materials.clear();
 			rd.name = U"回収機β";
 			rd.max_endurance = 1000;
-			it.it = ITEMTYPE::IT_WOOD1;
-			it.amount = 2.5;
-			rd.materials.push_back(it);
 			rd.texture_name = U"Machine_Collect2";
 			RobotLib.emplace(ROBOTTYPE::RT_COLLECT2, rd);
 		}
 		{
-			rd.materials.clear();
 			rd.name = U"戦闘機α";
 			rd.max_endurance = 1000;
-			it.it = ITEMTYPE::IT_WOOD1;
-			it.amount = 3.5;
-			rd.materials.push_back(it);
 			rd.texture_name = U"Machine_Fight1";
 			RobotLib.emplace(ROBOTTYPE::RT_FIGHT1, rd);
 		}
 		{
-			rd.materials.clear();
 			rd.name = U"戦闘機β";
 			rd.max_endurance = 1000;
-			it.it = ITEMTYPE::IT_WOOD1;
-			it.amount = 4.5;
-			rd.materials.push_back(it);
 			rd.texture_name = U"Machine_Fight2";
 			RobotLib.emplace(ROBOTTYPE::RT_FIGHT2, rd);
 		}
