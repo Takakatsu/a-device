@@ -3,16 +3,12 @@
 #include<Siv3D.hpp> // OpenSiv3D v0.6.5
 
 //////定数//////
-
-//#define SCENE_WIDTH 960
-//#define SCENE_HEIGHT 540
+//画面サイズ
 #define SCENE_WIDTH 1920
 #define SCENE_HEIGHT 1080
-
 //マップ系
 #define MAP_CENTER_X 32
 #define MAP_CENTER_Y 32
-
 //アイコン系
 #define MARGIN_ICON 80//アイコンの間隔
 #define ICON_SIZE 64//アイコンのサイズ
@@ -21,15 +17,29 @@
 #define MARGIN_TITLEBAR 30//タイトルバーの太さ
 #define MARGIN_TITLEBAR_BUTTON 50//タイトルバーのボタンの太さ
 #define UNDERBAR_HEIGHT 40//下のバーの太さ
+//ゲームバランス
+#define GAMETIME 1500//ゲームの終了時間(秒)
 
 extern bool is_game_exit;
 
-//時間
-extern double passed_time;
 //デルタ秒
 extern double delta;
 //マウス座標
 extern Vec2 cursor_pos;
+
+typedef struct GAMESTATE
+{
+	char phase;//フェーズ(0が起動、1がゲーム、2がエンディング)
+	char event_msg;//メッセージの時間的進捗
+	double passed_time;//時間
+	//評価系
+	char cnt_opn;//開いている数のカウント
+	char good_eval_cnt;
+	char bad_eval_cnt;
+	bool is_said_enemy_description;//敵に関するメッセージを表示したか
+	bool is_good_end;//グッドエンドか否か
+};
+extern int hit_enemy_cnt;//敵に遭遇した回数
 
 enum CLICKED_TYPE
 {

@@ -4,6 +4,7 @@ bool is_game_exit = false;
 double passed_time = 0;
 double delta;
 Vec2 cursor_pos;
+int hit_enemy_cnt;
 
 CLICKED_TYPE g_clicktype;
 
@@ -78,31 +79,31 @@ void initialize_lib()
 		RobotData rd;
 		Item it;
 		{
-			rd.name = U"探査機";
+			rd.name = U"惑星探査機";
 			rd.max_endurance = 1000;
 			rd.texture_name = U"Machine_Search";
 			RobotLib.emplace(ROBOTTYPE::RT_SEARCH, rd);
 		}
 		{
-			rd.name = U"回収機α";
+			rd.name = U"物質回収機α";
 			rd.max_endurance = 1000;
 			rd.texture_name = U"Machine_Collect1";
 			RobotLib.emplace(ROBOTTYPE::RT_COLLECT1, rd);
 		}
 		{
-			rd.name = U"回収機β";
+			rd.name = U"物質回収機β";
 			rd.max_endurance = 1000;
 			rd.texture_name = U"Machine_Collect2";
 			RobotLib.emplace(ROBOTTYPE::RT_COLLECT2, rd);
 		}
 		{
-			rd.name = U"戦闘機α";
+			rd.name = U"高出力攻撃兵器α";
 			rd.max_endurance = 1000;
 			rd.texture_name = U"Machine_Fight1";
 			RobotLib.emplace(ROBOTTYPE::RT_FIGHT1, rd);
 		}
 		{
-			rd.name = U"戦闘機β";
+			rd.name = U"高強度攻撃兵器β";
 			rd.max_endurance = 1000;
 			rd.texture_name = U"Machine_Fight2";
 			RobotLib.emplace(ROBOTTYPE::RT_FIGHT2, rd);
@@ -491,12 +492,15 @@ bool search_map(Point pos, Robot* robo)
 				{
 				case ROBOTTYPE::RT_SEARCH:
 					is_break = true;
+					hit_enemy_cnt++;
 					break;
 				case ROBOTTYPE::RT_COLLECT1:
 					is_break = true;
+					hit_enemy_cnt++;
 					break;
 				case ROBOTTYPE::RT_COLLECT2:
 					is_break = true;
+					hit_enemy_cnt++;
 					break;
 				case ROBOTTYPE::RT_FIGHT1:
 					MAINMAP[pos.x][pos.y].et = ENEMYTYPE::ET_NONE;
@@ -517,12 +521,15 @@ bool search_map(Point pos, Robot* robo)
 				{
 				case ROBOTTYPE::RT_SEARCH:
 					is_break = true;
+					hit_enemy_cnt++;
 					break;
 				case ROBOTTYPE::RT_COLLECT1:
 					is_break = true;
+					hit_enemy_cnt++;
 					break;
 				case ROBOTTYPE::RT_COLLECT2:
 					is_break = true;
+					hit_enemy_cnt++;
 					break;
 				case ROBOTTYPE::RT_FIGHT1:
 					MAINMAP[pos.x][pos.y].e_life -= Random(1, 5);
@@ -582,6 +589,7 @@ bool search_map(Point pos, Robot* robo)
 			case ENEMYTYPE::ET_WALL:
 			{
 				is_break = true;
+				hit_enemy_cnt++;
 			}
 			break;
 			default:

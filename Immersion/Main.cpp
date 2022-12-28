@@ -333,8 +333,7 @@ void Main()
 		throw Error{ U"Failed to load a shader file" };
 	}
 
-	char game_phase = 1;
-	char state_event_msg = 0;
+	GAMESTATE gamestate = { 1,0,0,0,0,0,false,false };
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
 
@@ -372,36 +371,36 @@ void Main()
 			// レンダーターゲットを renderTexture_all に設定
 			Graphics2D::SetPSConstantBuffer(1, pc_filter);
 			const ScopedRenderTarget2D target{ renderTexture_all };
-			switch (game_phase)
+			switch (gamestate.phase)
 			{
-			case 0:
+			case 0://OP
 			{
 				Cursor::RequestStyle(CursorStyle::Hidden);
-				passed_time += delta;
+				gamestate.passed_time += delta;
 				if (!AudioLib[U"SetUpBGM"].isPlaying())
 				{
 					AudioLib[U"SetUpBGM"].play();
 				}
-				if (passed_time < 3)
+				if (gamestate.passed_time < 3)
 				{
 					if (RandomBool(0.005))
 					{
 						Rect(Point(0, 0), Scene::Size()).draw(Color(127));
 					}
 				}
-				else if (passed_time < 10)
+				else if (gamestate.passed_time < 10)
 				{
-					String p = String((int(passed_time * 4)) % 4, '.');
+					String p = String((int(gamestate.passed_time * 4)) % 4, '.');
 
 					font_initiation(U"Setup Initialization" + p).draw(Point(0, 0), Color(255));
 				}
-				else if (passed_time < 30)
+				else if (gamestate.passed_time < 30)
 				{
 					TextureLib[U"OSIcon"].drawAt(Point(SCENE_WIDTH / 2, SCENE_HEIGHT / 3));
 					constexpr int n = 17;
 					for (int i = 0; i < n; i++)
 					{
-						const double t = passed_time - i;
+						const double t = gamestate.passed_time - i;
 						double sum = 0;
 						for (int j = 1; j <= 5; j += 2)
 						{
@@ -413,15 +412,16 @@ void Main()
 				}
 				else
 				{
-					passed_time = 0;
-					game_phase = 1;
+					gamestate.passed_time = 0;
+					gamestate.phase = 1;
 				}
 			}
 			break;
-			case 1:
+			case 1://Game
 			{
-				//限定イベント
-				if (state_event_msg == 0 && MouseL.down())
+				////限定イベント////
+				//初期メッセージ1
+				if (gamestate.event_msg == 0 && MouseL.down())
 				{
 					MailData md;
 					md.from = U"supporter-bot";
@@ -433,57 +433,138 @@ void Main()
 					lg.time = DateTime::Now();
 					logs.push_front(lg);
 					AudioLib[U"SE_MSG"].playOneShot();
-					state_event_msg = 1;
-					passed_time = 0;
+					gamestate.event_msg = 1;
+					gamestate.passed_time = 0;
+					//開いているマスの数を計算
+					int cnt_opn = 0;
+					for (int i = 0; i < MAINMAP.size(); i++)
+					{
+						for (int j = 0; j < MAINMAP[i].size(); j++)
+						{
+							if (MAINMAP[i][j].is_found)cnt_opn++;
+						}
+					}
+					gamestate.cnt_opn = cnt_opn;
 				}
-				else if (state_event_msg == 1)
+				//初期メッセージ2
+				else if (gamestate.event_msg == 1)
 				{
-					passed_time += delta;
-					if (my_wins.includes(&s_mail) && passed_time > 30)
+					gamestate.passed_time += delta;
+					if (my_wins.includes(&s_mail) && gamestate.passed_time > 30)
 					{
 						MailData md;
 						md.from = U"supporter-bot";
-						md.title = U"正常化プログラム";
-						md.text = U"記憶は正常ですか？\n\n貴方は先程、目的の惑星へと墜落しました。\n外部接続扉が破損したため、船外に出ることはできませんが、船内からでも探査機を派遣することは可能です。\n予定通り、この惑星の探査及び生存圏の確保を行ってください。\n\nまた、電源装置の破損から、この端末の寿命としては30分が限度となります。\n次の探査者の為に、急ぎ情報の入手を進めてください。";
+						md.title = U"通知";
+						md.text = U"脳機能や記憶は正常ですか？\n\n貴方は先程、目的の惑星へと墜落しました。\n外部接続扉が破損したため、船外に出ることはできませんが、船内からでも探査機を派遣することは可能です。\n予定通り、この惑星の探査及び生存圏の確保を行ってください。\n\nまた、電源装置の破損から、この端末の寿命としては約30分が限度となります。\n次の探査者の為に、急ぎ情報の入手を進めてください。";
 						MailLib.push_back(md);
 						GameLog lg;
 						lg.text = U"メッセージが追加されました";
 						lg.time = DateTime::Now();
 						logs.push_front(lg);
 						AudioLib[U"SE_MSG"].playOneShot();
-						state_event_msg = 2;
-						passed_time = 0;
+						gamestate.event_msg = 2;
+						gamestate.passed_time = 0;
 					}
 				}
-				else if (state_event_msg == 2)
+				//75%msg
+				else if (gamestate.event_msg == 2)
 				{
-					//エンディングへ向かうメッセージの処理
-					passed_time += delta;
-					if (passed_time >= 1500)
+					gamestate.passed_time += delta;
+					if (gamestate.passed_time >= GAMETIME / 4)
 					{
 						MailData md;
-						md.from = U"不明";
-						md.title = U"無題";
-						//スコア評価
-						int cnt_num = 0, cnt_opn = 0;
-						for (int i = 0; i < MAINMAP.size(); i++)
+						md.from = U"supporter-bot";
+						md.title = U"通知";
+						//ここで評価などをし、メッセージを作成
 						{
-							for (int j = 0; j < MAINMAP[i].size(); j++)
+							//開いているマスの数を計算
+							int cnt_opn = 0;
+							for (int i = 0; i < MAINMAP.size(); i++)
 							{
-								if (MAINMAP[i][j].et != ET_WALL) {
-									cnt_num++;
+								for (int j = 0; j < MAINMAP[i].size(); j++)
+								{
+									if (MAINMAP[i][j].et != ET_WALL) {
+										if (MAINMAP[i][j].is_found)cnt_opn++;
+									}
+								}
+							}
+							md.text = U"残存電力が75%を切りました。";
+							bool tf = false;
+							if (gamestate.cnt_opn < cnt_opn)
+							{
+								tf = true;
+								gamestate.good_eval_cnt++;
+								md.text += U"\n\nお疲れ様です。\n自分の役割はお忘れではないようですね。\nその調子で探索を進めてください。";
+							}
+							if (hit_enemy_cnt > 5 && !gamestate.is_said_enemy_description)
+							{
+								tf = true;
+								md.text += U"\n\n同じ場所に何度探査機を送り込んでも帰ってこない場合、そこには何らかの生物や異常性が存在する可能性があります。\n各種兵器を送り込んでも改善しない場合、その場所の探索は見送るべきでしょう。";
+								gamestate.is_said_enemy_description = true;
+							}
+							if (!tf)
+							{
+								gamestate.bad_eval_cnt++;
+								md.text = U"\n\n端末の操作方法をお忘れですか？\nWLDより探査機を送り込むことでその場所の地形情報を入手できます。\nまた、適度に回収機を送り、物質を入手することで予備の機体を作ることができるでしょう。";
+							}
+							gamestate.cnt_opn = cnt_opn;
+						}
+						MailLib.push_back(md);
+						GameLog lg;
+						lg.text = U"メッセージが追加されました";
+						lg.time = DateTime::Now();
+						logs.push_front(lg);
+						AudioLib[U"SE_MSG"].playOneShot();
+						gamestate.event_msg = 3;
+					}
+				}
+				//50%msg
+				else if (gamestate.event_msg == 3)
+				{
+					gamestate.passed_time += delta;
+					if (gamestate.passed_time >= GAMETIME / 2)
+					{
+						MailData md;
+						md.from = U"supporter-bot";
+						md.title = U"通知";
+						//ここで評価などをし、メッセージを作成
+						{
+							//開いているマスの数を計算
+							int cnt_opn = 0;
+							for (int i = 0; i < MAINMAP.size(); i++)
+							{
+								for (int j = 0; j < MAINMAP[i].size(); j++)
+								{
 									if (MAINMAP[i][j].is_found)cnt_opn++;
 								}
 							}
-						}
-						double score = cnt_opn / (double)cnt_num;
-						if (score > 0.2)
-						{
-							md.text = U"お疲れのところ申し訳ありません。\n\n率直に述べさせていただきますと、先程までの指令";
-						}
-						else
-						{
-							md.text = U"";
+							md.text = U"残存電力が50%を切りました。";
+							bool tf = false;
+							if (gamestate.cnt_opn < cnt_opn)
+							{
+								tf = true;
+								gamestate.good_eval_cnt++;
+								if (gamestate.good_eval_cnt == 1)
+								{
+									md.text += U"\n\nお疲れ様です。\n自分の役割はお忘れではないようですね。\nその調子で探索を進めてください。";
+								}
+								else
+								{
+									md.text += U"\n\nお疲れ様です。\n誠意をもって指令を遂行できているようですね。\nそのまま探索を進めてください。";
+								}
+							}
+							if (hit_enemy_cnt > 5 && !gamestate.is_said_enemy_description)
+							{
+								tf = true;
+								md.text += U"\n\n同じ場所に何度探査機を送り込んでも帰ってこない場合、そこには何らかの生物や異常性が存在する可能性があります。\n各種兵器を送り込んでも改善しない場合、その場所の探索は見送るべきでしょう。";
+								gamestate.is_said_enemy_description = true;
+							}
+							if (!tf)
+							{
+								gamestate.bad_eval_cnt++;
+								md.text = U"\n\nもうやり方はお忘れではないでしょう。自分の役割をお忘れですか？\nどうせそこから出ることもできないのですから、暇つぶしにでも進めてみたらいかがですか？";
+							}
+							gamestate.cnt_opn = cnt_opn;
 						}
 						MailLib.push_back(md);
 						GameLog lg;
@@ -491,17 +572,146 @@ void Main()
 						lg.time = DateTime::Now();
 						logs.push_front(lg);
 						AudioLib[U"SE_MSG"].playOneShot();
-						state_event_msg = 3;
-						passed_time = 0;
+						gamestate.event_msg = 4;
 					}
 				}
-				else if (state_event_msg == 3)
+				//25%msg
+				else if (gamestate.event_msg == 4)
+				{
+					gamestate.passed_time += delta;
+					if (gamestate.passed_time >= GAMETIME * 3 / 4)
+					{
+						MailData md;
+						md.from = U"supporter-bot";
+						md.title = U"通知";
+						//ここで評価などをし、メッセージを作成
+						{
+							//開いているマスの数を計算
+							int cnt_opn = 0;
+							for (int i = 0; i < MAINMAP.size(); i++)
+							{
+								for (int j = 0; j < MAINMAP[i].size(); j++)
+								{
+									if (MAINMAP[i][j].et != ET_WALL) {
+										if (MAINMAP[i][j].is_found)cnt_opn++;
+									}
+								}
+							}
+							md.text = U"残存電力が25%を切りました。";
+							bool tf = false;
+							if (gamestate.cnt_opn < cnt_opn)
+							{
+								tf = true;
+								gamestate.good_eval_cnt++;
+								if (gamestate.good_eval_cnt == 1)
+								{
+									md.text += U"\n\nお疲れ様です。\n自分の役割はお忘れではないようですね。\nその調子で探索を進めてください。";
+								}
+								else if(gamestate.good_eval_cnt == 2)
+								{
+									md.text += U"\n\nお疲れ様です。\n誠意をもって指令を遂行できているようですね。\nそのまま探索を進めてください。";
+								}
+								else
+								{
+									md.text += U"\n\nお疲れ様です。\n貴方の誠実な仕事振りには感心します。\nでは、最後までお願い致します。";
+								}
+							}
+							if (hit_enemy_cnt > 5 && !gamestate.is_said_enemy_description)
+							{
+								tf = true;
+								md.text += U"\n\n同じ場所に何度探査機を送り込んでも帰ってこない場合、そこには何らかの生物や異常性が存在する可能性があります。\n各種兵器を送り込んでも改善しない場合、その場所の探索は見送るべきでしょう。";
+								gamestate.is_said_enemy_description = true;
+							}
+							if (!tf)
+							{
+								gamestate.bad_eval_cnt++;
+								if (gamestate.bad_eval_cnt == 2)
+								{
+									md.text = U"\n\nもうやり方はお忘れではないでしょう。自分の役割をお忘れですか？\nどうせそこから出ることもできないのですから、暇つぶしにでも進めてみたらいかがですか？";
+								}
+								else
+								{
+									md.text = U"\n\nもう何もする気は無いようですね。";
+								}
+							}
+							gamestate.cnt_opn = cnt_opn;
+						}
+						MailLib.push_back(md);
+						GameLog lg;
+						lg.text = U"メッセージが追加されました";
+						lg.time = DateTime::Now();
+						logs.push_front(lg);
+						AudioLib[U"SE_MSG"].playOneShot();
+						gamestate.event_msg = 5;
+					}
+				}
+				//3%msg
+				else if (gamestate.event_msg == 5)
+				{
+					gamestate.passed_time += delta;
+					if (gamestate.passed_time >= GAMETIME)
+					{
+						MailData md;
+						md.from = U"supporter-bot";
+						md.title = U"通知";
+						//ここで評価などをし、メッセージを作成
+						{
+							//開いているマスの数を計算
+							int cnt_opn = 0;
+							for (int i = 0; i < MAINMAP.size(); i++)
+							{
+								for (int j = 0; j < MAINMAP[i].size(); j++)
+								{
+									if (MAINMAP[i][j].et != ET_WALL) {
+										if (MAINMAP[i][j].is_found)cnt_opn++;
+									}
+								}
+							}
+							md.text = U"残存電力が3%を切りました。";
+							bool tf = false;
+							if (gamestate.cnt_opn < cnt_opn)
+							{
+								tf = true;
+								gamestate.good_eval_cnt++;
+							}
+							if (hit_enemy_cnt > 5 && !gamestate.is_said_enemy_description)
+							{
+								tf = true;
+							}
+							if (!tf)
+							{
+								gamestate.bad_eval_cnt++;
+							}
+
+							if (gamestate.good_eval_cnt >= 3)
+							{
+								md.text += U"\n\n指令通りに作業を遂行して頂き感謝します。";
+							}
+							md.text += U"\n\n端末はこのメッセージ受信の30秒後、自動的に終了されます。";
+							if (gamestate.good_eval_cnt >= 3)
+							{
+								md.text += U"\n\n正直、このような状況に置かれた中でここまで指令を遂行して頂けるとは思っていませんでした。\n僅かながらではありますが、私から感謝の念を伝えさせて頂こうと思います。";
+							}
+							gamestate.cnt_opn = cnt_opn;
+						}
+						MailLib.push_back(md);
+						GameLog lg;
+						lg.text = U"メッセージが追加されました";
+						lg.time = DateTime::Now();
+						logs.push_front(lg);
+						AudioLib[U"SE_MSG"].playOneShot();
+						gamestate.event_msg = 6;
+						gamestate.passed_time = 0;
+					}
+				}
+				//ending
+				else if (gamestate.event_msg == 6)
 				{
 					//エンディングへと
-					passed_time += delta;
-					if (passed_time >= 30)
+					gamestate.passed_time += delta;
+					if (gamestate.passed_time >= 30)
 					{
-						game_phase = 2;
+						gamestate.phase = 2;
 					}
 				}
 
@@ -599,7 +809,7 @@ void Main()
 
 			}
 			break;
-			case 2:
+			case 2://End
 				break;
 			default:
 				break;
