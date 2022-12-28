@@ -6,6 +6,7 @@ class MyIcon
 private:
 protected:
 	String texture;
+	String name;
 	Point pos;
 	MyWindow* win;
 public:
@@ -14,17 +15,18 @@ public:
 		pos = Point();
 		win = nullptr;
 	}
-	MyIcon(Point p, MyWindow* w, String str)
+	MyIcon(Point p, MyWindow* w, String str_tex,String str_name)
 	{
 		pos = Point(p);
 		win = w;
-		texture = str;
+		texture = str_tex;
+		name = str_name;
 	}
 	virtual void click()
 	{
 		if (!my_wins.includes(win))
 		{
-			*win = MyWindow(Vec2(300, 300), Vec2(200, 200));
+			*win = MyWindow(name,Vec2(300, 300), Vec2(200, 200));
 			my_wins.push_front(win);
 		}
 		else
@@ -47,7 +49,7 @@ public:
 	{
 		if (!my_wins.includes(win))
 		{
-			*win = MyWindow(Vec2(300, 300), Vec2(200, 200));
+			*win = MyWindow(name,Vec2(300, 300), Vec2(200, 200));
 			my_wins.push_front(win);
 		}
 		else

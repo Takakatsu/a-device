@@ -6,6 +6,8 @@ class MyWindow
 {
 private:
 protected:
+	Font font_titlebar;
+	String name;
 	bool is_min;//最小化か否か
 	bool is_max;//最大化か否か
 	Vec2 pos;//座標
@@ -16,6 +18,8 @@ protected:
 public:
 	MyWindow()
 	{
+		font_titlebar = Font(16);
+		name = U"";
 		is_max = false;
 		is_min = false;
 		pos_tmp = Vec2();
@@ -24,8 +28,10 @@ public:
 		pos = Vec2(0, 0);
 		size = Vec2(0, 0);
 	}
-	MyWindow(Vec2 p, Vec2 s)
+	MyWindow(String str, Vec2 p, Vec2 s)
 	{
+		font_titlebar = Font(16);
+		name = str;
 		is_max = false;
 		is_min = false;
 		pos_tmp = Vec2();
@@ -67,6 +73,8 @@ public:
 		getTitleBar(1)(TextureLib[U"Button_Min"]).draw(color);
 		getTitleBar(2)(TextureLib[U"Button_Max"]).draw(color);
 		getTitleBar(3)(TextureLib[U"Button_Close"]).draw(color);
+		Vec2 pos_txt = Vec2(getTitleBar(0).pos.x + 10, getTitleBar(0).centerY() - font_titlebar.height() / 2);
+		font_titlebar(name).draw(pos_txt, color);
 	}
 	virtual void click(Vec2 pos, bool is_left)//呼び出すときは内部座標で処理する
 	{

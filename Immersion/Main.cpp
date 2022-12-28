@@ -333,7 +333,7 @@ void Main()
 		throw Error{ U"Failed to load a shader file" };
 	}
 
-	char game_phase = 0;
+	char game_phase = 1;
 	char state_event_msg = 0;
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
@@ -346,13 +346,13 @@ void Main()
 	Inventor s_inv = Inventor(Vec2(350, 200), Vec2(200, 200));
 
 	//アイコン系
-	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP");
+	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP", U"WLD");
 	my_icons.push_back(&ic_map);
-	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL");
+	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL", U"message+");
 	my_icons.push_back(&ic_mail);
-	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP");
+	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP", U"stash");
 	my_icons.push_back(&ic_cmp);
-	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV");
+	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV", U"!nvent");
 	my_icons.push_back(&ic_inv);
 
 	ConstantBuffer<MyPCFilter> pc_filter;
