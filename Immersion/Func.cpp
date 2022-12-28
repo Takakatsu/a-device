@@ -415,7 +415,7 @@ void initialize_lib()
 		MailLib.push_back(md);
 		md.from = U"admin";
 		md.title = U"操作指示書";
-		md.text = U"この端末には、今回の探索に向けて最適化された以下の4つのソフトウェアが搭載されております。\n・message+\n　・メッセージ受信ソフトです。\n・d_Prompt\n　・コマンドにより制御できるソフトウェアです。\n・creater\n　・探索に必要な装置を作成するソフトウェアです。\n・WLD\n　・探索に主に用いるソフトウェアです。\n　・周囲の環境の確認ができます";
+		md.text = U"この端末には、今回の探索に向けて最適化された以下のソフトウェアが搭載されております。\n・message + \n　・メッセージ送受信ソフトウェアです\n・!nvent\n　・探査に必要な装置を作成するソフトウェアです\n・WLD\n　・探査機の派遣が行えます\n・ken\n　・探査機の様子を確認できます\n・(cast)4\n　・気候観測ソフトウェアです\n・stash\n　・コマンドにより制御できるソフトウェアです";
 		MailLib.push_back(md);
 		md.from = U"supporter-bot";
 		md.title = U"通知";
