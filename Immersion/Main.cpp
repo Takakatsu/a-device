@@ -321,21 +321,33 @@ struct MyPCFilter
 	float time;
 };
 
+struct MyPCBreakFilter
+{
+	float time;
+};
+
 void Main()
 {
 	Initialize();
 
 	const MSRenderTexture renderTexture_all{ Scene::Size() };
-	const PixelShader psPosterize = HLSL{ U"example/shader/hlsl/oldpc_filter.hlsl", U"PS" }
+	const PixelShader ps_Posterize = HLSL{ U"example/shader/hlsl/oldpc_filter.hlsl", U"PS" }
 	| GLSL{ U"example/shader/glsl/swirl.frag", {{U"PSConstants2D", 0}, {U"MyPCFilter", 1}} };
-	if (!psPosterize)
+	const PixelShader ps_LastScene = HLSL{ U"example/shader/hlsl/oldpc_break_filter.hlsl", U"PS" }
+	| GLSL{ U"example/shader/glsl/swirl.frag", {{U"PSConstants2D", 0}, {U"MyPCBreakFilter", 2}} };
+	if (!ps_Posterize)
 	{
-		throw Error{ U"Failed to load a shader file" };
+		throw Error{ U"Failed to load a shader1 file" };
+	}
+	if (!ps_LastScene)
+	{
+		throw Error{ U"Failed to load a shader2 file" };
 	}
 
 	GAMESTATE gamestate = { 1,0,0,0,0,0,false,false };
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
+	Font font_lastmessage = Font(256);
 
 	//以下はグローバル変数として扱う物とその処理
 	//ウィンドウ系
@@ -355,6 +367,7 @@ void Main()
 	my_icons.push_back(&ic_inv);
 
 	ConstantBuffer<MyPCFilter> pc_filter;
+	ConstantBuffer<MyPCBreakFilter> pc_break_filter;
 
 	while (System::Update())
 	{
@@ -607,7 +620,7 @@ void Main()
 								{
 									md.text += U"\n\nお疲れ様です。\n自分の役割はお忘れではないようですね。\nその調子で探索を進めてください。";
 								}
-								else if(gamestate.good_eval_cnt == 2)
+								else if (gamestate.good_eval_cnt == 2)
 								{
 									md.text += U"\n\nお疲れ様です。\n誠意をもって指令を遂行できているようですね。\nそのまま探索を進めてください。";
 								}
@@ -712,6 +725,7 @@ void Main()
 					if (gamestate.passed_time >= 30)
 					{
 						gamestate.phase = 2;
+						gamestate.passed_time = 0;
 					}
 				}
 
@@ -810,16 +824,35 @@ void Main()
 			}
 			break;
 			case 2://End
-				break;
+			{
+				gamestate.passed_time += delta;
+				Print(gamestate.passed_time);
+				if (gamestate.passed_time < 10)
+				{
+					font_lastmessage(U"Thank you").drawAt(Scene::Center(), ColorF(1.0, 1.0, 1.0, gamestate.passed_time / 10.0));
+				}
+				else
+				{
+					font_lastmessage(U"Thank you").drawAt(Scene::Center(), Color(255));
+				}
+			}
+			break;
 			default:
 				break;
 			}
 		}
 		Graphics2D::Flush();
 		renderTexture_all.resolve();
-
-		const ScopedCustomShader2D shader{ psPosterize };
-		renderTexture_all.draw();
+		if (gamestate.phase != 2)
+		{
+			const ScopedCustomShader2D shader{ ps_Posterize };
+			renderTexture_all.draw();
+		}
+		else
+		{
+			const ScopedCustomShader2D shader{ ps_Posterize };
+			renderTexture_all.draw();
+		}
 		//終了処理
 		if (is_game_exit)System::Exit();
 	}

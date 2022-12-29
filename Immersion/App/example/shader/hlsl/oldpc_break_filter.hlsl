@@ -20,7 +20,7 @@ cbuffer PSConstants2D : register(b0)
 	float4 g_internal;
 }
 
-cbuffer MyPCFilter : register(b1)
+cbuffer MyPCBreakFilter : register(b1)
 {
 	float time;
 }
@@ -43,7 +43,7 @@ float4 PS(s3d::PSInput input) : SV_TARGET
 	x = fmod(x, 13.0) * fmod(x, 123.0);
 	float dx = fmod(x, 0.01);
 
-	float3 cResult = texColor.rgb + texColor.rgb * (clamp(0.1 + dx * 100.0, 0.0, 1.0)-0.5);
+	float3 cResult = texColor.rgb + texColor.rgb * (clamp(0.1 + dx * 100.0, 0.0, 1.0) - 0.5);
 	float2 sc = float2(sin(input.uv.y * sCount), cos(input.uv.y * sCount));
 	cResult += texColor.rgb * float3(sc.x, sc.y, sc.x) * sIntensity;
 	cResult = texColor.rgb + clamp(nIntensity, 0.0, 1.0) * (cResult - texColor.rgb);
