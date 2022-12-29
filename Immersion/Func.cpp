@@ -1,6 +1,7 @@
 ﻿#include "def.h"
 
 bool is_game_exit = false;
+bool is_exit_phase = false;
 double passed_time = 0;
 double delta;
 Vec2 cursor_pos;

@@ -66,7 +66,7 @@ void Mouse_Operation()
 				//ホームメニュー
 				if (Rect(Point(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(32, 32)).contains(pos))
 				{
-
+					is_exit_phase = true;
 				}
 				else
 				{
@@ -346,7 +346,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 2,0,0,0,0,0,false,true };
+	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
 	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
@@ -378,7 +378,7 @@ void Main()
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
 
-		if (KeyEscape.down())is_game_exit = true;
+		//if (KeyEscape.down())is_game_exit = true;
 
 		pc_filter->time = Random(1.0, 5.0);
 		pc_break_filter->time = Random(-5.0, 5.0);
@@ -392,6 +392,7 @@ void Main()
 			{
 			case 0://OP
 			{
+				if (KeyEscape.down())is_game_exit = true;
 				Cursor::RequestStyle(CursorStyle::Hidden);
 				gamestate.passed_time += delta;
 				if (!AudioLib[U"SetUpBGM"].isPlaying())
@@ -731,14 +732,23 @@ void Main()
 					}
 				}
 
-				//マウス操作
-				Cursor::RequestStyle(CursorStyle::Default);
-				Mouse_Operation();
-
-				//各種処理
-				for (int i = 0; i < my_wins.size(); i++)
+				if (is_exit_phase)
 				{
-					my_wins[i]->update();
+					Point size = Point(200, 100);
+					int diss_x = 150;
+					if (Rect(Scene::Center() + Point(diss_x, 100) - size / 2, size).leftClicked())is_game_exit = true;
+					if (Rect(Scene::Center() + Point(-diss_x, 100) - size / 2, size).leftClicked())is_exit_phase = false;
+				}
+				else
+				{
+					//マウス操作
+					Cursor::RequestStyle(CursorStyle::Default);
+					Mouse_Operation();
+					//各種処理
+					for (int i = 0; i < my_wins.size(); i++)
+					{
+						my_wins[i]->update();
+					}
 				}
 				Update_Robot();
 				Update_Log();
@@ -823,10 +833,23 @@ void Main()
 					}
 				}
 
+				if (is_exit_phase)
+				{
+					Point size = Point(200, 100);
+					int diss_x = 150;
+					Rect(Point(0, 0), Scene::Size()).draw(ColorF(0.0,0.0,0.0,0.5));
+					font_message(U"終了しますか？").drawAt(Scene::Center() + Point(0,-100), Color(0));
+					Rect(Scene::Center() + Point(diss_x, 100) - size / 2, size).draw(Color(255));
+					font_message(U"終了").drawAt(Scene::Center() + Point(diss_x, 100), Color(0));
+					Rect(Scene::Center() + Point(-diss_x, 100) - size / 2, size).draw(Color(255));
+					font_message(U"続ける").drawAt(Scene::Center() + Point(-diss_x, 100), Color(0));
+				}
+
 			}
 			break;
 			case 2://End
 			{
+				if (KeyEscape.down())is_game_exit = true;
 				gamestate.passed_time += delta;
 				pc_break_filter->level = fmod(pc_break_filter->level + delta / 30, 1.0);
 				if (gamestate.passed_time < 2)
@@ -876,6 +899,7 @@ void Main()
 			}
 			break;
 			default:
+				if (KeyEscape.down())is_game_exit = true;
 				break;
 			}
 		}

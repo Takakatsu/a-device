@@ -21,6 +21,7 @@
 #define GAMETIME 1500//ゲームの終了時間(秒)
 
 extern bool is_game_exit;
+extern bool is_exit_phase;
 
 //デルタ秒
 extern double delta;
