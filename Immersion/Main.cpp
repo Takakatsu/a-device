@@ -346,7 +346,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 1,6,0,0,0,0,false,false };
+	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
 	Font font_lastmessage = Font(256);
@@ -357,19 +357,15 @@ void Main()
 	MAPViewer s_map;
 	CommandPrompt s_cmp;
 	Inventor s_inv;
-	/*= MailSoft(Vec2(250, 200), Vec2(200, 200));
-	= MAPViewer(Vec2(250, 200), Vec2(200, 200));
-	= CommandPrompt(Vec2(300, 200), Vec2(200, 200));
-	= Inventor(Vec2(350, 200), Vec2(200, 200));*/
 
 	//アイコン系
-	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP", U"WLD", Vec2(600, 600),Vec2(400,400));
+	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP", U"WLD", Vec2(600, 600), Vec2(400, 400));
 	my_icons.push_back(&ic_map);
-	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL", U"message+", Vec2(800, 500),Vec2(300,120));
+	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL", U"message+", Vec2(800, 500), Vec2(300, 120));
 	my_icons.push_back(&ic_mail);
-	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP", U"stash", Vec2(300, 100),Vec2(320,64));
+	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP", U"stash", Vec2(300, 100), Vec2(320, 64));
 	my_icons.push_back(&ic_cmp);
-	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV", U"!nvent", Vec2(400, 800),Vec2(400,600));
+	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV", U"!nvent", Vec2(400, 800), Vec2(400, 600));
 	my_icons.push_back(&ic_inv);
 
 	ConstantBuffer<MyPCFilter> pc_filter;
@@ -703,15 +699,11 @@ void Main()
 								gamestate.bad_eval_cnt++;
 							}
 
-							if (gamestate.good_eval_cnt >= 3)
-							{
-								md.text += U"\n\n指令通りに作業を遂行して頂き感謝します。";
-							}
+							gamestate.is_good_end = gamestate.good_eval_cnt >= 3;
+
+							if (gamestate.is_good_end)md.text += U"\n\n指令通りに作業を遂行して頂き感謝します。";
 							md.text += U"\n\n端末はこのメッセージ受信の30秒後、自動的に終了されます。";
-							if (gamestate.good_eval_cnt >= 3)
-							{
-								md.text += U"\n\n正直、このような状況に置かれた中でここまで指令を遂行して頂けるとは思っていませんでした。\n僅かながらではありますが、私から感謝の念を伝えさせて頂こうと思います。";
-							}
+							if (gamestate.is_good_end)md.text += U"\n\n正直、このような状況に置かれた中でここまで指令を遂行して頂けるとは思っていませんでした。\n僅かながらではありますが、私から感謝の念を伝えさせて頂こうと思います。";
 							gamestate.cnt_opn = cnt_opn;
 						}
 						MailLib.push_back(md);
@@ -734,7 +726,7 @@ void Main()
 						gamestate.phase = 2;
 						gamestate.passed_time = 0;
 						pc_break_filter->level = 0;
-						AudioLib[U"LastBGM"].play();
+						if (gamestate.is_good_end)AudioLib[U"LastBGM"].play();
 					}
 				}
 
@@ -835,11 +827,10 @@ void Main()
 			case 2://End
 			{
 				gamestate.passed_time += delta;
-				Print(gamestate.passed_time);
 				pc_break_filter->level = fmod(pc_break_filter->level + delta / 30, 1.0);
 				if (gamestate.passed_time < 2)
 				{
-					font_lastmessage(U"Thank you").drawAt(Scene::Center(), ColorF(1.0, 1.0, 1.0, gamestate.passed_time / 2.0));
+					if (gamestate.is_good_end)font_lastmessage(U"Thank you").drawAt(Scene::Center(), ColorF(1.0, 1.0, 1.0, gamestate.passed_time / 2.0));
 				}
 				else if (gamestate.passed_time > 30)
 				{
@@ -847,7 +838,7 @@ void Main()
 				}
 				else
 				{
-					font_lastmessage(U"Thank you").drawAt(Scene::Center(), Color(255));
+					if (gamestate.is_good_end)font_lastmessage(U"Thank you").drawAt(Scene::Center(), Color(255));
 				}
 			}
 			break;

@@ -476,7 +476,7 @@ public:
 							Vec2 dis = Vec2(
 								(i - MAP_CENTER_X) * m_r * 1.5,
 								(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-							Shape2D::Hexagon(r * scale, rect.size / 2 + dis * scale, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c);
+							Shape2D::Hexagon(r * scale, rect.size / 2 + dis * scale, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c).drawFrame(2,Color(200,200,0));
 						}
 						//未発見の座標
 						else
