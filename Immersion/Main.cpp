@@ -324,6 +324,7 @@ struct MyPCFilter
 struct MyPCBreakFilter
 {
 	float time;
+	float level;
 };
 
 void Main()
@@ -371,18 +372,21 @@ void Main()
 
 	while (System::Update())
 	{
-		pc_filter->time = Random(1.0, 5.0);
-
-		if (KeyEscape.down())is_game_exit = true;
-
 		ClearPrint();
 
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
+
+		if (KeyEscape.down())is_game_exit = true;
+
+		pc_filter->time = Random(1.0, 5.0);
+		pc_break_filter->time = Random(-5.0, 5.0);
+		pc_break_filter->level = fmod(pc_break_filter->level + delta/10,1.0);
+
 		renderTexture_all.clear(Color(0));
 		{
 			// レンダーターゲットを renderTexture_all に設定
-			Graphics2D::SetPSConstantBuffer(1, pc_filter);
+			Graphics2D::SetPSConstantBuffer(1, pc_break_filter);
 			const ScopedRenderTarget2D target{ renderTexture_all };
 			switch (gamestate.phase)
 			{
@@ -843,7 +847,9 @@ void Main()
 		}
 		Graphics2D::Flush();
 		renderTexture_all.resolve();
-		if (gamestate.phase != 2)
+		const ScopedCustomShader2D shader{ ps_LastScene };
+		renderTexture_all.draw();
+		/*if (gamestate.phase != 2)
 		{
 			const ScopedCustomShader2D shader{ ps_Posterize };
 			renderTexture_all.draw();
@@ -852,7 +858,7 @@ void Main()
 		{
 			const ScopedCustomShader2D shader{ ps_Posterize };
 			renderTexture_all.draw();
-		}
+		}*/
 		//終了処理
 		if (is_game_exit)System::Exit();
 	}
