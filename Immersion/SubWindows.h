@@ -13,14 +13,14 @@ public:
 	MailSoft() : MyWindow()
 	{
 		size_min = Vec2(300, size_min.y + font01.height());
-		font01 = Font(13);
+		font01 = Font(15, U"resource/AozoraMinchoRegular.ttf");
 		is_reading = false;
 		mail_num = 0;
 	};
 	MailSoft(Vec2 p, Vec2 s) : MyWindow(U"message+", p, s,Vec2(300, size_min.y + font01.height()))
 	{
 		size_min = Vec2(300, size_min.y + font01.height());
-		font01 = Font(13);
+		font01 = Font(15, U"resource/AozoraMinchoRegular.ttf");
 		is_reading = false;
 		mail_num = 0;
 	};
@@ -169,14 +169,14 @@ public:
 	Inventor() : MyWindow()
 	{
 		size_min = Vec2(400, 600);
-		font01 = Font(30);
-		font02 = Font(14);
+		font01 = Font(30, U"resource/GenEiNuGothic-EB.ttf");
+		font02 = Font(14, U"resource/GenEiNuGothic-EB.ttf");
 	};
 	Inventor(Vec2 p, Vec2 s) : MyWindow(U"!nvent", p, s, Vec2(400, 600))
 	{
 		size_min = Vec2(400, 600);
-		font01 = Font(30);
-		font02 = Font(14);
+		font01 = Font(30, U"resource/GenEiNuGothic-EB.ttf");
+		font02 = Font(14, U"resource/GenEiNuGothic-EB.ttf");
 	};
 	RectF getSelectionRect(int i)
 	{
@@ -315,15 +315,15 @@ public:
 	MAPViewer() : MyWindow()
 	{
 		size_min = Vec2(400, 400);
-		font01 = Font(25);
-		font02 = Font(13);
+		font01 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
+		font02 = Font(13, U"resource/GenEiNuGothic-EB.ttf");
 		pos_camera = Vec2(0, 0);
 	};
 	MAPViewer(Vec2 p, Vec2 s) : MyWindow(U"WLD", p, s, Vec2(400, 400))
 	{
 		size_min = Vec2(400, 400);
-		font01 = Font(25);
-		font02 = Font(13);
+		font01 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
+		font02 = Font(13, U"resource/GenEiNuGothic-EB.ttf");
 		pos_camera = Vec2(0, 0);
 	};
 	double get_right_panel_width()

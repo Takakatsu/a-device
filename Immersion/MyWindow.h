@@ -18,7 +18,7 @@ protected:
 public:
 	MyWindow()
 	{
-		font_titlebar = Font(16);
+		font_titlebar = Font(16, U"resource/GenEiNuGothic-EB.ttf");
 		name = U"";
 		is_max = false;
 		is_min = false;
@@ -28,9 +28,9 @@ public:
 		pos = Vec2(0, 0);
 		size = Vec2(0, 0);
 	}
-	MyWindow(String str, Vec2 p, Vec2 s,Vec2 min)
+	MyWindow(String str, Vec2 p, Vec2 s, Vec2 min)
 	{
-		font_titlebar = Font(16);
+		font_titlebar = Font(16, U"resource/GenEiNuGothic-EB.ttf");
 		name = str;
 		is_max = false;
 		is_min = false;

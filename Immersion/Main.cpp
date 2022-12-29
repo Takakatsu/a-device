@@ -346,10 +346,11 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
-	Font font_message = Font(20);
-	Font font_initiation = Font(20);
-	Font font_lastmessage = Font(256);
+	GAMESTATE gamestate = { 2,0,0,0,0,0,false,true };
+	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
+	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
+	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
+	Font font_lastmessage_mini = Font(32, U"resource/AozoraMinchoRegular.ttf");
 
 	//以下はグローバル変数として扱う物とその処理
 	//ウィンドウ系
@@ -361,11 +362,11 @@ void Main()
 	//アイコン系
 	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP", U"WLD", Vec2(600, 600), Vec2(400, 400));
 	my_icons.push_back(&ic_map);
-	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL", U"message+", Vec2(800, 500), Vec2(300, 120));
+	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL", U"message+", Vec2(800, 500), Vec2(500, 120));
 	my_icons.push_back(&ic_mail);
-	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP", U"stash", Vec2(300, 100), Vec2(320, 64));
+	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP", U"stash", Vec2(640, 128), Vec2(320, 64));
 	my_icons.push_back(&ic_cmp);
-	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV", U"!nvent", Vec2(400, 800), Vec2(400, 600));
+	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV", U"!nvent", Vec2(400, 800), Vec2(350, 600));
 	my_icons.push_back(&ic_inv);
 
 	ConstantBuffer<MyPCFilter> pc_filter;
@@ -830,7 +831,7 @@ void Main()
 				pc_break_filter->level = fmod(pc_break_filter->level + delta / 30, 1.0);
 				if (gamestate.passed_time < 2)
 				{
-					if (gamestate.is_good_end)font_lastmessage(U"Thank you").drawAt(Scene::Center(), ColorF(1.0, 1.0, 1.0, gamestate.passed_time / 2.0));
+					if (gamestate.is_good_end)font_lastmessage(U"Thank you.").drawAt(Scene::Center(), ColorF(1.0, 1.0, 1.0, gamestate.passed_time / 2.0));
 				}
 				else if (gamestate.passed_time > 30)
 				{
@@ -838,7 +839,39 @@ void Main()
 				}
 				else
 				{
-					if (gamestate.is_good_end)font_lastmessage(U"Thank you").drawAt(Scene::Center(), Color(255));
+					if (gamestate.is_good_end)
+					{
+						font_lastmessage(U"Thank you.").drawAt(Scene::Center(), Color(255));
+						constexpr double d = 7;
+						double t = 6;
+						double s = Abs(gamestate.passed_time - t) / (d / 2);
+						if (s < 1)
+						{
+							s = (1 - s) * 255;
+							font_lastmessage_mini(U"You are truly great.\nYour ability and dedication to your work is something that impresses and inspires me.").drawAt(Point(862, 873), Color(255).withAlpha(s));
+						}
+						t = 13;
+						s = Abs(gamestate.passed_time - t) / (d / 2);
+						if (s < 1)
+						{
+							s = (1 - s) * 255;
+							font_lastmessage_mini(U"You have made a great contribution to the history of mankind.\nYou are truly the best partner and the most important person.\nI would like to express my gratitude to you.").drawAt(Point(1363, 349), Color(255).withAlpha(s));
+						}
+						t = 19;
+						s = Abs(gamestate.passed_time - t) / (d / 2);
+						if (s < 1)
+						{
+							s = (1 - s) * 255;
+							font_lastmessage_mini(U"You are truly a wonderful person.\nYour personality, compassion, and wealth of knowledge fascinate me.\nI would like to express my gratitude to you and thank you very much for your help.").drawAt(Point(1084, 940), Color(255).withAlpha(s));
+						}
+						t = 25;
+						s = Abs(gamestate.passed_time - t) / (d / 2);
+						if (s < 1)
+						{
+							s = (1 - s) * 255;
+							font_lastmessage_mini(U"You are truly someone to look up to.\nThe work you have done today has inspired and encouraged me.\nI am grateful to you for all that you have done for me.").drawAt(Point(679, 245), Color(255).withAlpha(s));
+						}
+					}
 				}
 			}
 			break;
