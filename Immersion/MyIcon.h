@@ -8,16 +8,21 @@ protected:
 	String texture;
 	String name;
 	Point pos;
+	Vec2 start_size;
+	Vec2 min_size;
 	MyWindow* win;
 public:
 	MyIcon()
 	{
 		pos = Point();
+		start_size = Vec2();
 		win = nullptr;
 	}
-	MyIcon(Point p, MyWindow* w, String str_tex,String str_name)
+	MyIcon(Point p, MyWindow* w, String str_tex, String str_name, Vec2 size_defo,Vec2 size_min)
 	{
 		pos = Point(p);
+		start_size = size_defo;
+		min_size = size_min;
 		win = w;
 		texture = str_tex;
 		name = str_name;
@@ -26,8 +31,12 @@ public:
 	{
 		if (!my_wins.includes(win))
 		{
-			*win = MyWindow(name,Vec2(300, 300), Vec2(200, 200));
+			Point p = (newWin_pos + start_size).asPoint();
+			if (p.x > Scene::Width())newWin_pos.x = 64;
+			if (p.y > Scene::Height())newWin_pos.y = 64;
+			*win = MyWindow(name, newWin_pos, start_size, min_size);
 			my_wins.push_front(win);
+			newWin_pos += Point(1, 1) * 64;
 		}
 		else
 		{
@@ -49,8 +58,12 @@ public:
 	{
 		if (!my_wins.includes(win))
 		{
-			*win = MyWindow(name,Vec2(300, 300), Vec2(200, 200));
+			Point p = (newWin_pos + start_size).asPoint();
+			if (p.x > Scene::Width())newWin_pos.x = 64;
+			if (p.y > Scene::Height())newWin_pos.y = 64;
+			*win = MyWindow(name, newWin_pos, start_size, min_size);
 			my_wins.push_front(win);
+			newWin_pos += Point(1, 1) * 64;
 		}
 		else
 		{

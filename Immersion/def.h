@@ -26,6 +26,8 @@ extern bool is_game_exit;
 extern double delta;
 //マウス座標
 extern Vec2 cursor_pos;
+//新規ウィンドウ出現座標
+extern Vec2 newWin_pos;
 
 typedef struct GAMESTATE
 {

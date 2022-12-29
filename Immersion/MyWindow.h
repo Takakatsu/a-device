@@ -28,7 +28,7 @@ public:
 		pos = Vec2(0, 0);
 		size = Vec2(0, 0);
 	}
-	MyWindow(String str, Vec2 p, Vec2 s)
+	MyWindow(String str, Vec2 p, Vec2 s,Vec2 min)
 	{
 		font_titlebar = Font(16);
 		name = str;
@@ -36,7 +36,7 @@ public:
 		is_min = false;
 		pos_tmp = Vec2();
 		size_tmp = Vec2();
-		size_min = Vec2(MARGIN_FLAME * 2 + MARGIN_TITLEBAR_BUTTON * 3, MARGIN_FLAME * 2 + MARGIN_TITLEBAR);
+		size_min = min;
 		pos = p;
 		size = s;
 	}
@@ -205,6 +205,10 @@ public:
 	Vec2 getSize()
 	{
 		return size;
+	}
+	Vec2 getSizeMin()
+	{
+		return size_min;
 	}
 	//タイトルバーのボタン処理
 	void dealSizeMax()

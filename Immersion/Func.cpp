@@ -4,6 +4,7 @@ bool is_game_exit = false;
 double passed_time = 0;
 double delta;
 Vec2 cursor_pos;
+Vec2 newWin_pos = Vec2(64, 64);
 int hit_enemy_cnt;
 
 CLICKED_TYPE g_clicktype;

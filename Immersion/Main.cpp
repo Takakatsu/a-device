@@ -235,6 +235,7 @@ void Mouse_Operation()
 				default:
 					break;
 				}
+				newWin_pos = win_active->getPos() + Vec2(1, 1) * 32;
 			}
 		}
 	}
@@ -352,19 +353,23 @@ void Main()
 
 	//以下はグローバル変数として扱う物とその処理
 	//ウィンドウ系
-	MailSoft s_mail = MailSoft(Vec2(250, 200), Vec2(200, 200));
-	MAPViewer s_map = MAPViewer(Vec2(250, 200), Vec2(200, 200));
-	CommandPrompt s_cmp = CommandPrompt(Vec2(300, 200), Vec2(200, 200));
-	Inventor s_inv = Inventor(Vec2(350, 200), Vec2(200, 200));
+	MailSoft s_mail;
+	MAPViewer s_map;
+	CommandPrompt s_cmp;
+	Inventor s_inv;
+	/*= MailSoft(Vec2(250, 200), Vec2(200, 200));
+	= MAPViewer(Vec2(250, 200), Vec2(200, 200));
+	= CommandPrompt(Vec2(300, 200), Vec2(200, 200));
+	= Inventor(Vec2(350, 200), Vec2(200, 200));*/
 
 	//アイコン系
-	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP", U"WLD");
+	MyIcon ic_map = MyIcon(Point(0, 0), &s_map, U"ICON_MAP", U"WLD", Vec2(600, 600),Vec2(400,400));
 	my_icons.push_back(&ic_map);
-	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL", U"message+");
+	MyIcon ic_mail = MyIcon(Point(1, 0), &s_mail, U"ICON_MIL", U"message+", Vec2(800, 500),Vec2(300,120));
 	my_icons.push_back(&ic_mail);
-	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP", U"stash");
+	MyIcon ic_cmp = MyIcon(Point(0, 1), &s_cmp, U"ICON_CMP", U"stash", Vec2(300, 100),Vec2(320,64));
 	my_icons.push_back(&ic_cmp);
-	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV", U"!nvent");
+	MyIcon ic_inv = MyIcon(Point(0, 2), &s_inv, U"ICON_INV", U"!nvent", Vec2(400, 800),Vec2(400,600));
 	my_icons.push_back(&ic_inv);
 
 	ConstantBuffer<MyPCFilter> pc_filter;
@@ -373,7 +378,6 @@ void Main()
 	while (System::Update())
 	{
 		ClearPrint();
-
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
 
