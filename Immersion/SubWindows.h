@@ -183,7 +183,7 @@ public:
 	RectF getButtonRect()
 	{
 		RectF rf = getContentsRectF();
-		RectF btn = RectF(Vec2(rf.w / 2, rf.h * 2 / 3), Vec2(30, 20));
+		RectF btn = RectF(Vec2(rf.w / 2, rf.h * 2 / 3), Vec2(80, 30));
 		btn.moveBy(-btn.size / 2);
 		return btn;
 	}
@@ -283,9 +283,10 @@ public:
 			{
 				RectF(Vec2(0, 0), size).draw(ColorF(0.0, 0.0, 0.0, 0.5));
 				RectF rf = getContentsRectF();
-				font01(U"Enter the Name").drawAt(Vec2(rf.w / 2, rf.h / 3), Color(255));
+				font01(U"名前を入力してください").drawAt(Vec2(rf.w / 2, rf.h / 3), Color(255));
 				font01(txtstt.text).drawAt(Vec2(rf.w / 2, rf.h / 2), Color(255));
 				getButtonRect().draw(getButtonRect().mouseOver() ? Color(255) : Color(127));
+				font02(U"作成").drawAt(getButtonRect().center(), Color(255));
 			}
 		}
 		drawFlame(col_bg);

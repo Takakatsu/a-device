@@ -345,7 +345,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 1,0,0,0,0,0,false,false };
+	GAMESTATE gamestate = { 1,6,0,0,0,0,false,false };
 	Font font_message = Font(20);
 	Font font_initiation = Font(20);
 	Font font_lastmessage = Font(256);
@@ -381,12 +381,11 @@ void Main()
 
 		pc_filter->time = Random(1.0, 5.0);
 		pc_break_filter->time = Random(-5.0, 5.0);
-		pc_break_filter->level = fmod(pc_break_filter->level + delta/10,1.0);
 
 		renderTexture_all.clear(Color(0));
 		{
-			// レンダーターゲットを renderTexture_all に設定
-			Graphics2D::SetPSConstantBuffer(1, pc_break_filter);
+			if (gamestate.phase != 2)Graphics2D::SetPSConstantBuffer(1, pc_filter);
+			else Graphics2D::SetPSConstantBuffer(1, pc_break_filter);
 			const ScopedRenderTarget2D target{ renderTexture_all };
 			switch (gamestate.phase)
 			{
@@ -730,6 +729,8 @@ void Main()
 					{
 						gamestate.phase = 2;
 						gamestate.passed_time = 0;
+						pc_break_filter->level = 0;
+						AudioLib[U"LastBGM"].play();
 					}
 				}
 
@@ -831,9 +832,14 @@ void Main()
 			{
 				gamestate.passed_time += delta;
 				Print(gamestate.passed_time);
-				if (gamestate.passed_time < 10)
+				pc_break_filter->level = fmod(pc_break_filter->level + delta / 30, 1.0);
+				if (gamestate.passed_time < 2)
 				{
-					font_lastmessage(U"Thank you").drawAt(Scene::Center(), ColorF(1.0, 1.0, 1.0, gamestate.passed_time / 10.0));
+					font_lastmessage(U"Thank you").drawAt(Scene::Center(), ColorF(1.0, 1.0, 1.0, gamestate.passed_time / 2.0));
+				}
+				else if (gamestate.passed_time > 30)
+				{
+					is_game_exit = true;
 				}
 				else
 				{
@@ -847,18 +853,16 @@ void Main()
 		}
 		Graphics2D::Flush();
 		renderTexture_all.resolve();
-		const ScopedCustomShader2D shader{ ps_LastScene };
-		renderTexture_all.draw();
-		/*if (gamestate.phase != 2)
+		if (gamestate.phase != 2)
 		{
 			const ScopedCustomShader2D shader{ ps_Posterize };
 			renderTexture_all.draw();
 		}
 		else
 		{
-			const ScopedCustomShader2D shader{ ps_Posterize };
+			const ScopedCustomShader2D shader{ ps_LastScene };
 			renderTexture_all.draw();
-		}*/
+		}
 		//終了処理
 		if (is_game_exit)System::Exit();
 	}

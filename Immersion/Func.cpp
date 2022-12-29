@@ -430,6 +430,7 @@ void initialize_lib()
 	{
 		//各種音源のセットアップ
 		AudioLib.emplace(U"SetUpBGM", Audio(U"resource/computer_startup.ogg", Arg::loopBegin = 30s, Arg::loopEnd = 60s));
+		AudioLib.emplace(U"LastBGM", Audio(U"resource/lastbgm.ogg"));
 		AudioLib.emplace(U"SE_MSG", Audio(U"resource/se_message.ogg"));
 		AudioLib.emplace(U"SE_TOUCH", Audio(U"resource/se_touch.ogg"));
 	}
