@@ -60,7 +60,7 @@ float calc_nn(float t, float lv, float2 p)
 		* (calc_n(float3(y * 0.51 + 421.0 + s, 1.0, 1.0)) + 0.0);
 	v *= hash42(float2(p.x + t * 0.01, p.y)).x + 0.3;
 	v = pow(v + 0.3, 1.0);
-	if (v < lv * 1.3) v = 0.0;
+	//v = v < 0.4 ? 0.0 : v;
 	return v;
 }
 
@@ -70,6 +70,8 @@ float4 PS(s3d::PSInput input) : SV_TARGET
 	float one_y = 0.1;
 	float2 uv = floor(input.uv * 100 / one_y) * one_y;
 	float lev = calc_nn(time,level,uv);
-	texColor.rgb *= float3(lev, lev, lev) * (1 - pow(level,5));
+	//texColor.rgb *= lev;// float3(lev, lev, lev);// *(1 - pow(level, 5));
+	//texColor.rgb = texColor.rgb *(1-level) + float3(lev, lev, lev) * level;
+	texColor.rgb = lev > pow(level,2) * 0.71 + 0.29 ? texColor.rgb : float3(lev, lev, lev);
 	return (texColor * input.color) + g_colorAdd;
 }

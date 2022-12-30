@@ -333,6 +333,7 @@ void Main()
 	Initialize();
 
 	const MSRenderTexture renderTexture_all{ Scene::Size() };
+	const MSRenderTexture renderTexture_all2{ Scene::Size() };
 	const PixelShader ps_Posterize = HLSL{ U"example/shader/hlsl/oldpc_filter.hlsl", U"PS" }
 	| GLSL{ U"example/shader/glsl/swirl.frag", {{U"PSConstants2D", 0}, {U"MyPCFilter", 1}} };
 	const PixelShader ps_LastScene = HLSL{ U"example/shader/hlsl/oldpc_break_filter.hlsl", U"PS" }
@@ -346,7 +347,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 1,0,0,0,0,0,false,false };
+	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
 	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
@@ -380,11 +381,11 @@ void Main()
 
 		pc_filter->time = Random(1.0, 5.0);
 		pc_break_filter->time = Random(-5.0, 5.0);
+		//pc_break_filter->level = fmod(pc_break_filter->level + delta / 10, 1.0);
 
 		renderTexture_all.clear(Color(0));
 		{
-			if (gamestate.phase != 2)Graphics2D::SetPSConstantBuffer(1, pc_filter);
-			else Graphics2D::SetPSConstantBuffer(1, pc_break_filter);
+			Graphics2D::SetPSConstantBuffer(1, pc_filter);
 			const ScopedRenderTarget2D target{ renderTexture_all };
 			switch (gamestate.phase)
 			{
@@ -704,9 +705,10 @@ void Main()
 							}
 
 							gamestate.is_good_end = gamestate.good_eval_cnt >= 3;
+							
 
 							if (gamestate.is_good_end)md.text += U"\n\n指令通りに作業を遂行して頂き感謝します。";
-							md.text += U"\n\n端末はこのメッセージ受信の30秒後、自動的に終了されます。";
+							md.text += U"\n\n端末はこのメッセージ受信の60秒後、自動的に終了されます。";
 							if (gamestate.is_good_end)md.text += U"\n\n正直、このような状況に置かれた中でここまで指令を遂行して頂けるとは思っていませんでした。\n僅かながらではありますが、私から感謝の念を伝えさせて頂こうと思います。";
 							gamestate.cnt_opn = cnt_opn;
 						}
@@ -718,6 +720,8 @@ void Main()
 						AudioLib[U"SE_MSG"].playOneShot();
 						gamestate.event_msg = 6;
 						gamestate.passed_time = 0;
+						//if (gamestate.is_good_end)AudioLib[U"LastBGM"].play();
+						pc_break_filter->level = 0;
 					}
 				}
 				//ending
@@ -725,12 +729,13 @@ void Main()
 				{
 					//エンディングへと
 					gamestate.passed_time += delta;
-					if (gamestate.passed_time >= 30)
+					pc_break_filter->level = gamestate.passed_time / 60.0;
+					AudioLib[U"SetUpBGM"].setVolume(0.3 + 0.7 * gamestate.passed_time / 60);
+					if (gamestate.passed_time >= 60)
 					{
-						gamestate.phase = 2;
-						gamestate.passed_time = 0;
-						pc_break_filter->level = 0;
-						if (gamestate.is_good_end)AudioLib[U"LastBGM"].play();
+						is_game_exit = true;
+						//gamestate.passed_time = 0;
+						//if (gamestate.is_good_end)AudioLib[U"LastBGM"].play();
 					}
 				}
 
@@ -910,18 +915,23 @@ void Main()
 				break;
 			}
 		}
-		Graphics2D::Flush();
-		renderTexture_all.resolve();
-		if (gamestate.phase != 2)
+
+		renderTexture_all2.clear(Color(0));
 		{
+			Graphics2D::SetPSConstantBuffer(1, pc_break_filter);
+			const ScopedRenderTarget2D target{ renderTexture_all2 };
+			Graphics2D::Flush();
+			renderTexture_all.resolve();
 			const ScopedCustomShader2D shader{ ps_Posterize };
 			renderTexture_all.draw();
 		}
-		else
-		{
-			const ScopedCustomShader2D shader{ ps_LastScene };
-			renderTexture_all.draw();
-		}
+
+		Graphics2D::Flush();
+		renderTexture_all2.resolve();
+		const ScopedCustomShader2D shader{ ps_LastScene };
+		renderTexture_all2.draw();
+
+		Graphics2D::SetPSConstantBuffer(1, pc_break_filter);
 		//終了処理
 		if (is_game_exit)System::Exit();
 	}
