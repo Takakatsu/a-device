@@ -17,7 +17,7 @@ public:
 		is_reading = false;
 		mail_num = 0;
 	};
-	MailSoft(Vec2 p, Vec2 s) : MyWindow(U"message+", p, s,Vec2(300, size_min.y + font01.height()))
+	MailSoft(Vec2 p, Vec2 s) : MyWindow(U"message+", p, s, Vec2(300, size_min.y + font01.height()))
 	{
 		size_min = Vec2(300, size_min.y + font01.height());
 		font01 = Font(15, U"resource/AozoraMinchoRegular.ttf");
@@ -180,9 +180,13 @@ public:
 	};
 	RectF getSelectionRect(int i)
 	{
+		int sep = int(size.x) / 400 + 1;//分割数
+		int seplin = i % sep;//列番号
+		i /= sep;
 		double margin = 10;
 		Vec2 s_size = Vec2(getContentsRectF().w - margin * 2, font01.height() + font02.height() + frame_padding * 2);
-		return RectF(Vec2(margin, margin + (margin + s_size.y) * i), s_size).movedBy(getContentsRectF().pos);
+		s_size.x /= sep;
+		return RectF(Vec2(margin + seplin * s_size.x, margin + (margin + s_size.y) * i), s_size - Vec2(sep - 1 == seplin ? 0 : margin, 0)).movedBy(getContentsRectF().pos);
 	}
 	RectF getButtonRect()
 	{
@@ -476,7 +480,7 @@ public:
 							Vec2 dis = Vec2(
 								(i - MAP_CENTER_X) * m_r * 1.5,
 								(j - MAP_CENTER_Y + ((i % 2 == 0) ? 0 : 0.5)) * m_r * sqrt(3));
-							Shape2D::Hexagon(r * scale, rect.size / 2 + dis * scale, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c).drawFrame(2,Color(200,200,0));
+							Shape2D::Hexagon(r * scale, rect.size / 2 + dis * scale, 30_deg).draw(TileLib[MAINMAP[i][j].tile].c).drawFrame(2, Color(200, 200, 0));
 						}
 						//未発見の座標
 						else
@@ -553,7 +557,7 @@ public:
 		font02 = Font(17, U"resource/GenEiNuGothic-EB.ttf");
 		font03 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 		font04 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
-		size_min = Vec2(Max(Max(size_min.x, SCENE_WIDTH / 3.0),300.0), size_min.y + font04.height());
+		size_min = Vec2(Max(Max(size_min.x, SCENE_WIDTH / 3.0), 300.0), size_min.y + font04.height());
 	};
 	CommandPrompt(Vec2 p, Vec2 s) : MyWindow(U"stash", p, s, Vec2(Max(Max(size_min.x, SCENE_WIDTH / 3.0), 300.0), size_min.y + font04.height()))
 	{

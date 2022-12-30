@@ -82,19 +82,19 @@ void initialize_lib()
 		Item it;
 		{
 			rd.name = U"惑星探査機";
-			rd.max_endurance = 1000;
+			rd.max_endurance = 2000;
 			rd.texture_name = U"Machine_Search";
 			RobotLib.emplace(ROBOTTYPE::RT_SEARCH, rd);
 		}
 		{
 			rd.name = U"物質回収機α";
-			rd.max_endurance = 1000;
+			rd.max_endurance = 1500;
 			rd.texture_name = U"Machine_Collect1";
 			RobotLib.emplace(ROBOTTYPE::RT_COLLECT1, rd);
 		}
 		{
 			rd.name = U"物質回収機β";
-			rd.max_endurance = 1000;
+			rd.max_endurance = 1500;
 			rd.texture_name = U"Machine_Collect2";
 			RobotLib.emplace(ROBOTTYPE::RT_COLLECT2, rd);
 		}
@@ -117,43 +117,127 @@ void initialize_lib()
 		Item it;
 		{
 			rc.first = ROBOTTYPE::RT_SEARCH;
-			it.amount = 0.5;
-			it.it = ITEMTYPE::IT_WOOD1;
-			rc.second.push_back(it);
-			Recipes.push_back(rc);
-			rc.second.clear();
+			Array<std::pair<ITEMTYPE, double>> its = {
+				{IT_WOOD1,3.2},{IT_WOOD2,3.2},
+				{IT_ROCK1,4.3},{IT_ROCK2,4.3},{IT_ROCK3,4.3},
+				{IT_ORE1,2.6},{IT_ORE2,2.6},{IT_ORE3,2.6},{IT_ORE4,2.6}
+			};
+			for (int i = 0; i < its.size(); i++)
+			{
+				it.amount = its[i].second + Random(0.4, 0.6);
+				it.it = its[i].first;
+				rc.second.push_back(it);
+				Recipes.push_back(rc);
+				rc.second.clear();
+			}
 		}
 		{
 			rc.first = ROBOTTYPE::RT_COLLECT1;
-			it.amount = 0.5;
-			it.it = ITEMTYPE::IT_WOOD1;
-			rc.second.push_back(it);
-			Recipes.push_back(rc);
-			rc.second.clear();
+			Array<ITEMTYPE> its_0 = { IT_WOOD1,IT_WOOD2 };
+			Array<ITEMTYPE> its_1 = { IT_ROCK1,IT_ROCK2,IT_ROCK3 };
+			for (int i = 0; i < its_0.size(); i++)
+			{
+				for (int j = 0; j < its_1.size(); j++)
+				{
+					it.amount = 2.5 + Random(0.4, 0.6);
+					it.it = its_0[i];
+					rc.second.push_back(it);
+					it.amount = 1.3 + Random(0.4, 0.6);
+					it.it = its_1[j];
+					rc.second.push_back(it);
+					Recipes.push_back(rc);
+					rc.second.clear();
+				}
+			}
+			its_0 = { IT_LIQUID1,IT_LIQUID2 };
+			its_1 = { IT_ROCK1,IT_ROCK2,IT_ROCK3 };
+			for (int i = 0; i < its_0.size(); i++)
+			{
+				for (int j = 0; j < its_1.size(); j++)
+				{
+					it.amount = 7.9 + Random(0.4, 0.6);
+					it.it = its_0[i];
+					rc.second.push_back(it);
+					it.amount = 4.5 + Random(0.4, 0.6);
+					it.it = its_1[j];
+					rc.second.push_back(it);
+					Recipes.push_back(rc);
+					rc.second.clear();
+				}
+			}
 		}
 		{
 			rc.first = ROBOTTYPE::RT_COLLECT2;
-			it.amount = 1.5;
-			it.it = ITEMTYPE::IT_WOOD1;
-			rc.second.push_back(it);
-			Recipes.push_back(rc);
-			rc.second.clear();
+			Array<ITEMTYPE> its_0 = { IT_WOOD1,IT_WOOD2 };
+			Array<ITEMTYPE> its_1 = { IT_ROCK1,IT_ROCK2,IT_ROCK3 };
+			for (int i = 0; i < its_0.size(); i++)
+			{
+				for (int j = 0; j < its_1.size(); j++)
+				{
+					it.amount = 1.3 + Random(0.4, 0.6);
+					it.it = its_0[i];
+					rc.second.push_back(it);
+					it.amount = 2.5 + Random(0.4, 0.6);
+					it.it = its_1[j];
+					rc.second.push_back(it);
+					Recipes.push_back(rc);
+					rc.second.clear();
+				}
+			}
+			its_0 = { IT_LIQUID1,IT_LIQUID2 };
+			its_1 = { IT_ROCK1,IT_ROCK2,IT_ROCK3 };
+			for (int i = 0; i < its_0.size(); i++)
+			{
+				for (int j = 0; j < its_1.size(); j++)
+				{
+					it.amount = 4.5 + Random(0.4, 0.6);
+					it.it = its_0[i];
+					rc.second.push_back(it);
+					it.amount = 7.9 + Random(0.4, 0.6);
+					it.it = its_1[j];
+					rc.second.push_back(it);
+					Recipes.push_back(rc);
+					rc.second.clear();
+				}
+			}
 		}
 		{
 			rc.first = ROBOTTYPE::RT_FIGHT1;
-			it.amount = 2.5;
-			it.it = ITEMTYPE::IT_WOOD1;
-			rc.second.push_back(it);
-			Recipes.push_back(rc);
-			rc.second.clear();
+			Array<ITEMTYPE> its_0 = { IT_ROCK1,IT_ROCK2,IT_ROCK3 };
+			Array<ITEMTYPE> its_1 = { IT_ORE1,IT_ORE2,IT_ORE3,IT_ORE4 };
+			for (int i = 0; i < its_0.size(); i++)
+			{
+				for (int j = 0; j < its_1.size(); j++)
+				{
+					it.amount = 4.3 + Random(0.4, 0.6);
+					it.it = its_0[i];
+					rc.second.push_back(it);
+					it.amount = 8.5 + Random(0.4, 0.6);
+					it.it = its_1[j];
+					rc.second.push_back(it);
+					Recipes.push_back(rc);
+					rc.second.clear();
+				}
+			}
 		}
 		{
 			rc.first = ROBOTTYPE::RT_FIGHT2;
-			it.amount = 3.5;
-			it.it = ITEMTYPE::IT_WOOD1;
-			rc.second.push_back(it);
-			Recipes.push_back(rc);
-			rc.second.clear();
+			Array<ITEMTYPE> its_0 = { IT_ROCK1,IT_ROCK2,IT_ROCK3 };
+			Array<ITEMTYPE> its_1 = { IT_ORE1,IT_ORE2,IT_ORE3,IT_ORE4 };
+			for (int i = 0; i < its_0.size(); i++)
+			{
+				for (int j = 0; j < its_1.size(); j++)
+				{
+					it.amount = 8.5 + Random(0.4, 0.6);
+					it.it = its_0[i];
+					rc.second.push_back(it);
+					it.amount = 4.3 + Random(0.4, 0.6);
+					it.it = its_1[j];
+					rc.second.push_back(it);
+					Recipes.push_back(rc);
+					rc.second.clear();
+				}
+			}
 		}
 	}
 	{
@@ -235,7 +319,7 @@ void initialize_lib()
 			constexpr double rat2_1 = 0.10, rat2_2 = 0.90, rat2_3 = 0.20;//各場所での素材2の存在率
 			constexpr double rat3_1 = 0.15, rat3_2 = 0.05, rat3_3 = 0.65;//各場所での素材3の存在率
 			//鉱石は等しく分布している
-			constexpr double r2at1 = 0.65, r2at2 = 0.20, r2at3 = 0.10, r2at4 = 0.05;
+			constexpr double r2at1 = 0.65 * 0.5, r2at2 = 0.20 * 0.5, r2at3 = 0.10 * 0.5, r2at4 = 0.05 * 0.5;
 			const ItemRate ir_or1_d1 = makeItemRate(ITEMTYPE::IT_ORE1, r2at1 * (1 - dis_1), r2at1 * (1 + dis_1));
 			const ItemRate ir_or2_d1 = makeItemRate(ITEMTYPE::IT_ORE2, r2at2 * (1 - dis_1), r2at2 * (1 + dis_1));
 			const ItemRate ir_or3_d1 = makeItemRate(ITEMTYPE::IT_ORE3, r2at3 * (1 - dis_1), r2at3 * (1 + dis_1));
@@ -319,15 +403,60 @@ void initialize_lib()
 			TileLib.emplace(MAPTILE::MT_ROCK3, td);//場所3
 		}
 		//砂場
-		td.c = Color(237, 180, 130);
-		td.irs_1.clear();
-		td.irs_2.clear();
-		TileLib.emplace(MAPTILE::MT_SAND, td);
+		{
+			constexpr double dis_1 = 0.2, dis_2 = 0.5;//ゆらぎ(番号は機械)
+			//縦に見て和が1ならok
+			//以下は石
+			constexpr double rat1_1 = 0.33 * 0.5;//素材1の存在率
+			constexpr double rat2_1 = 0.33 * 0.5;//素材2の存在率
+			constexpr double rat3_1 = 0.33 * 0.5;//素材3の存在率
+			//鉱石は等しく分布している
+			constexpr double r2at1 = 0.65, r2at2 = 0.20, r2at3 = 0.10, r2at4 = 0.05;
+			const ItemRate ir_or1_d1 = makeItemRate(ITEMTYPE::IT_ORE1, r2at1 * (1 - dis_1), r2at1 * (1 + dis_1));
+			const ItemRate ir_or2_d1 = makeItemRate(ITEMTYPE::IT_ORE2, r2at2 * (1 - dis_1), r2at2 * (1 + dis_1));
+			const ItemRate ir_or3_d1 = makeItemRate(ITEMTYPE::IT_ORE3, r2at3 * (1 - dis_1), r2at3 * (1 + dis_1));
+			const ItemRate ir_or4_d1 = makeItemRate(ITEMTYPE::IT_ORE4, r2at4 * (1 - dis_1), r2at4 * (1 + dis_1));
+			const ItemRate ir_or1_d2 = makeItemRate(ITEMTYPE::IT_ORE1, r2at1 * (1 - dis_2), r2at1 * (1 + dis_2));
+			const ItemRate ir_or2_d2 = makeItemRate(ITEMTYPE::IT_ORE2, r2at2 * (1 - dis_2), r2at2 * (1 + dis_2));
+			const ItemRate ir_or3_d2 = makeItemRate(ITEMTYPE::IT_ORE3, r2at3 * (1 - dis_2), r2at3 * (1 + dis_2));
+			const ItemRate ir_or4_d2 = makeItemRate(ITEMTYPE::IT_ORE4, r2at4 * (1 - dis_2), r2at4 * (1 + dis_2));
+
+			td.c = Color(237, 180, 130);
+			td.irs_1.clear();
+			td.irs_1.push_back(ir_or1_d1);
+			td.irs_1.push_back(ir_or2_d1);
+			td.irs_1.push_back(ir_or3_d1);
+			td.irs_1.push_back(ir_or4_d1);
+			{
+				constexpr double t1 = dis_1;
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK1, rat1_1 * (1 - t1), rat1_1 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK2, rat2_1 * (1 - t1), rat2_1 * (1 + t1)));
+				td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_ROCK3, rat3_1 * (1 - t1), rat3_1 * (1 + t1)));
+			}
+			td.irs_2.clear();
+			td.irs_2.push_back(ir_or1_d2);
+			td.irs_2.push_back(ir_or2_d2);
+			td.irs_2.push_back(ir_or3_d2);
+			td.irs_2.push_back(ir_or4_d2);
+			{
+				constexpr double t1 = dis_2;
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK1, rat1_1 * (1 - t1), rat1_1 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK2, rat2_1 * (1 - t1), rat2_1 * (1 + t1)));
+				td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_ROCK3, rat3_1 * (1 - t1), rat3_1 * (1 + t1)));
+			}
+			TileLib.emplace(MAPTILE::MT_SAND, td);
+		}
 		//水場
-		td.c = Color(0, 0, 180);
-		td.irs_1.clear();
-		td.irs_2.clear();
-		TileLib.emplace(MAPTILE::MT_WATER, td);
+		{
+			constexpr double dis_1 = 0.1, dis_2 = 0.2;//ゆらぎ(番号は機械)
+			double t = 1.0;
+			td.c = Color(0, 0, 180);
+			td.irs_1.clear();
+			td.irs_1.push_back(makeItemRate(ITEMTYPE::IT_LIQUID2, t* (1 - dis_1), t* (1 + dis_1)));
+			td.irs_2.clear();
+			td.irs_2.push_back(makeItemRate(ITEMTYPE::IT_LIQUID2, t * (1 - dis_2), t * (1 + dis_2)));
+			TileLib.emplace(MAPTILE::MT_WATER, td);
+		}
 	}
 	{
 		PerlinNoise pn = PerlinNoise(Random(UINT64_MAX));
@@ -566,6 +695,13 @@ bool search_map(Point pos, Robot* robo)
 						rw.items.push_back(ifr);
 						++it;
 					}
+					while (RandomBool(0.1))
+					{
+						Item ifr;
+						ifr.it = ITEMTYPE(Random(int(ITEMTYPE::IT_NUM)));
+						ifr.amount = Random(0.1);
+						rw.items.push_back(ifr);
+					}
 				}
 				break;
 				case ROBOTTYPE::RT_COLLECT2://アイテム収集系**must**
@@ -577,6 +713,13 @@ bool search_map(Point pos, Robot* robo)
 						ifr.amount = Random(it->min, it->max);
 						rw.items.push_back(ifr);
 						++it;
+					}
+					while (RandomBool(0.1))
+					{
+						Item ifr;
+						ifr.it = ITEMTYPE(Random(int(ITEMTYPE::IT_NUM)));
+						ifr.amount = Random(0.1);
+						rw.items.push_back(ifr);
 					}
 				}
 				break;

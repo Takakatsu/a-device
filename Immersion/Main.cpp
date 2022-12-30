@@ -346,7 +346,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
+	GAMESTATE gamestate = { 1,0,0,0,0,0,false,false };
 	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
@@ -378,8 +378,6 @@ void Main()
 		delta = Scene::DeltaTime();
 		cursor_pos = Cursor::PosF();
 
-		//if (KeyEscape.down())is_game_exit = true;
-
 		pc_filter->time = Random(1.0, 5.0);
 		pc_break_filter->time = Random(-5.0, 5.0);
 
@@ -408,7 +406,11 @@ void Main()
 				}
 				else if (gamestate.passed_time < 10)
 				{
-					String p = String((int(gamestate.passed_time * 4)) % 4, '.');
+					String p = U"";
+					for (int i = 0; i < (int(gamestate.passed_time * 4)) % 4; i++)
+					{
+						p += U" .";
+					}
 
 					font_initiation(U"Setup Initialization" + p).draw(Point(0, 0), Color(255));
 				}
