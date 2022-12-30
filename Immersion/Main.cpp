@@ -20,7 +20,7 @@ void Initialize()
 		for (int i = 0; i < (int)ITEMTYPE::IT_NUM; i++)
 		{
 			//デバッグの為、全て1.5で初期化
-			ItemBox.emplace((ITEMTYPE)i, 1.5);
+			ItemBox.emplace((ITEMTYPE)i, 0);
 		}
 	}
 
@@ -347,7 +347,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 1,0,0,0,0,0,false,false };
+	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
 	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
@@ -779,7 +779,7 @@ void Main()
 				{
 					double y_pos = SCENE_HEIGHT - UNDERBAR_HEIGHT;
 					constexpr double margin = 10;
-					const double height = (font_message.height()+margin)*2;
+					const double height = (font_message.height() + margin) * 2;
 					constexpr double width = 480;
 					for (auto it = logs_tmp.begin(); it != logs_tmp.end();)
 					{
@@ -796,12 +796,17 @@ void Main()
 
 								Vec2 penPos = rect.pos + Vec2(1, 1) * margin;
 								bool is_up = false;
+								bool is_break = false;
 								for (const auto& glyph : font_message.getGlyphs(it->text))
 								{
 									// 改行文字なら
 									if (glyph.codePoint == U'\n')
 									{
-										if (is_up)break;
+										if (is_up)
+										{
+											is_break = true;
+											break;
+										}
 										is_up = true;
 										penPos.y += font_message.height();
 										continue;
@@ -809,7 +814,11 @@ void Main()
 									//画面内に描画可能かの判定
 									if (penPos.x + glyph.xAdvance > rect.x + rect.w - margin)
 									{
-										if (is_up)break;
+										if (is_up)
+										{
+											is_break = true;
+											break;
+										}
 										is_up = true;
 										penPos.x = rect.x + margin;
 										penPos.y += font_message.height();
@@ -817,7 +826,7 @@ void Main()
 									glyph.texture.draw(Math::Round(penPos + glyph.getOffset()));
 									penPos.x += glyph.xAdvance;
 								}
-								if (is_up)font_message(U"...").draw(penPos);
+								if (is_break)font_message(U"...").draw(penPos);
 								y_pos -= th;
 							}
 							//継続時
@@ -830,12 +839,17 @@ void Main()
 
 								Vec2 penPos = rect.pos + Vec2(1, 1) * margin;
 								bool is_up = false;
+								bool is_break = false;
 								for (const auto& glyph : font_message.getGlyphs(it->text))
 								{
 									// 改行文字なら
 									if (glyph.codePoint == U'\n')
 									{
-										if (is_up)break;
+										if (is_up)
+										{
+											is_break = true;
+											break;
+										}
 										is_up = true;
 										penPos.y += font_message.height();
 										continue;
@@ -843,7 +857,11 @@ void Main()
 									//画面内に描画可能かの判定
 									if (penPos.x + glyph.xAdvance > rect.x + rect.w - margin)
 									{
-										if (is_up)break;
+										if (is_up)
+										{
+											is_break = true;
+											break;
+										}
 										is_up = true;
 										penPos.x = rect.x + margin;
 										penPos.y += font_message.height();
@@ -865,12 +883,17 @@ void Main()
 
 								Vec2 penPos = rect.pos + Vec2(1, 1) * margin;
 								bool is_up = false;
+								bool is_break = false;
 								for (const auto& glyph : font_message.getGlyphs(it->text))
 								{
 									// 改行文字なら
 									if (glyph.codePoint == U'\n')
 									{
-										if (is_up)break;
+										if (is_up)
+										{
+											is_break = true;
+											break;
+										}
 										is_up = true;
 										penPos.y += font_message.height();
 										continue;
@@ -878,7 +901,11 @@ void Main()
 									//画面内に描画可能かの判定
 									if (penPos.x + glyph.xAdvance > rect.x + rect.w - margin)
 									{
-										if (is_up)break;
+										if (is_up)
+										{
+											is_break = true;
+											break;
+										}
 										is_up = true;
 										penPos.x = rect.x + margin;
 										penPos.y += font_message.height();
@@ -886,7 +913,7 @@ void Main()
 									glyph.texture.draw(Math::Round(penPos + glyph.getOffset()));
 									penPos.x += glyph.xAdvance;
 								}
-								if(is_up)font_message(U"...").draw(penPos);
+								if (is_up)font_message(U"...").draw(penPos);
 								y_pos -= th;
 							}
 							it->remain_time -= delta;
@@ -903,7 +930,7 @@ void Main()
 				{
 					Rect(Point(0, SCENE_HEIGHT - UNDERBAR_HEIGHT), Point(SCENE_WIDTH, UNDERBAR_HEIGHT)).draw(Color(200));
 					constexpr int t = 4;
-					Rect(Point(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(1, 1) * (UNDERBAR_HEIGHT - t * 2))(TextureLib[U"ICON_OS"]).draw();
+					Rect(Point(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(1, 1)* (UNDERBAR_HEIGHT - t * 2))(TextureLib[U"ICON_OS"]).draw();
 					for (int i = 0; i < my_icons.size(); i++)
 					{
 						Rect(Point(int((i + 1.5) * UNDERBAR_HEIGHT) + t * i, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(1, 1) * (UNDERBAR_HEIGHT - t * 2))(TextureLib[my_icons[i]->getTexture()]).draw();
