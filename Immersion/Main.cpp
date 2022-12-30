@@ -38,7 +38,7 @@ void Initialize()
 		rob.rt = ROBOTTYPE::RT_SEARCH;
 		rob.name = U"drei";
 		robots_stay.push_back(rob);
-		rob.name = U"vier_dkfjaojoroghozon4rhfj0ruu408fja0h34h9fnhoajksjdkljdjojfljljdk";
+		rob.name = U"vier";
 		robots_stay.push_back(rob);
 	}
 

@@ -78,7 +78,7 @@ public:
 	}
 	virtual void click(Vec2 pos, bool is_left)//呼び出すときは内部座標で処理する
 	{
-		Print(pos);
+		//Print(pos);
 	}
 	virtual void drag(Vec2 delta, bool is_left)
 	{

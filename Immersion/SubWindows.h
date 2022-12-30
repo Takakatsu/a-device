@@ -210,7 +210,6 @@ public:
 	void buy()
 	{
 		robo.name = txtstt.text;
-		robo.endurance = RobotLib[robo.rt].max_endurance;
 		robots_stay.push_back(robo);
 		for (int i = 0; i < buy_resource.size(); i++)
 		{
@@ -226,6 +225,10 @@ public:
 			{
 				buy();
 			}
+			else if(!is_left)
+			{
+				is_buying = false;
+			}
 		}
 		else
 		{
@@ -240,7 +243,7 @@ public:
 				{
 					Robot rb;
 					rb.count_go = 0;
-					rb.endurance = RobotLib[Recipes[i].first].max_endurance;
+					rb.endurance = 0;
 					rb.remain_time = 0;
 					rb.rt = Recipes[i].first;
 					buy_resource = Recipes[i].second;
@@ -548,6 +551,7 @@ private:
 	Array<String> clogs;
 	Color col_bg = Color(0x00), col_txt = Color(0x26, 0xc3, 0x0f);
 	double scroll = 0;
+	double time = 0;
 	const String dir = U"s: > ";
 	const String indent = U"   ";
 protected:
@@ -575,6 +579,7 @@ public:
 		SimpleGUI::TextBox(txtstt, Vec2(-100, -100));
 		if (win_active == this)
 		{
+			time += delta;
 			txtstt.active = true;
 			if ((KeyControl + KeyNumAdd).down())
 			{
@@ -932,7 +937,7 @@ public:
 					}
 					glyph.texture.draw(Math::Round(penPos + glyph.getOffset()), col_txt);
 					penPos.x += glyph.xAdvance;
-					if (i == txtstt.cursorPos - 1)
+					if (i == txtstt.cursorPos - 1 && int(time * 2) % 2 == 0)
 					{
 						RectF(penPos, Vec2(10, use_font->height())).draw(col_txt);
 					}
