@@ -64,7 +64,7 @@ void Mouse_Operation()
 			{
 				constexpr int t = 4;
 				//ホームメニュー
-				if (Rect(Point(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(32, 32)).contains(pos))
+				if (Rect(Point(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(1, 1) * (UNDERBAR_HEIGHT - t * 2)).contains(pos))
 				{
 					is_exit_phase = true;
 				}
@@ -73,7 +73,7 @@ void Mouse_Operation()
 					for (int i = 0; i < my_icons.size(); i++)
 					{
 						//各種アイコンのクリック処理
-						if (Rect(Point((int)((i + 1.5) * UNDERBAR_HEIGHT + t * i), SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(32, 32)).contains(pos))
+						if (Rect(Point(int((i + 1.5) * UNDERBAR_HEIGHT) + t * i, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(1, 1) * (UNDERBAR_HEIGHT - t * 2)).contains(pos))
 						{
 							my_icons[i]->click_undericon();
 							break;
@@ -828,22 +828,27 @@ void Main()
 				{
 					Rect(Point(0, SCENE_HEIGHT - UNDERBAR_HEIGHT), Point(SCENE_WIDTH, UNDERBAR_HEIGHT)).draw(Color(200));
 					constexpr int t = 4;
-					TextureLib[U"ICON_OS"].scaled(0.5).draw(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t);
+					Rect(Point(t, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(1, 1) * (UNDERBAR_HEIGHT - t * 2))(TextureLib[U"ICON_OS"]).draw();
 					for (int i = 0; i < my_icons.size(); i++)
 					{
-						TextureLib[my_icons[i]->getTexture()].scaled(0.5).draw((i + 1.5) * UNDERBAR_HEIGHT + t * i, SCENE_HEIGHT - UNDERBAR_HEIGHT + t);
+						Rect(Point(int((i + 1.5) * UNDERBAR_HEIGHT) + t * i, SCENE_HEIGHT - UNDERBAR_HEIGHT + t), Point(1, 1) * (UNDERBAR_HEIGHT - t * 2))(TextureLib[my_icons[i]->getTexture()]).draw();
 					}
+					const String str = DateTime2GameTime(DateTime::Now());
+					double len = font_message(str).region().w;
+					font_message(str).drawAt(Point(SCENE_WIDTH - (int)len / 2 - 10, SCENE_HEIGHT - UNDERBAR_HEIGHT / 2), Color(0));
 				}
 
 				if (is_exit_phase)
 				{
 					Point size = Point(200, 100);
 					int diss_x = 150;
-					Rect(Point(0, 0), Scene::Size()).draw(ColorF(0.0,0.0,0.0,0.5));
-					font_message(U"終了しますか？").drawAt(Scene::Center() + Point(0,-100), Color(0));
-					Rect(Scene::Center() + Point(diss_x, 100) - size / 2, size).draw(Color(255));
+					Rect(Point(0, 0), Scene::Size()).draw(ColorF(0.0, 0.0, 0.0, 0.5));
+					Vec2 pos = Scene::Center() + Point(0, -100);
+					DrawableText dt = font_message(U"終了しますか？");
+					dt.drawAt(pos + Vec2(2, 2), Color(255)); dt.drawAt(pos + Vec2(1, 1), Color(127)); dt.drawAt(pos, Color(0));
+					Rect(Scene::Center() + Point(diss_x, 100) - size / 2, size).draw(Color(255)).drawFrame(2, Color(0));
 					font_message(U"終了").drawAt(Scene::Center() + Point(diss_x, 100), Color(0));
-					Rect(Scene::Center() + Point(-diss_x, 100) - size / 2, size).draw(Color(255));
+					Rect(Scene::Center() + Point(-diss_x, 100) - size / 2, size).draw(Color(255)).drawFrame(2, Color(0));
 					font_message(U"続ける").drawAt(Scene::Center() + Point(-diss_x, 100), Color(0));
 				}
 

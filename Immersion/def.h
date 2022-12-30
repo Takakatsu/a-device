@@ -16,7 +16,7 @@
 #define MARGIN_FLAME 4//フレームの幅
 #define MARGIN_TITLEBAR 30//タイトルバーの太さ
 #define MARGIN_TITLEBAR_BUTTON 50//タイトルバーのボタンの太さ
-#define UNDERBAR_HEIGHT 40//下のバーの太さ
+#define UNDERBAR_HEIGHT 60//下のバーの太さ
 //ゲームバランス
 #define GAMETIME 1500//ゲームの終了時間(秒)
 
