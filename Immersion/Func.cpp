@@ -564,6 +564,7 @@ void initialize_lib()
 		AudioLib[U"SetUpBGM"].setVolume(0.3);
 		AudioLib.emplace(U"LastBGM", Audio(U"resource/lastbgm.ogg"));
 		AudioLib.emplace(U"SE_MSG", Audio(U"resource/se_message.ogg"));
+		AudioLib.emplace(U"SE_MSG_SP", Audio(U"resource/se_message_sp.ogg"));
 		AudioLib.emplace(U"SE_TOUCH", Audio(U"resource/se_touch.ogg"));
 	}
 	{
@@ -748,7 +749,7 @@ bool search_map(Point pos, Robot* robo)
 				lg.time = DateTime::Now();
 				lg.text = robo->name + U"は探索に向かいました";
 				logs.push_front(lg);
-				AudioLib[U"SE_TOUCH"].playOneShot();
+				AudioLib[U"SE_TOUCH"].playOneShot(0.3);
 			}
 			//死亡可能性ログの出力
 			if (is_break)

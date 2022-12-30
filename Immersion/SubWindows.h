@@ -210,6 +210,7 @@ public:
 	void buy()
 	{
 		robo.name = txtstt.text;
+		robo.endurance = RobotLib[robo.rt].max_endurance;
 		robots_stay.push_back(robo);
 		for (int i = 0; i < buy_resource.size(); i++)
 		{
@@ -244,6 +245,7 @@ public:
 					rb.rt = Recipes[i].first;
 					buy_resource = Recipes[i].second;
 					robo = rb;
+					txtstt.clear();
 					is_buying = true;
 					break;
 				}

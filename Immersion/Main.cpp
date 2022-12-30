@@ -30,15 +30,15 @@ void Initialize()
 		rob.count_go = 0;
 		rob.endurance = 0;
 		rob.remain_time = 0;
-		rob.name = U"トレース";
+		rob.name = U"eins";
 		rob.rt = ROBOTTYPE::RT_COLLECT1;
 		robots_stay.push_back(rob);
-		rob.name = U"ドゥオ";
+		rob.name = U"zwei";
 		robots_stay.push_back(rob);
 		rob.rt = ROBOTTYPE::RT_SEARCH;
-		rob.name = U"ウーヌス";
+		rob.name = U"drei";
 		robots_stay.push_back(rob);
-		rob.name = U"ニーヒル";
+		rob.name = U"vier_dkfjaojoroghozon4rhfj0ruu408fja0h34h9fnhoajksjdkljdjojfljljdk";
 		robots_stay.push_back(rob);
 	}
 
@@ -293,7 +293,7 @@ void Update_Robot()
 				lg.text = it->rb.name + U"は" + ItemLib[it->rw.items[i].it].name + U"を" + Format(it->rw.items[i].amount) + U"kg 回収しました";
 				logs.push_front(lg);
 			}
-			AudioLib[U"SE_MSG"].playOneShot();
+			AudioLib[U"SE_MSG"].playOneShot(0.5);
 
 			//所持しているロボットに追加
 			robots_stay.push_back((*it).rb);
@@ -347,7 +347,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
+	GAMESTATE gamestate = { 1,0,0,0,0,0,false,false };
 	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
@@ -381,7 +381,7 @@ void Main()
 
 		pc_filter->time = Random(1.0, 5.0);
 		pc_break_filter->time = Random(-5.0, 5.0);
-		//pc_break_filter->level = fmod(pc_break_filter->level + delta / 10, 1.0);
+		if (KeyEscape.down())is_exit_phase = true;
 
 		renderTexture_all.clear(Color(0));
 		{
@@ -453,7 +453,7 @@ void Main()
 					lg.text = U"メッセージが追加されました";
 					lg.time = DateTime::Now();
 					logs.push_front(lg);
-					AudioLib[U"SE_MSG"].playOneShot();
+					AudioLib[U"SE_MSG_SP"].playOneShot();
 					gamestate.event_msg = 1;
 					gamestate.passed_time = 0;
 					//開いているマスの数を計算
@@ -482,7 +482,7 @@ void Main()
 						lg.text = U"メッセージが追加されました";
 						lg.time = DateTime::Now();
 						logs.push_front(lg);
-						AudioLib[U"SE_MSG"].playOneShot();
+						AudioLib[U"SE_MSG_SP"].playOneShot();
 						gamestate.event_msg = 2;
 						gamestate.passed_time = 0;
 					}
@@ -491,7 +491,7 @@ void Main()
 				else if (gamestate.event_msg == 2)
 				{
 					gamestate.passed_time += delta;
-					if (gamestate.passed_time >= GAMETIME / 4)
+					if (gamestate.passed_time >= GAMETIME * 2 / 5)
 					{
 						MailData md;
 						md.from = U"supporter-bot";
@@ -535,7 +535,7 @@ void Main()
 						lg.text = U"メッセージが追加されました";
 						lg.time = DateTime::Now();
 						logs.push_front(lg);
-						AudioLib[U"SE_MSG"].playOneShot();
+						AudioLib[U"SE_MSG_SP"].playOneShot();
 						gamestate.event_msg = 3;
 					}
 				}
@@ -543,7 +543,7 @@ void Main()
 				else if (gamestate.event_msg == 3)
 				{
 					gamestate.passed_time += delta;
-					if (gamestate.passed_time >= GAMETIME / 2)
+					if (gamestate.passed_time >= GAMETIME * 3 / 5)
 					{
 						MailData md;
 						md.from = U"supporter-bot";
@@ -592,7 +592,7 @@ void Main()
 						lg.text = U"メッセージが追加されました";
 						lg.time = DateTime::Now();
 						logs.push_front(lg);
-						AudioLib[U"SE_MSG"].playOneShot();
+						AudioLib[U"SE_MSG_SP"].playOneShot();
 						gamestate.event_msg = 4;
 					}
 				}
@@ -600,7 +600,7 @@ void Main()
 				else if (gamestate.event_msg == 4)
 				{
 					gamestate.passed_time += delta;
-					if (gamestate.passed_time >= GAMETIME * 3 / 4)
+					if (gamestate.passed_time >= GAMETIME * 4 / 5)
 					{
 						MailData md;
 						md.from = U"supporter-bot";
@@ -662,7 +662,7 @@ void Main()
 						lg.text = U"メッセージが追加されました";
 						lg.time = DateTime::Now();
 						logs.push_front(lg);
-						AudioLib[U"SE_MSG"].playOneShot();
+						AudioLib[U"SE_MSG_SP"].playOneShot();
 						gamestate.event_msg = 5;
 					}
 				}
@@ -705,7 +705,7 @@ void Main()
 							}
 
 							gamestate.is_good_end = gamestate.good_eval_cnt >= 3;
-							
+
 
 							if (gamestate.is_good_end)md.text += U"\n\n指令通りに作業を遂行して頂き感謝します。";
 							md.text += U"\n\n端末はこのメッセージ受信の60秒後、自動的に終了されます。";
@@ -717,10 +717,9 @@ void Main()
 						lg.text = U"メッセージが追加されました";
 						lg.time = DateTime::Now();
 						logs.push_front(lg);
-						AudioLib[U"SE_MSG"].playOneShot();
+						AudioLib[U"SE_MSG_SP"].playOneShot();
 						gamestate.event_msg = 6;
 						gamestate.passed_time = 0;
-						//if (gamestate.is_good_end)AudioLib[U"LastBGM"].play();
 						pc_break_filter->level = 0;
 					}
 				}
@@ -734,8 +733,6 @@ void Main()
 					if (gamestate.passed_time >= 60)
 					{
 						is_game_exit = true;
-						//gamestate.passed_time = 0;
-						//if (gamestate.is_good_end)AudioLib[U"LastBGM"].play();
 					}
 				}
 
@@ -781,7 +778,8 @@ void Main()
 				//メッセージの表示&処理
 				{
 					double y_pos = SCENE_HEIGHT - UNDERBAR_HEIGHT;
-					constexpr double height = 60;
+					constexpr double margin = 10;
+					const double height = (font_message.height()+margin)*2;
 					constexpr double width = 480;
 					for (auto it = logs_tmp.begin(); it != logs_tmp.end();)
 					{
@@ -795,7 +793,31 @@ void Main()
 								const ScopedViewport2D viewport(rect);
 								rect.pos = Point(0, 0);
 								rect.draw(Color(127)).drawFrame();
-								font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+
+								Vec2 penPos = rect.pos + Vec2(1, 1) * margin;
+								bool is_up = false;
+								for (const auto& glyph : font_message.getGlyphs(it->text))
+								{
+									// 改行文字なら
+									if (glyph.codePoint == U'\n')
+									{
+										if (is_up)break;
+										is_up = true;
+										penPos.y += font_message.height();
+										continue;
+									}
+									//画面内に描画可能かの判定
+									if (penPos.x + glyph.xAdvance > rect.x + rect.w - margin)
+									{
+										if (is_up)break;
+										is_up = true;
+										penPos.x = rect.x + margin;
+										penPos.y += font_message.height();
+									}
+									glyph.texture.draw(Math::Round(penPos + glyph.getOffset()));
+									penPos.x += glyph.xAdvance;
+								}
+								if (is_up)font_message(U"...").draw(penPos);
 								y_pos -= th;
 							}
 							//継続時
@@ -805,7 +827,31 @@ void Main()
 								const ScopedViewport2D viewport(rect);
 								rect.pos = Point(0, 0);
 								rect.draw(Color(127)).drawFrame();
-								font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+
+								Vec2 penPos = rect.pos + Vec2(1, 1) * margin;
+								bool is_up = false;
+								for (const auto& glyph : font_message.getGlyphs(it->text))
+								{
+									// 改行文字なら
+									if (glyph.codePoint == U'\n')
+									{
+										if (is_up)break;
+										is_up = true;
+										penPos.y += font_message.height();
+										continue;
+									}
+									//画面内に描画可能かの判定
+									if (penPos.x + glyph.xAdvance > rect.x + rect.w - margin)
+									{
+										if (is_up)break;
+										is_up = true;
+										penPos.x = rect.x + margin;
+										penPos.y += font_message.height();
+									}
+									glyph.texture.draw(Math::Round(penPos + glyph.getOffset()));
+									penPos.x += glyph.xAdvance;
+								}
+								if (is_up)font_message(U"...").draw(penPos);
 								y_pos -= height;
 							}
 							//撤退時
@@ -816,7 +862,31 @@ void Main()
 								const ScopedViewport2D viewport(rect);
 								rect.pos = Point(0, 0);
 								rect.draw(Color(127)).drawFrame();
-								font_message(it->text).drawAt(Vec2(rect.centerX(), rect.y + height / 2));
+
+								Vec2 penPos = rect.pos + Vec2(1, 1) * margin;
+								bool is_up = false;
+								for (const auto& glyph : font_message.getGlyphs(it->text))
+								{
+									// 改行文字なら
+									if (glyph.codePoint == U'\n')
+									{
+										if (is_up)break;
+										is_up = true;
+										penPos.y += font_message.height();
+										continue;
+									}
+									//画面内に描画可能かの判定
+									if (penPos.x + glyph.xAdvance > rect.x + rect.w - margin)
+									{
+										if (is_up)break;
+										is_up = true;
+										penPos.x = rect.x + margin;
+										penPos.y += font_message.height();
+									}
+									glyph.texture.draw(Math::Round(penPos + glyph.getOffset()));
+									penPos.x += glyph.xAdvance;
+								}
+								if(is_up)font_message(U"...").draw(penPos);
 								y_pos -= th;
 							}
 							it->remain_time -= delta;
@@ -851,9 +921,9 @@ void Main()
 					Vec2 pos = Scene::Center() + Point(0, -100);
 					DrawableText dt = font_message(U"終了しますか？");
 					dt.drawAt(pos + Vec2(2, 2), Color(255)); dt.drawAt(pos + Vec2(1, 1), Color(127)); dt.drawAt(pos, Color(0));
-					Rect(Scene::Center() + Point(diss_x, 100) - size / 2, size).draw(Color(255)).drawFrame(2, Color(0));
+					Rect(Scene::Center() + Point(diss_x, 100) - size / 2, size).draw(Color(190)).drawFrame(2, Color(0));
 					font_message(U"終了").drawAt(Scene::Center() + Point(diss_x, 100), Color(0));
-					Rect(Scene::Center() + Point(-diss_x, 100) - size / 2, size).draw(Color(255)).drawFrame(2, Color(0));
+					Rect(Scene::Center() + Point(-diss_x, 100) - size / 2, size).draw(Color(190)).drawFrame(2, Color(0));
 					font_message(U"続ける").drawAt(Scene::Center() + Point(-diss_x, 100), Color(0));
 				}
 
