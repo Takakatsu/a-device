@@ -18,7 +18,10 @@
 #define MARGIN_TITLEBAR_BUTTON 50//タイトルバーのボタンの太さ
 #define UNDERBAR_HEIGHT 60//下のバーの太さ
 //ゲームバランス
-#define GAMETIME 1500//ゲームの終了時間(秒)
+#define GAMETIME1 420//ゲームの終了時間(秒)
+#define GAMETIME2 680//ゲームの終了時間(秒)
+#define GAMETIME3 940//ゲームの終了時間(秒)
+#define GAMETIMEL 1200//ゲームの終了時間(秒)
 
 extern bool is_game_exit;
 extern bool is_exit_phase;

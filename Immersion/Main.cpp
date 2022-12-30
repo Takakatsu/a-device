@@ -347,7 +347,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
+	GAMESTATE gamestate = { 1,6,0,0,0,0,false,false };
 	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
@@ -476,7 +476,7 @@ void Main()
 						MailData md;
 						md.from = U"supporter-bot";
 						md.title = U"通知";
-						md.text = U"脳機能や記憶は正常ですか？\n\n貴方は先程、目的の惑星へと墜落しました。\n外部接続扉が破損したため、船外に出ることはできませんが、船内からでも探査機を派遣することは可能です。\n予定通り、この惑星の探査及び生存圏の確保を行ってください。\n\nまた、電源装置の破損から、この端末の寿命としては約30分が限度となります。\n次の探査者の為に、急ぎ情報の入手を進めてください。";
+						md.text = U"脳機能や記憶は正常ですか？\n\n貴方は先程、目的の惑星へと墜落しました。\n外部接続扉が破損したため、船外に出ることはできませんが、船内からでも探査機を派遣することは可能です。\n予定通り、この惑星の探査及び生存圏の確保を行ってください。\n\nまた、電源装置の破損から、この端末の寿命としては約20分が限度となります。\n次の探査者の為に、急ぎ情報の入手を進めてください。";
 						MailLib.push_back(md);
 						GameLog lg;
 						lg.text = U"メッセージが追加されました";
@@ -491,7 +491,7 @@ void Main()
 				else if (gamestate.event_msg == 2)
 				{
 					gamestate.passed_time += delta;
-					if (gamestate.passed_time >= GAMETIME * 2 / 5)
+					if (gamestate.passed_time >= GAMETIME1)
 					{
 						MailData md;
 						md.from = U"supporter-bot";
@@ -543,7 +543,7 @@ void Main()
 				else if (gamestate.event_msg == 3)
 				{
 					gamestate.passed_time += delta;
-					if (gamestate.passed_time >= GAMETIME * 3 / 5)
+					if (gamestate.passed_time >= GAMETIME2)
 					{
 						MailData md;
 						md.from = U"supporter-bot";
@@ -600,7 +600,7 @@ void Main()
 				else if (gamestate.event_msg == 4)
 				{
 					gamestate.passed_time += delta;
-					if (gamestate.passed_time >= GAMETIME * 4 / 5)
+					if (gamestate.passed_time >= GAMETIME3)
 					{
 						MailData md;
 						md.from = U"supporter-bot";
@@ -670,7 +670,7 @@ void Main()
 				else if (gamestate.event_msg == 5)
 				{
 					gamestate.passed_time += delta;
-					if (gamestate.passed_time >= GAMETIME)
+					if (gamestate.passed_time >= GAMETIMEL)
 					{
 						MailData md;
 						md.from = U"supporter-bot";

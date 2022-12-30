@@ -225,7 +225,7 @@ public:
 			{
 				buy();
 			}
-			else if(!is_left)
+			else if (!is_left)
 			{
 				is_buying = false;
 			}
@@ -285,7 +285,7 @@ public:
 					for (int j = 0; j < Recipes[i].second.size(); j++)
 					{
 						if (j != 0)str += U", ";
-						str += ItemLib[Recipes[i].second[j].it].name + U": " + Format(ItemAmount2Visual(Recipes[i].second[j].it, Recipes[i].second[j].amount));
+						str += ItemLib[Recipes[i].second[j].it].name + U": " + U"{:.2f}"_fmt(ItemAmount2Visual(Recipes[i].second[j].it, Recipes[i].second[j].amount));
 					}
 					font02(str).draw(Vec2(0, font01.height()), Color(0));
 				}
@@ -804,7 +804,7 @@ public:
 							if (ItemBox[(ITEMTYPE)i] > 0)
 							{
 								is_printed = true;
-								clogs.push_front(indent + ItemLib[(ITEMTYPE)i].name + U" " + Format(ItemAmount2Visual((ITEMTYPE)i, ItemBox[(ITEMTYPE)i])) + U"kg");
+								clogs.push_front(indent + ItemLib[(ITEMTYPE)i].name + U" " + U"{:.2f}"_fmt(ItemAmount2Visual((ITEMTYPE)i, ItemBox[(ITEMTYPE)i])) + U"kg");
 							}
 						}
 						if (!is_printed)clogs.push_front(U"There is no resource.");

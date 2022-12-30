@@ -72,6 +72,7 @@ float4 PS(s3d::PSInput input) : SV_TARGET
 	float lev = calc_nn(time,level,uv);
 	//texColor.rgb *= lev;// float3(lev, lev, lev);// *(1 - pow(level, 5));
 	//texColor.rgb = texColor.rgb *(1-level) + float3(lev, lev, lev) * level;
-	texColor.rgb = lev > pow(level,2) * 0.71 + 0.29 ? texColor.rgb : float3(lev, lev, lev);
+	//texColor.rgb = lev > pow(level,2) * 0.71 + 0.29 ? texColor.rgb : float3(lev, lev, lev);
+	texColor.rgb = lev > pow(level, 2) * 0.71 + 0.29 ? texColor.rgb : float3(0, 0, 0);
 	return (texColor * input.color) + g_colorAdd;
 }
