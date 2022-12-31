@@ -334,9 +334,9 @@ void Main()
 
 	const MSRenderTexture renderTexture_all{ Scene::Size() };
 	const MSRenderTexture renderTexture_all2{ Scene::Size() };
-	const PixelShader ps_Posterize = HLSL{ U"example/shader/hlsl/oldpc_filter.hlsl", U"PS" }
+	const PixelShader ps_Posterize = HLSL{ Resource(U"resource/oldpc_filter.hlsl"), U"PS" }
 	| GLSL{ U"example/shader/glsl/swirl.frag", {{U"PSConstants2D", 0}, {U"MyPCFilter", 1}} };
-	const PixelShader ps_LastScene = HLSL{ U"example/shader/hlsl/oldpc_break_filter.hlsl", U"PS" }
+	const PixelShader ps_LastScene = HLSL{ Resource(U"resource/oldpc_break_filter.hlsl"), U"PS" }
 	| GLSL{ U"example/shader/glsl/swirl.frag", {{U"PSConstants2D", 0}, {U"MyPCBreakFilter", 2}} };
 	if (!ps_Posterize)
 	{
@@ -348,10 +348,10 @@ void Main()
 	}
 
 	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
-	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
-	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
-	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
-	Font font_lastmessage_mini = Font(32, U"resource/AozoraMinchoRegular.ttf");
+	Font font_message = Font(20, FONTPATH_A);
+	Font font_initiation = Font(20, FONTPATH_A);
+	Font font_lastmessage = Font(256, FONTPATH_B);
+	Font font_lastmessage_mini = Font(32, FONTPATH_B);
 
 	//以下はグローバル変数として扱う物とその処理
 	//ウィンドウ系

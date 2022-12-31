@@ -23,6 +23,10 @@
 #define GAMETIME3 940//ゲームの終了時間(秒)
 #define GAMETIMEL 1200//ゲームの終了時間(秒)
 
+//素材
+#define FONTPATH_A Resource(U"resource/GenEiNuGothic-EB.ttf")
+#define FONTPATH_B Resource(U"resource/AozoraMinchoRegular.ttf")
+
 extern bool is_game_exit;
 extern bool is_exit_phase;
 

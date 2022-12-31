@@ -13,14 +13,14 @@ public:
 	MailSoft() : MyWindow()
 	{
 		size_min = Vec2(300, size_min.y + font01.height());
-		font01 = Font(15, U"resource/AozoraMinchoRegular.ttf");
+		font01 = Font(15, FONTPATH_B);
 		is_reading = false;
 		mail_num = 0;
 	};
 	MailSoft(Vec2 p, Vec2 s) : MyWindow(U"message+", p, s, Vec2(300, size_min.y + font01.height()))
 	{
 		size_min = Vec2(300, size_min.y + font01.height());
-		font01 = Font(15, U"resource/AozoraMinchoRegular.ttf");
+		font01 = Font(15, FONTPATH_B);
 		is_reading = false;
 		mail_num = 0;
 	};
@@ -169,14 +169,14 @@ public:
 	Inventor() : MyWindow()
 	{
 		size_min = Vec2(400, 600);
-		font01 = Font(30, U"resource/GenEiNuGothic-EB.ttf");
-		font02 = Font(14, U"resource/GenEiNuGothic-EB.ttf");
+		font01 = Font(30, FONTPATH_A);
+		font02 = Font(14, FONTPATH_A);
 	};
 	Inventor(Vec2 p, Vec2 s) : MyWindow(U"!nvent", p, s, Vec2(400, 600))
 	{
 		size_min = Vec2(400, 600);
-		font01 = Font(30, U"resource/GenEiNuGothic-EB.ttf");
-		font02 = Font(14, U"resource/GenEiNuGothic-EB.ttf");
+		font01 = Font(30, FONTPATH_A);
+		font02 = Font(14, FONTPATH_A);
 	};
 	RectF getSelectionRect(int i)
 	{
@@ -324,15 +324,15 @@ public:
 	MAPViewer() : MyWindow()
 	{
 		size_min = Vec2(400, 400);
-		font01 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
-		font02 = Font(13, U"resource/GenEiNuGothic-EB.ttf");
+		font01 = Font(25, FONTPATH_A);
+		font02 = Font(13, FONTPATH_A);
 		pos_camera = Vec2(0, 0);
 	};
 	MAPViewer(Vec2 p, Vec2 s) : MyWindow(U"WLD", p, s, Vec2(400, 400))
 	{
 		size_min = Vec2(400, 400);
-		font01 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
-		font02 = Font(13, U"resource/GenEiNuGothic-EB.ttf");
+		font01 = Font(25, FONTPATH_A);
+		font02 = Font(13, FONTPATH_A);
 		pos_camera = Vec2(0, 0);
 	};
 	double get_right_panel_width()
@@ -558,20 +558,20 @@ protected:
 public:
 	CommandPrompt() : MyWindow()
 	{
-		font00 = Font(10, U"resource/GenEiNuGothic-EB.ttf");
-		font01 = Font(13, U"resource/GenEiNuGothic-EB.ttf");
-		font02 = Font(17, U"resource/GenEiNuGothic-EB.ttf");
-		font03 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
-		font04 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
+		font00 = Font(10, FONTPATH_A);
+		font01 = Font(13, FONTPATH_A);
+		font02 = Font(17, FONTPATH_A);
+		font03 = Font(20, FONTPATH_A);
+		font04 = Font(25, FONTPATH_A);
 		size_min = Vec2(Max(Max(size_min.x, SCENE_WIDTH / 3.0), 300.0), size_min.y + font04.height());
 	};
 	CommandPrompt(Vec2 p, Vec2 s) : MyWindow(U"stash", p, s, Vec2(Max(Max(size_min.x, SCENE_WIDTH / 3.0), 300.0), size_min.y + font04.height()))
 	{
-		font00 = Font(10, U"resource/GenEiNuGothic-EB.ttf");
-		font01 = Font(13, U"resource/GenEiNuGothic-EB.ttf");
-		font02 = Font(17, U"resource/GenEiNuGothic-EB.ttf");
-		font03 = Font(20, U"resource/GenEiNuGothic-EB.ttf");
-		font04 = Font(25, U"resource/GenEiNuGothic-EB.ttf");
+		font00 = Font(10, FONTPATH_A);
+		font01 = Font(13, FONTPATH_A);
+		font02 = Font(17, FONTPATH_A);
+		font03 = Font(20, FONTPATH_A);
+		font04 = Font(25, FONTPATH_A);
 		size_min = Vec2(Max(Max(size_min.x, SCENE_WIDTH / 3.0), 300.0), size_min.y + font04.height());
 	};
 	void update()

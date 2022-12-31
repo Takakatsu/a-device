@@ -119,7 +119,37 @@ Resource(engine/soundfont/GMGSx.sf2.zstdcmp)
 //
 //////////////////////////////////////////////////////
 
+Resource(resource/computer_startup.ogg)
+Resource(resource/lastbgm.ogg)
+Resource(resource/se_message.ogg)
+Resource(resource/se_message_sp.ogg)
+Resource(resource/se_touch.ogg)
 
+Resource(resource/bg.png)
+Resource(resource/icon.png)
+Resource(resource/icon_os.png)
+
+Resource(resource/icon_map.png)
+Resource(resource/icon_inventor.png)
+Resource(resource/icon_command.png)
+Resource(resource/icon_mail.png)
+
+Resource(resource/frame.png)
+Resource(resource/button_close.png)
+Resource(resource/button_max.png)
+Resource(resource/button_min.png)
+
+Resource(resource/machine_find.png)
+Resource(resource/machine_get1.png)
+Resource(resource/machine_get2.png)
+Resource(resource/machine_attack1.png)
+Resource(resource/machine_attack2.png)
+
+Resource(resource/GenEiNuGothic-EB.ttf)
+Resource(resource/AozoraMinchoRegular.ttf)
+
+Resource(resource/oldpc_break_filter.hlsl)
+Resource(resource/oldpc_filter.hlsl)
 
 /* examples 
 

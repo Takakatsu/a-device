@@ -560,34 +560,34 @@ void initialize_lib()
 	}
 	{
 		//各種音源のセットアップ
-		AudioLib.emplace(U"SetUpBGM", Audio(U"resource/computer_startup.ogg", Arg::loopBegin = 30s, Arg::loopEnd = 60s));
+		AudioLib.emplace(U"SetUpBGM", Audio(Resource(U"resource/computer_startup.ogg"), Arg::loopBegin = 30s, Arg::loopEnd = 60s));
 		AudioLib[U"SetUpBGM"].setVolume(0.3);
-		AudioLib.emplace(U"LastBGM", Audio(U"resource/lastbgm.ogg"));
-		AudioLib.emplace(U"SE_MSG", Audio(U"resource/se_message.ogg"));
-		AudioLib.emplace(U"SE_MSG_SP", Audio(U"resource/se_message_sp.ogg"));
-		AudioLib.emplace(U"SE_TOUCH", Audio(U"resource/se_touch.ogg"));
+		AudioLib.emplace(U"LastBGM", Audio(Resource(U"resource/lastbgm.ogg")));
+		AudioLib.emplace(U"SE_MSG", Audio(Resource(U"resource/se_message.ogg")));
+		AudioLib.emplace(U"SE_MSG_SP", Audio(Resource(U"resource/se_message_sp.ogg")));
+		AudioLib.emplace(U"SE_TOUCH", Audio(Resource(U"resource/se_touch.ogg")));
 	}
 	{
 		//各種画像のセットアップ
-		TextureLib.emplace(U"BackGround", Texture(U"resource/bg.png"));
-		TextureLib.emplace(U"OSIcon", Texture(U"resource/icon.png"));
-		TextureLib.emplace(U"ICON_OS", Texture(U"resource/icon_os.png"));
+		TextureLib.emplace(U"BackGround",Texture(Resource(U"resource/bg.png")));
+		TextureLib.emplace(U"OSIcon", Texture(Resource(U"resource/icon.png")));
+		TextureLib.emplace(U"ICON_OS", Texture(Resource(U"resource/icon_os.png")));
 
-		TextureLib.emplace(U"ICON_MAP", Texture(U"resource/icon_map.png"));
-		TextureLib.emplace(U"ICON_INV", Texture(U"resource/icon_inventor.png"));
-		TextureLib.emplace(U"ICON_CMP", Texture(U"resource/icon_command.png"));
-		TextureLib.emplace(U"ICON_MIL", Texture(U"resource/icon_mail.png"));
+		TextureLib.emplace(U"ICON_MAP", Texture(Resource(U"resource/icon_map.png")));
+		TextureLib.emplace(U"ICON_INV", Texture(Resource(U"resource/icon_inventor.png")));
+		TextureLib.emplace(U"ICON_CMP", Texture(Resource(U"resource/icon_command.png")));
+		TextureLib.emplace(U"ICON_MIL", Texture(Resource(U"resource/icon_mail.png")));
 
-		TextureLib.emplace(U"Frame", Texture(U"resource/frame.png"));
-		TextureLib.emplace(U"Button_Close", Texture(U"resource/button_close.png"));
-		TextureLib.emplace(U"Button_Max", Texture(U"resource/button_max.png"));
-		TextureLib.emplace(U"Button_Min", Texture(U"resource/button_min.png"));
+		TextureLib.emplace(U"Frame", Texture(Resource(U"resource/frame.png")));
+		TextureLib.emplace(U"Button_Close", Texture(Resource(U"resource/button_close.png")));
+		TextureLib.emplace(U"Button_Max", Texture(Resource(U"resource/button_max.png")));
+		TextureLib.emplace(U"Button_Min", Texture(Resource(U"resource/button_min.png")));
 
-		TextureLib.emplace(U"Machine_Search", Texture(U"resource/machine_find.png"));
-		TextureLib.emplace(U"Machine_Collect1", Texture(U"resource/machine_get1.png"));
-		TextureLib.emplace(U"Machine_Collect2", Texture(U"resource/machine_get2.png"));
-		TextureLib.emplace(U"Machine_Fight1", Texture(U"resource/machine_attack1.png"));
-		TextureLib.emplace(U"Machine_Fight2", Texture(U"resource/machine_attack2.png"));
+		TextureLib.emplace(U"Machine_Search", Texture(Resource(U"resource/machine_find.png")));
+		TextureLib.emplace(U"Machine_Collect1", Texture(Resource(U"resource/machine_get1.png")));
+		TextureLib.emplace(U"Machine_Collect2", Texture(Resource(U"resource/machine_get2.png")));
+		TextureLib.emplace(U"Machine_Fight1", Texture(Resource(U"resource/machine_attack1.png")));
+		TextureLib.emplace(U"Machine_Fight2", Texture(Resource(U"resource/machine_attack2.png")));
 	}
 }
 
