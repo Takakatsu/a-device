@@ -347,7 +347,7 @@ void Main()
 		throw Error{ U"Failed to load a shader2 file" };
 	}
 
-	GAMESTATE gamestate = { 1,6,0,0,0,0,false,false };
+	GAMESTATE gamestate = { 0,0,0,0,0,0,false,false };
 	Font font_message = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_initiation = Font(20, U"resource/GenEiNuGothic-EB.ttf");
 	Font font_lastmessage = Font(256, U"resource/AozoraMinchoRegular.ttf");
